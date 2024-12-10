@@ -1,25 +1,34 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { generateResponse } from "@/lib/googleAIService";
+import { useGenerateResponseMutation } from "@/redux/api/promptApi";
 import { useState } from "react";
 
 export default function AiToHumanConverter() {
   const [prompt, setPrompt] = useState<string>("");
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [generateResponse, { isLoading, data, error }] =
+    useGenerateResponseMutation();
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent the form from reloading the page
     setLoading(true);
 
     // Generate the response from the AI
-    const result = await generateResponse(prompt);
+    if (!prompt.trim()) return;
 
-    console.log(result, "RESULT");
-    // Handle the response: if it's null or undefined, set a default message
-    setResponse(result ?? "No response received.");
-    setLoading(false);
+    try {
+      const result = await generateResponse(prompt).unwrap();
+      // console.log(result, "RESULT");
+      setResponse(result.response ?? "No response received.");
+      setLoading(false);
+    } catch (err) {
+      console.error("Error generating response:", err);
+    }
+    // console.log(result, "RESULT");
+    // // Handle the response: if it's null or undefined, set a default message
+    // setResponse(result ?? "No response received.");
+    // setLoading(false);
   };
 
   return (
