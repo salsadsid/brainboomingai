@@ -13,6 +13,7 @@ export async function POST(req: Request) {
     await dbConnect(); // Ensure DB connection
     const { prompt } = await req.json();
 
+    console.log(prompt);
     // Generate the response
     const aiResponse = await generateResponse(prompt);
 
@@ -21,6 +22,20 @@ export async function POST(req: Request) {
       prompt,
       response: aiResponse,
     });
+
+    // Calculate word frequencies from the prompt
+    // const wordFrequencies = calculateWordFrequency(prompt);
+
+    // // Save word frequencies to the database
+    // const wordFrequencyEntries = Object.entries(wordFrequencies).map(
+    //   ([word, frequency]) => ({
+    //     word,
+    //     frequency,
+    //     prompt,
+    //   })
+    // );
+
+    // await WordFrequencyModel.insertMany(wordFrequencyEntries);
 
     return NextResponse.json(savedResponse, { status: 201 });
   } catch (error: any) {

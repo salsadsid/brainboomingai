@@ -5,5 +5,5 @@ export default function AiToolLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main>AiToolLayout{children}</main>;
+  return <main>{children}</main>;
 }

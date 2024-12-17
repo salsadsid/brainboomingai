@@ -3,7 +3,7 @@ const AiToolsLayout = ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  return <main>AiTools{children}</main>;
+  return <main>{children}</main>;
 };
 
 export default AiToolsLayout;
