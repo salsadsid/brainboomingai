@@ -13,7 +13,7 @@ Your task is to rewrite the provided paragraph based on the following guidelines
 - It should sound natural and human-like, avoiding awkward or robotic language.
 - Adapt the tone, vocabulary, and structure to align with the specified writing style.
 - Ensure the rewrite serves the stated purpose effectively, addressing the target audience's needs.
-- Output as the given paragraph format, with the given writing style and purpose.
+- Output as the given paragraph format and paragraph numbers, headers, with the given writing style and purpose.
 
 
 Provide the rewritten text in the following format, with the given writing style and language. Tailor the output to the given writing style , purpose and language. No markdown syntax is allowed. The output should be in the same format as the original paragraph. only html tags are allowed. 
