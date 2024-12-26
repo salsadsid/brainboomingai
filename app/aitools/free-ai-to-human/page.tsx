@@ -76,7 +76,7 @@ export default function AiToHumanConverter() {
 
           {loading || isLoading ? (
             <div className="flex flex-col mt-6 space-y-3">
-              <Skeleton className="w-full h-20 rounded-xl" />
+              <Skeleton className="w-full h-40 rounded-xl" />
             </div>
           ) : null}
 

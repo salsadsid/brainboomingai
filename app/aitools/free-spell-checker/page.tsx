@@ -7,7 +7,7 @@ import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { useState } from "react";
 import { free_grammer_checker_prompt } from "./prompt";
-import { parseMistakeCount } from "./utils";
+import { parseCorrectedParagraph, parseMistakeCount } from "./utils";
 
 export default function AiToHumanConverter() {
   const [prompt, setPrompt] = useState<string>("");
@@ -42,7 +42,7 @@ export default function AiToHumanConverter() {
     <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-16">
       <article>
         <h1 className="text-2xl font-mono text-gray-800 font-bold my-4 text-center md:text-7xl">
-          Free Plagiarism Checker
+          Free Spell Checker
         </h1>
         <p className="text-lg text-gray-500 my-4 text-center">
           Take your AI-generated text and turn it into something that reads like
@@ -89,14 +89,14 @@ export default function AiToHumanConverter() {
                 <span>{wordCount(response)} words</span>
                 <span className="font-bold">&#183;</span>
                 <span>
-                  {parseMistakeCount(response)} grammatical mistakes
+                  {parseMistakeCount(response)} Spelling Mistakes
                 </span>{" "}
                 {/* Display mistakes count */}
               </p>
               <p
                 className="text-gray-800 text-lg mt-4 space-y-3"
                 dangerouslySetInnerHTML={{
-                  __html: response,
+                  __html: parseCorrectedParagraph(response),
                 }} // Corrected paragraph
               ></p>
             </div>
