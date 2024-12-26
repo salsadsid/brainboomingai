@@ -14,7 +14,6 @@ export default function TodoApp() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
     console.log(form);
     try {
       const res = await createTodo(form).unwrap();

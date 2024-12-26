@@ -14,10 +14,10 @@ interface Todo {
 }
 
 const TodosClient: React.FC = () => {
-  const { data: todos, error, isLoading: loading } = useGetTodosQuery();
+  const { data: todos, error, isLoading: loading } = useGetTodosQuery(null);
 
   if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">{error.message}</p>;
+  // if (error) return <p className="text-red-500">{error}</p>;
 
   return <Todos todos={todos} />;
 };
