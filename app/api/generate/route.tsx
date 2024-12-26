@@ -1,4 +1,5 @@
 // app/api/generate/route.ts
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { generateResponse } from "@/lib/googleAIService";
 import dbConnect from "@/lib/mongoose";
 
@@ -38,7 +39,6 @@ export async function POST(req: Request) {
     // await WordFrequencyModel.insertMany(wordFrequencyEntries);
 
     return NextResponse.json(savedResponse, { status: 201 });
-    /* eslint-disable no-explicit-any */
   } catch (error: any) {
     console.error("Error generating response:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
