@@ -5,13 +5,18 @@ import mongoose, { Document, Schema } from "mongoose";
 interface GeneratedResponse extends Document {
   prompt: string;
   response: string;
+  tool: string;
 }
 
 // Define the schema for generated responses
-const GeneratedResponseSchema = new Schema<GeneratedResponse>({
-  prompt: { type: String, required: true },
-  response: { type: String, required: true },
-});
+const GeneratedResponseSchema = new Schema<GeneratedResponse>(
+  {
+    prompt: { type: String, required: true },
+    response: { type: String, required: true },
+    tool: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
 // Prevent model overwrite by checking if it exists
 const GeneratedResponseModel =

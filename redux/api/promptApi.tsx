@@ -3,10 +3,10 @@ import api from "./api";
 export const promptApi = api.injectEndpoints({
   endpoints: (builder) => ({
     generateResponse: builder.mutation({
-      query: (prompt: string) => ({
+      query: ({ prompt, tool }) => ({
         url: "/generate",
         method: "POST",
-        body: { prompt },
+        body: { prompt, tool },
       }),
     }),
   }),

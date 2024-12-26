@@ -19,11 +19,14 @@ export default function AiToHumanConverter() {
     if (imageToText) {
       const handleGenerateResponse = async () => {
         setLoading(true);
-        setResponse;
+        setResponse(null);
         const modifiedPrompt = free_image_to_text_prompt(imageToText);
         try {
-          const result = await generateResponse(modifiedPrompt).unwrap();
-          setResponse(result.response ?? "No response received.");
+          const result = await generateResponse({
+            prompt: modifiedPrompt,
+            tool: "free-image-to-text",
+          }).unwrap();
+          setResponse(result ?? "No response received.");
         } catch (err) {
           console.error("Error generating response:", err);
         } finally {

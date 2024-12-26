@@ -25,9 +25,12 @@ export default function AiToHumanConverter() {
     const modifiedPrompt = free_grammer_checker_prompt(prompt);
 
     try {
-      const result = await generateResponse(modifiedPrompt).unwrap();
+      const result = await generateResponse({
+        prompt: modifiedPrompt,
+        tool: "free-spell-checker",
+      }).unwrap();
       // console.log(result, "RESULT");
-      setResponse(result.response ?? "No response received.");
+      setResponse(result ?? "No response received.");
       setLoading(false);
     } catch (err) {
       console.error("Error generating response:", err);
