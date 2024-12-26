@@ -1,3 +1,9 @@
+/* eslint no-var: off */
+
+/* eslint no-var: */
+
+/* eslint no-var: 0 */
+
 import mongoose from "mongoose";
 
 const MONGO_URI = process.env.NEXT_PUBLIC_MONGODB_URI as string;
