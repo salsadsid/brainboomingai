@@ -1,9 +1,3 @@
-/* eslint no-var: off */
-
-/* eslint no-var: */
-
-/* eslint no-var: 0 */
-
 import mongoose from "mongoose";
 
 const MONGO_URI = process.env.NEXT_PUBLIC_MONGODB_URI as string;
@@ -12,16 +6,19 @@ if (!MONGO_URI) {
   throw new Error("Please define the MONGO_URI environment variable.");
 }
 
-// Extend global object
+// Extend global object to include mongoose cache with correct types
 interface MongooseCache {
   conn: mongoose.Connection | null;
   promise: Promise<mongoose.Mongoose> | null;
 }
 
+// Add a custom definition for globalThis to avoid TypeScript errors
 declare global {
+  // Make sure the type matches MongooseCache
   var mongoose: MongooseCache;
 }
 
+// Initialize the cached variable or create a new one if it doesn't exist
 let cached: MongooseCache = global.mongoose || { conn: null, promise: null };
 
 if (!cached) {
