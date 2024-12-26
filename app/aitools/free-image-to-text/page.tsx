@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable no-unused-expressions */
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerateResponseMutation } from "@/redux/api/promptApi";
 import { characterCount } from "@/utils/characterCount";

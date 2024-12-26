@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable no-unused-expressions */
 import { AutosizeTextarea } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
