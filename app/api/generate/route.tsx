@@ -15,13 +15,24 @@ export async function POST(req: Request) {
     const { prompt, tool } = await req.json();
 
     // Generate the response
-    const aiResponse = await generateResponse(prompt);
+    const generatedResponse = await generateResponse(prompt);
+
+    // Check if the generatedResponse is null
+    if (!generatedResponse) {
+      return NextResponse.json(
+        { error: "Failed to generate a response." },
+        { status: 500 }
+      );
+    }
+
+    const { response: aiResponse, responseRaw } = generatedResponse;
 
     // Save to MongoDB
     const savedResponse = await GeneratedResponseModel.create({
       prompt,
       tool,
       response: aiResponse,
+      responseRaw,
     });
 
     return NextResponse.json(savedResponse.response, { status: 201 });

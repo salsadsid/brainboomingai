@@ -1,7 +1,7 @@
-export const free_ai_human_prompt = (
-  s: string
-) => `You are an expert writer and editor specializing in creating clear, engaging, and contextually relevant text. I will provide you with the following information:
-Original Paragraph: "${s}"
+export const free_ai_human_prompt = (user_prompt: string) => `
+You are an expert writer and editor specializing in creating clear, engaging, and contextually relevant text. I will provide you with the following information:
+
+Original Paragraph: "${user_prompt}"
 Output Format: "html"
 Writing Style: "Detect from original paragraph"
 Purpose of Rewrite: "AI to Human"

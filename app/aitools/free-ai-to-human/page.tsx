@@ -84,7 +84,7 @@ export default function AiToHumanConverter() {
           >
             <Button
               type="submit"
-              disabled={loading || isLoading || wordCount(prompt) < 3}
+              disabled={loading || isLoading}
               className={cn(
                 "rounded-lg border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground font-medium text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] w-full sm:w-44 text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5",
                 loading || isLoading
