@@ -15,7 +15,7 @@ if (!apiKey) {
 
 // Instantiate the model
 const model = new ChatGoogleGenerativeAI({
-  model: "gemini-pro",
+  model: "gemini-2.0-flash",
   maxOutputTokens: 2048,
   apiKey: apiKey,
 });

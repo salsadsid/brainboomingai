@@ -14,7 +14,7 @@ export default function Home() {
               <Image
                 src={"/Google_Gemini_logo.svg.png"}
                 width={40}
-                height={30}
+                height={15}
                 alt={"Google Gemini"}
                 className="inline"
               />
