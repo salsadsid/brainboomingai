@@ -9,16 +9,6 @@ export default function Home() {
         <div className="flex gap-4 items-center flex-col">
           <h1 className="text-5xl flex flex-col items-center gap-2 font-bold mb-4">
             AI Tools
-            <span className="flex bg-gradient-to-tr from-pink-100 p-1 rounded to-purple-100   items-start gap-1 ml-2">
-              <span className="text-sm font-light">powered by </span>
-              <Image
-                src={"/Google_Gemini_logo.svg.png"}
-                width={40}
-                height={15}
-                alt={"Google Gemini"}
-                className="inline"
-              />
-            </span>
           </h1>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-7">
             {aiTools.map((tool) => (

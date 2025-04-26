@@ -44,4 +44,16 @@ export const otherTools = [
     featuresImg: "/aitools.png",
     shortTitle: "MD5 Generator",
   },
+  {
+    title: "Image Resizer",
+    href: "/image-resizer",
+    featuresImg: "/aitools.png",
+    shortTitle: "Image Resizer",
+  },
+  {
+    title: "Image Compressor",
+    href: "/image-compressor",
+    featuresImg: "/aitools.png",
+    shortTitle: "Image Compressor",
+  },
 ];
