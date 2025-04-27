@@ -1,0 +1,55 @@
+📦app
+┣ 📂(main)                 # Route group for marketing pages
+┃ ┣ 📜layout.tsx           # Simple layout for marketing pages
+┃ ┗ 📜page.tsx             # Landing page
+┣ 📂(tools)                # Route group for all tools
+┃ ┣ 📜layout.tsx           # Shared tool layout (header, footer)
+┃ ┣ 📂ai-to-human
+┃ ┃ ┣ 📜page.tsx
+┃ ┃ ┗ 📜prompt.ts          # Tool-specific prompts
+┃ ┣ 📂grammar-checker
+┃ ┃ ┣ 📜page.tsx
+┃ ┃ ┗ 📜utils.ts           # Tool-specific utilities
+┃ ┣ 📂image-tools
+┃ ┃ ┣ 📂image-to-text
+┃ ┃ ┃ ┣ 📂components
+┃ ┃ ┃ ┃ ┗ 📜ImageUploader.tsx
+┃ ┃ ┃ ┣ 📜page.tsx
+┃ ┃ ┃ ┗ 📜prompt.ts
+┃ ┃ ┣ 📂compressor
+┃ ┃ ┃ ┗ 📜page.tsx
+┃ ┃ ┗ 📂resizer
+┃ ┃ ┃ ┗ 📜page.tsx
+┣ 📂api
+┃ ┣ 📂tools                # API routes organized by tool
+┃ ┃ ┣ 📂generator
+┃ ┃ ┃ ┗ 📜route.ts
+┃ ┃ ┣ 📂md5
+┃ ┃ ┃ ┗ 📜route.ts
+┃ ┃ ┗ 📂todos
+┃ ┃ ┃ ┗ 📜route.tsx
+┣ 📂components
+┃ ┣ 📂ui                   # Reusable UI primitives
+┃ ┃ ┣ 📜button.tsx
+┃ ┃ ┣ 📜card.tsx
+┃ ┃ ┗ 📜input.tsx
+┃ ┣ 📂layouts              # Layout components
+┃ ┃ ┣ 📜main-nav.tsx
+┃ ┃ ┗ 📜tool-layout.tsx
+┃ ┗ 📂shared               # Shared tool components
+┃ ┃ ┣ 📜TextAreaWithAI.tsx
+┃ ┃ ┗ 📜FileUpload.tsx
+┣ 📂lib
+┃ ┣ 📂api                  # API clients
+┃ ┃ ┣ 📜openai.ts
+┃ ┃ ┗ 📜todos.ts
+┃ ┣ 📂utils                # Shared utilities
+┃ ┃ ┣ 📜string.ts
+┃ ┃ ┗ 📜validation.ts
+┃ ┗ 📂hooks                # Custom hooks
+┃ ┃ ┣ 📜use-text-analysis.ts
+┃ ┃ ┗ 📜use-image-processing.ts
+┣ 📂types                  # TypeScript types
+┃ ┗ 📜tools.d.ts
+┣ 📜layout.tsx             # Root layout
+┗ 📜page.tsx               # Redirects to (main)

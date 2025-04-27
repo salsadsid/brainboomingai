@@ -21,7 +21,7 @@ export default function Navbar() {
         <SheetContent side="left">
           <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
             <MountainIcon className="h-6 w-6" />
-            <span>brain booming</span>
+            <span>BRAIN BOOMING AI</span>
           </Link>
           <div className="grid gap-2 py-6">
             <Link
@@ -50,7 +50,7 @@ export default function Navbar() {
         prefetch={false}
       >
         🧠
-        <span className="inline-block font-bold">brain booming</span>
+        <span className="inline-block  font-bold">BRAIN BOOMING AI</span>
       </Link>
       <nav className="ml-auto hidden lg:flex gap-6">
         <Link
