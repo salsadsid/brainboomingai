@@ -1,8 +1,10 @@
 import Navbar from "@/components/navbar/Navbar";
 
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Providers } from "@/redux/provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -33,8 +35,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers>
-          <Navbar></Navbar>
-          <main className="container mx-auto">{children}</main>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster position="top-center" />
+            <Navbar></Navbar>
+            <main className="container dark:bg-slate-900 mx-auto">
+              {children}
+            </main>
+          </ThemeProvider>
         </Providers>
       </body>
     </html>

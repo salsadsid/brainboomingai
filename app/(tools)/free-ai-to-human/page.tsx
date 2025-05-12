@@ -1,130 +1,230 @@
 "use client";
-/* eslint-disable no-unused-expressions */
 import { AutosizeTextarea } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
 import { useGenerateResponseMutation } from "@/redux/api/promptApi";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
-import { FileWarning } from "lucide-react";
-import { useState } from "react";
+import {
+  Clipboard,
+  ClipboardCheck,
+  FileWarning,
+  RotateCw,
+  Sparkles,
+} from "lucide-react";
+import { FormEvent, useCallback, useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+import { z } from "zod";
 import { free_ai_human_prompt } from "./prompt";
 
+const MAX_INPUT_LENGTH = 5000;
+const schema = z.object({
+  content: z
+    .string()
+    .min(1, "Input cannot be empty")
+    .max(MAX_INPUT_LENGTH, `Input exceeds ${MAX_INPUT_LENGTH} character limit`),
+});
+
 export default function AiToHumanConverter() {
-  const [prompt, setPrompt] = useState<string>("");
-  const [response, setResponse] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [generateResponse, { isLoading, error }] =
-    useGenerateResponseMutation();
+  const [input, setInput] = useState("");
+  const [outputs, setOutputs] = useState<string[]>([]);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [generateResponse, { isLoading }] = useGenerateResponseMutation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the form from reloading the page
-    setResponse(null);
-    // Generate the response from the AI
-    if (!prompt.trim()) return;
-    setLoading(true);
+  const handleSubmit = useCallback(
+    async (e: FormEvent) => {
+      e.preventDefault();
 
-    const modifiedPrompt = free_ai_human_prompt(prompt);
+      try {
+        const validation = schema.safeParse({ content: input });
+        if (!validation.success) {
+          validation.error.issues.forEach((issue) =>
+            toast.error(issue.message)
+          );
+          return;
+        }
 
+        const modifiedPrompt = free_ai_human_prompt(input);
+        const result = await generateResponse({
+          prompt: modifiedPrompt,
+          tool: "free-ai-to-human",
+        }).unwrap();
+
+        setOutputs((prev) => [
+          result || "Could not generate conversion. Please try again.",
+          ...prev,
+        ]);
+        toast.success("Conversion successful!");
+      } catch (err) {
+        console.error("Conversion error:", err);
+        toast.error("Failed to convert text. Please try again.");
+      }
+    },
+    [input, generateResponse]
+  );
+
+  const copyToClipboard = async (text: string, index: number) => {
     try {
-      const result = await generateResponse({
-        prompt: modifiedPrompt,
-        tool: "free-ai-to-human",
-      }).unwrap();
-      setResponse(result ?? "No response received.");
-      setLoading(false);
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex(index);
+      toast.success("Copied to clipboard!");
+      setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
-      console.error("Error generating response:", err);
-    } finally {
-      setLoading(false);
+      toast.error("Failed to copy text");
     }
   };
 
+  const generateAnother = async () => {
+    if (!input) return;
+    await handleSubmit(new Event("submit") as unknown as FormEvent);
+  };
+
+  const inputStats = `${wordCount(input)} words · ${characterCount(
+    input
+  )} chars`;
+  const isInputValid =
+    input.trim().length > 0 && input.length <= MAX_INPUT_LENGTH;
+
   return (
-    <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-10 sm:py-16">
-      <article>
-        <h1 className="text-2xl font-mono text-gray-800 font-bold my-4 text-center md:text-6xl">
+    <section className="max-w-4xl mx-auto px-4 py-8 md:py-12 dark:bg-slate-900">
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          duration: 3000,
+          className:
+            "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
+        }}
+      />
+
+      <header className="mb-10 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 md:text-5xl mb-4 dark:text-white">
           AI to Human Text Converter
         </h1>
-        <p className="sm:block hidden text-gray-500 my-4 text-center">
-          Take your AI-generated text and turn it into something that reads like
-          it was written by a human. Just copy and paste your text into our
-          converter and watch it transform in seconds.
+        <p className="text-gray-600 md:text-lg mx-auto max-w-2xl dark:text-slate-400">
+          Transform AI-generated content into natural, human-like text with our
+          intelligent converter. Perfect for refining marketing copy, articles,
+          and more.
         </p>
-      </article>
-      <article className="flex justify-center items-center">
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-2xl w-full md:min-w-[700px] sm:px-0 px-3"
-        >
-          <AutosizeTextarea
-            placeholder="Paste your AI-generated text here."
-            name="message"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            minHeight={100}
-            maxHeight={400}
-            className="text-base"
-          />
+      </header>
 
-          {prompt && (
-            <div className="text-sm text-right my-2  sm:my-1 text-gray-500">
-              <span className="bg-gray-100 px-2 py-1 rounded-md inline-block">
-                {"Words: " + wordCount(prompt)}
-              </span>
-            </div>
-          )}
-
-          <div
-            className={cn(
-              "flex gap-4 mt-6 items-center flex-col sm:flex-row",
-              prompt && "mt-0"
-            )}
-          >
-            <Button
-              type="submit"
-              disabled={loading || isLoading}
-              className={cn(
-                "rounded-lg border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground font-medium text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] w-full sm:w-44 text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5",
-                loading || isLoading
-                  ? "cursor-not-allowed animate-pulse"
-                  : "cursor-pointer"
-              )}
+      <form
+        onSubmit={handleSubmit}
+        className="space-y-6 bg-white p-6 rounded-lg shadow-md "
+      >
+        <div className="space-y-4">
+          <div className="relative">
+            <AutosizeTextarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Paste your AI-generated text here..."
+              minHeight={150}
+              maxHeight={400}
+              maxLength={MAX_INPUT_LENGTH}
+              className="ring-1 border border-gray-300 ring-gray-200 focus:ring-2 focus:ring-blue-500 
+              rounded-lg p-4 text-base text-black bg-white shadow-sm 
+               dark:placeholder:text-slate-400"
+            />
+            <div
+              className="absolute bottom-2 right-2 text-xs text-gray-500 
+            bg-white/80 px-2 py-1 rounded "
             >
-              {loading || isLoading ? "Generating..." : "Generate"}
-            </Button>
+              {input.length}/{MAX_INPUT_LENGTH}
+            </div>
           </div>
 
-          {loading || isLoading ? (
-            <div className="flex flex-col mt-6 space-y-3">
-              <Skeleton className="w-full h-40 rounded-xl" />
+          {input.length > 0 && (
+            <div className="flex justify-between items-center text-sm text-gray-500 dark:text-slate-400">
+              <span>{inputStats}</span>
+              {input.length > MAX_INPUT_LENGTH && (
+                <span className="text-red-500 flex items-center dark:text-red-400">
+                  <FileWarning className="w-4 h-4 mr-1" />
+                  Exceeds character limit
+                </span>
+              )}
             </div>
-          ) : null}
+          )}
+        </div>
 
-          {response && (
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-              <p className="flex gap-2 items-center text-gray-500">
-                <span>{characterCount(response)} characters</span>{" "}
-                <span className="font-bold">&#183;</span>
-                <span>{wordCount(response)} words</span>
-              </p>
-              <p
-                className="text-gray-800 text-lg mt-4 space-y-3"
-                dangerouslySetInnerHTML={{ __html: response }}
-              ></p>
-            </div>
+        <div className="flex flex-col sm:justify-between sm:flex-row gap-3">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className=" border border-solid border-transparent transition-colors 
+                flex items-center justify-center bg-blue-600 hover:bg-blue-700 font-medium 
+                text-white gap-2 text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5
+                dark:bg-blue-700 dark:hover:bg-blue-600"
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <RotateCw className="w-5 h-5 animate-spin" />
+                Converting...
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                Convert to Human Text
+              </div>
+            )}
+          </Button>
+
+          {outputs.length > 0 && (
+            <Button
+              type="button"
+              onClick={generateAnother}
+              variant="outline"
+              className="w-full md:w-auto text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 dark:border-slate-700 
+              dark:text-white dark:hover:bg-slate-800"
+            >
+              Generate Another
+            </Button>
           )}
-          {error && (
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-              <p className="flex gap-2 items-center text-red-500">
-                <FileWarning className="w-4 h-4" /> Something went wrong, please
-                try again.
-              </p>
+        </div>
+
+        {isLoading && (
+          <div className="space-y-3">
+            <Skeleton className="h-4 w-32 bg-slate-200" />
+            <Skeleton className="h-32 w-full bg-slate-200" />
+          </div>
+        )}
+
+        <div className="space-y-6">
+          {outputs.map((output, index) => (
+            <div
+              key={index}
+              className=" bg-gray-100 rounded-lg p-6 shadow-sm 
+              relative  dark:border-slate-700"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-lg text-gray-800">
+                  Conversion #{outputs.length - index}
+                </h3>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-gray-500 ">
+                    {wordCount(output)} words · {characterCount(output)} chars
+                  </span>
+                  <Button
+                    onClick={() => copyToClipboard(output, index)}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                    className="text-gray-600 hover:bg-gray-400 "
+                  >
+                    {copiedIndex === index ? (
+                      <ClipboardCheck className="w-4 h-4" />
+                    ) : (
+                      <Clipboard className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <div
+                className="prose text-gray-800 "
+                dangerouslySetInnerHTML={{ __html: output }}
+              />
             </div>
-          )}
-        </form>
-      </article>
+          ))}
+        </div>
+      </form>
     </section>
   );
 }

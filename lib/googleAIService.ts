@@ -1,10 +1,4 @@
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import { z } from "zod";
-
-// Define the expected structure of the response using Zod
-const responseSchema = z.object({
-  content: z.string(),
-});
 
 // Ensure the API key is available
 const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY;

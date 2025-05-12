@@ -34,10 +34,6 @@ export default function AiToHumanConverter() {
     } catch (err) {
       console.error("Error generating response:", err);
     }
-    // console.log(result, "RESULT");
-    // // Handle the response: if it's null or undefined, set a default message
-    // setResponse(result ?? "No response received.");
-    // setLoading(false);
   };
 
   return (
@@ -89,14 +85,12 @@ export default function AiToHumanConverter() {
                 <span>{characterCount(response)} characters</span>
                 <span className="font-bold">&#183;</span>
                 <span>{wordCount(response)} words</span>
-
-                {/* Display mistakes count */}
               </p>
               <p
                 className="text-gray-800 text-lg mt-4 space-y-3"
                 dangerouslySetInnerHTML={{
                   __html: response,
-                }} // Corrected paragraph
+                }}
               ></p>
             </div>
           )}
