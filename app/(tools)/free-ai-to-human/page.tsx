@@ -121,8 +121,8 @@ export default function AiToHumanConverter() {
               maxHeight={400}
               maxLength={MAX_INPUT_LENGTH}
               className="ring-1 border border-gray-300 ring-gray-200 focus:ring-2 focus:ring-blue-500 
-              rounded-lg p-4 text-base text-black bg-white shadow-sm 
-               dark:placeholder:text-slate-400"
+             rounded-lg p-4 text-base text-black bg-white shadow-sm 
+             dark:placeholder:text-slate-400"
             />
             <div
               className="absolute bottom-2 right-2 text-xs text-gray-500 
@@ -173,9 +173,10 @@ export default function AiToHumanConverter() {
               onClick={generateAnother}
               variant="outline"
               className="w-full md:w-auto text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 dark:border-slate-700 
-              dark:text-white dark:hover:bg-slate-800"
+    dark:text-white dark:hover:bg-slate-800 flex items-center gap-2"
             >
-              Generate Another
+              <RotateCw className="w-4 h-4" />
+              Regenerate Output
             </Button>
           )}
         </div>
@@ -195,27 +196,21 @@ export default function AiToHumanConverter() {
               relative  dark:border-slate-700"
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-lg text-gray-800">
-                  Conversion #{outputs.length - index}
-                </h3>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-500 ">
-                    {wordCount(output)} words · {characterCount(output)} chars
-                  </span>
-                  <Button
-                    onClick={() => copyToClipboard(output, index)}
-                    size="sm"
-                    type="button"
-                    variant="ghost"
-                    className="text-gray-600 hover:bg-gray-400 "
-                  >
-                    {copiedIndex === index ? (
-                      <ClipboardCheck className="w-4 h-4" />
-                    ) : (
-                      <Clipboard className="w-4 h-4" />
-                    )}
-                  </Button>
-                </div>
+                <span className="text-sm text-gray-500 ">
+                  {wordCount(output)} words · {characterCount(output)} chars
+                </span>
+                <Button
+                  onClick={() => copyToClipboard(output, index)}
+                  size="sm"
+                  type="button"
+                  className="text-gray-600  "
+                >
+                  {copiedIndex === index ? (
+                    <ClipboardCheck className="w-4 h-4" />
+                  ) : (
+                    <Clipboard className="w-4 h-4" />
+                  )}
+                </Button>
               </div>
               <div
                 className="prose text-gray-800 "

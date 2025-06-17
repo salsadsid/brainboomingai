@@ -16,30 +16,27 @@ export const useAutosizeTextArea = ({
   maxHeight = Number.MAX_SAFE_INTEGER,
   minHeight = 0,
 }: UseAutosizeTextAreaProps) => {
-  const [init, setInit] = React.useState(true);
   React.useEffect(() => {
-    // We need to reset the height momentarily to get the correct scrollHeight for the textarea
-    const offsetBorder = 6;
     const textAreaElement = textAreaRef.current;
-    if (textAreaElement) {
-      if (init) {
-        textAreaElement.style.minHeight = `${minHeight + offsetBorder}px`;
-        if (maxHeight > minHeight) {
-          textAreaElement.style.maxHeight = `${maxHeight}px`;
-        }
-        setInit(false);
-      }
-      textAreaElement.style.height = `${minHeight + offsetBorder}px`;
-      const scrollHeight = textAreaElement.scrollHeight;
-      // We then set the height directly, outside of the render loop
-      // Trying to set this with state or a ref will product an incorrect value.
-      if (scrollHeight > maxHeight) {
-        textAreaElement.style.height = `${maxHeight}px`;
-      } else {
-        textAreaElement.style.height = `${scrollHeight + offsetBorder}px`;
-      }
-    }
-  }, [textAreaRef.current, triggerAutoSize]);
+    if (!textAreaElement) return;
+
+    // Batch height calculations in one frame
+    window.requestAnimationFrame(() => {
+      const offsetBorder = 6;
+
+      // Reset height to get accurate scrollHeight
+      textAreaElement.style.height = "auto";
+      const scrollHeight = textAreaElement.scrollHeight + offsetBorder;
+
+      // Apply calculated height (clamped within min/max)
+      let newHeight = scrollHeight;
+      if (scrollHeight > maxHeight) newHeight = maxHeight;
+      if (scrollHeight < minHeight + offsetBorder)
+        newHeight = minHeight + offsetBorder;
+
+      textAreaElement.style.height = `${newHeight}px`;
+    });
+  }, [triggerAutoSize]);
 };
 
 export type AutosizeTextAreaRef = {
@@ -87,12 +84,20 @@ export const AutosizeTextarea = React.forwardRef<
 
     React.useEffect(() => {
       setTriggerAutoSize(value as string);
-    }, [props?.defaultValue, value]);
+    }, [value]);
+
     return (
       <textarea
         {...props}
         value={value}
-        ref={textAreaRef}
+        ref={(element) => {
+          textAreaRef.current = element;
+          // Apply min/max heights directly to element
+          if (element) {
+            element.style.minHeight = `${minHeight}px`;
+            element.style.maxHeight = `${maxHeight}px`;
+          }
+        }}
         className={cn(
           "flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className
