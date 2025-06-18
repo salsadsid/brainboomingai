@@ -43,7 +43,7 @@ export default function RootLayout({
           >
             <Toaster position="top-center" />
             <Navbar></Navbar>
-            <main className="container dark:bg-slate-900 mx-auto">
+            <main className="container dark:bg-slate-700 mx-auto">
               {children}
             </main>
           </ThemeProvider>
