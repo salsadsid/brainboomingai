@@ -5,5 +5,7 @@ export default function AiToolLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main>{children}</main>;
+  return (
+    <main className="container dark:bg-slate-700 mx-auto">{children}</main>
+  );
 }

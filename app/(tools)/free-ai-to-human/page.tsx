@@ -86,7 +86,7 @@ export default function AiToHumanConverter() {
     input.trim().length > 0 && input.length <= MAX_INPUT_LENGTH;
 
   return (
-    <section className="max-w-4xl mx-auto px-4 py-8 md:py-12 dark:bg-slate-900">
+    <section className="max-w-4xl mx-auto px-4 py-8 md:py-12 ">
       <Toaster
         position="top-center"
         toastOptions={{
