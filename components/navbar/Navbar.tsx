@@ -13,10 +13,20 @@ export default function Navbar() {
     <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="lg:hidden">
-            <MenuIcon className="h-6 w-6" />
-            <span className="sr-only">Toggle navigation menu</span>
-          </Button>
+          <div className="flex items-center gap-4 lg:hidden">
+            <Button variant="outline" size="icon" className="lg:hidden">
+              <MenuIcon className="h-6 w-6" />
+              <span className="sr-only">Toggle navigation menu</span>
+            </Button>
+            <Link
+              href="/"
+              className="mr-6   items-center gap-2"
+              prefetch={false}
+            >
+              🧠
+              <span className="inline-block  font-bold">BRAIN BOOMING AI</span>
+            </Link>
+          </div>
         </SheetTrigger>
         <SheetContent side="left">
           <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>

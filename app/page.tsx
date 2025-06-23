@@ -131,7 +131,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
-              className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto"
+              className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto sm:px-0 px-4"
             >
               Streamline your workflow with cutting-edge AI solutions that
               enhance creativity, automate tasks, and unlock new possibilities.
@@ -142,7 +142,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 0.6 }}
-              className="flex flex-col sm:flex-row gap-4 justify-center"
+              className="flex flex-col sm:flex-row gap-4 px-2 justify-center"
             >
               <Link href="/free-ai-to-human">
                 <Button
@@ -161,7 +161,7 @@ export default function Home() {
               <Button
                 size="lg"
                 variant="outline"
-                className="px-8 py-4 font-medium rounded-xl bg-white/70 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-sm hover:bg-white dark:hover:bg-slate-800 transition-colors"
+                className="px-8 py-4 font-medium  sm:mx-0 mx-auto rounded-xl bg-white/70 dark:bg-slate-800/60 text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-slate-700 shadow-sm hover:bg-white dark:hover:bg-slate-800 transition-colors"
                 aria-label="View All Features"
                 onClick={() => {
                   document.getElementById("features")?.scrollIntoView({
@@ -179,7 +179,10 @@ export default function Home() {
         {/* Bottom decorative accent */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white dark:from-slate-900 to-transparent pointer-events-none" />
       </section>
-      <section id="features" className="container max-w-7xl mx-auto py-12">
+      <section
+        id="features"
+        className="container max-w-7xl mx-auto sm:px-2 px-3 py-12"
+      >
         <SectionTitle
           title="AI Tools"
           icon={<RocketIcon className="w-6 h-6" />}
@@ -196,7 +199,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <section className="container max-w-7xl mx-auto py-12">
+      <section className="container sm:px-2 px-3 max-w-7xl mx-auto py-12">
         <SectionTitle
           title="Productivity Suite"
           icon={<MagicWandIcon className="w-6 h-6" />}
