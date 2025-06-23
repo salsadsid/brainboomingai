@@ -64,7 +64,7 @@ export default function AiToHumanConverter() {
   };
 
   return (
-    <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-16 dark:bg-slate-900">
+    <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-16 ">
       <Toaster
         position="top-center"
         toastOptions={{
@@ -88,7 +88,7 @@ export default function AiToHumanConverter() {
       <article className="flex justify-center items-center">
         <form
           onSubmit={handleSubmit}
-          className="max-w-2xl w-full md:min-w-[700px] px-1.5"
+          className="max-w-2xl w-full bg-white md:min-w-[700px] px-1.5"
         >
           <div className="relative">
             <AutosizeTextarea
