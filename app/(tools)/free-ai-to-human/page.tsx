@@ -1,5 +1,8 @@
 "use client";
-import { AutosizeTextarea } from "@/components/ui/autotextarea";
+import {
+  AutosizeTextarea,
+  AutosizeTextAreaRef,
+} from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerateResponseMutation } from "@/redux/api/promptApi";
@@ -12,7 +15,7 @@ import {
   RotateCw,
   Sparkles,
 } from "lucide-react";
-import { FormEvent, useCallback, useState } from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import { free_ai_human_prompt } from "./prompt";
@@ -21,7 +24,7 @@ const MAX_INPUT_LENGTH = 5000;
 const schema = z.object({
   content: z
     .string()
-    .min(1, "Input cannot be empty")
+    .min(10, "Input cannot be empty or too short")
     .max(MAX_INPUT_LENGTH, `Input exceeds ${MAX_INPUT_LENGTH} character limit`),
 });
 
@@ -30,17 +33,26 @@ export default function AiToHumanConverter() {
   const [outputs, setOutputs] = useState<string[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const [generateResponse, { isLoading }] = useGenerateResponseMutation();
+  const [error, setError] = useState<string | null>(null);
+
+  // Create ref for textarea
+  const textareaRef = useRef<AutosizeTextAreaRef>(null);
 
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
-
+      setError(null);
       try {
         const validation = schema.safeParse({ content: input });
         if (!validation.success) {
-          validation.error.issues.forEach((issue) =>
-            toast.error(issue.message)
-          );
+          validation.error.issues.forEach((issue) => {
+            setError(issue.message);
+
+            // Focus textarea for empty input errors
+            if (issue.message === "Input cannot be empty") {
+              textareaRef.current?.textArea.focus();
+            }
+          });
           return;
         }
 
@@ -67,7 +79,7 @@ export default function AiToHumanConverter() {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedIndex(index);
-      toast.success("Copied to clipboard!");
+      toast.success("Copied to clipboard");
       setTimeout(() => setCopiedIndex(null), 2000);
     } catch (err) {
       toast.error("Failed to copy text");
@@ -111,17 +123,21 @@ export default function AiToHumanConverter() {
         onSubmit={handleSubmit}
         className="space-y-6 bg-white p-6 rounded-lg shadow-md "
       >
-        <div className="space-y-4">
+        <div className="space-y-2">
           <div className="relative">
             <AutosizeTextarea
+              ref={textareaRef} // Attach ref here
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setError(null);
+              }}
               placeholder="Paste your AI-generated text here..."
               minHeight={150}
               maxHeight={400}
               maxLength={MAX_INPUT_LENGTH}
               className="ring-1 border border-gray-300 ring-gray-200 focus:ring-2 focus:ring-blue-500 
-             rounded-lg p-4 text-base text-black bg-white shadow-sm 
+             rounded-lg p-3 text-base text-black bg-white shadow-sm 
              dark:placeholder:text-slate-400"
             />
             <div
@@ -141,6 +157,12 @@ export default function AiToHumanConverter() {
                   Exceeds character limit
                 </span>
               )}
+            </div>
+          )}
+          {error && (
+            <div className="text-red-500 text-sm flex items-center gap-2">
+              <FileWarning className="w-4 h-4" />
+              {error}
             </div>
           )}
         </div>
