@@ -397,8 +397,9 @@ export default function MD5GeneratorTool() {
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                   MD5 (Message Digest 5) is a cryptographic hash function that
-                  produces a 32-character hexadecimal hash value. It's commonly
-                  used for data integrity verification and digital signatures.
+                  produces a 32-character hexadecimal hash value. It&apos;s
+                  commonly used for data integrity verification and digital
+                  signatures.
                 </p>
               </div>
             </div>
@@ -419,7 +420,7 @@ export default function MD5GeneratorTool() {
                   Is MD5 secure for passwords?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  While MD5 was widely used for password hashing, it's now
+                  While MD5 was widely used for password hashing, it&apos;s now
                   considered cryptographically broken for security purposes. For
                   password storage, use stronger algorithms like bcrypt, scrypt,
                   or Argon2.
@@ -445,7 +446,7 @@ export default function MD5GeneratorTool() {
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
                   MD5 hashes are useful for file integrity checks, creating
                   unique identifiers, data deduplication, and non-security
-                  checksums. They're still valuable for non-cryptographic
+                  checksums. They&apos;re still valuable for non-cryptographic
                   applications.
                 </p>
               </div>

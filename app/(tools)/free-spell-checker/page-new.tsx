@@ -117,7 +117,7 @@ export default function FreeSpellCheckerPage() {
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
               Our advanced AI spell checker goes beyond basic spell checking to
               provide context-aware corrections that understand the meaning of
-              your text. Whether you're writing emails, essays, reports, or
+              your text. Whether you&apos;re writing emails, essays, reports, or
               creative content, our tool helps you maintain professional writing
               standards.
             </p>

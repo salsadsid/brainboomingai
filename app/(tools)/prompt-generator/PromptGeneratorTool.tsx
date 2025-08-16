@@ -285,8 +285,9 @@ export default function PromptGeneratorTool() {
               Instant Generation
             </h3>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Get creative and engaging prompts in seconds. No more writer's
-              block or struggling to find the right words to express your ideas.
+              Get creative and engaging prompts in seconds. No more
+              writer&apos;s block or struggling to find the right words to
+              express your ideas.
             </p>
           </motion.div>
 
@@ -304,8 +305,8 @@ export default function PromptGeneratorTool() {
             </h3>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
               Completely free to use with no registration required. Your data is
-              processed securely and we don't store your prompts or personal
-              information.
+              processed securely and we don&apos;t store your prompts or
+              personal information.
             </p>
           </motion.div>
         </div>
@@ -441,9 +442,9 @@ export default function PromptGeneratorTool() {
                   Can I generate multiple prompts from the same description?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Yes! You can use the "Regenerate" button to create different
-                  variations of prompts based on the same description. Each
-                  generation will provide a unique perspective.
+                  Yes! You can use the &quot;Regenerate&qout; button to create
+                  different variations of prompts based on the same description.
+                  Each generation will provide a unique perspective.
                 </p>
               </div>
             </div>
@@ -464,9 +465,9 @@ export default function PromptGeneratorTool() {
                   Is there a limit to how many prompts I can generate?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  No, there's no limit! You can generate as many prompts as you
-                  need. Our service is completely free and designed to support
-                  your creative process without restrictions.
+                  No, there&apos;s no limit! You can generate as many prompts as
+                  you need. Our service is completely free and designed to
+                  support your creative process without restrictions.
                 </p>
               </div>
             </div>
