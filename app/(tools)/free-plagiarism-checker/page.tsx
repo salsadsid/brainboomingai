@@ -1,111 +1,142 @@
-"use client";
-import { AutosizeTextarea } from "@/components/ui/autotextarea";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerateResponseMutation } from "@/redux/api/promptApi";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
-import { useState } from "react";
-import { free_grammer_checker_prompt } from "./prompt";
-import { parseMistakeCount } from "./utils";
+import type { Metadata } from "next";
+import PlagiarismCheckerTool from "./PlagiarismCheckerTool";
 
-export default function AiToHumanConverter() {
-  const [prompt, setPrompt] = useState<string>("");
-  const [response, setResponse] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [generateResponse, { isLoading, data, error }] =
-    useGenerateResponseMutation();
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent the form from reloading the page
-    setResponse(null);
-    // Generate the response from the AI
-    if (!prompt.trim()) return;
-    setLoading(true);
+export const metadata: Metadata = {
+  title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
+  description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection for students and professionals.",
+  keywords: [
+    "plagiarism checker",
+    "duplicate content detector",
+    "academic integrity",
+    "originality checker",
+    "copy detection",
+    "plagiarism scanner",
+    "content verification",
+    "AI plagiarism detection",
+    "free plagiarism checker",
+    "online plagiarism tool"
+  ],
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
+    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection.",
+    url: "https://brainboomingai.com/free-plagiarism-checker",
+    siteName: "BrainBoomingAI",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/plagiarism-checker-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "BrainBoomingAI Free Plagiarism Checker Tool",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free AI Plagiarism Checker - Detect Copied Content Instantly",
+    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly.",
+    images: ["/plagiarism-checker-twitter.jpg"],
+    creator: "@brainboomingai",
+    site: "@brainboomingai",
+  },
+  alternates: {
+    canonical: "https://brainboomingai.com/free-plagiarism-checker",
+  },
+  category: "AI Tools",
+  classification: "Academic Tools",
+  other: {
+    "application-name": "BrainBoomingAI",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Plagiarism Checker",
+    "msapplication-TileColor": "#6366f1",
+    "theme-color": "#6366f1",
+  },
+};
 
-    const modifiedPrompt = free_grammer_checker_prompt(prompt);
-
-    try {
-      const result = await generateResponse({
-        prompt: modifiedPrompt,
-        tool: "free-plagiarism-checker",
-      }).unwrap();
-      // console.log(result, "RESULT");
-      setResponse(result ?? "No response received.");
-      setLoading(false);
-    } catch (err) {
-      console.error("Error generating response:", err);
-    }
-    // console.log(result, "RESULT");
-    // // Handle the response: if it's null or undefined, set a default message
-    // setResponse(result ?? "No response received.");
-    // setLoading(false);
-  };
-
+export default function FreePlagiarismCheckerPage() {
   return (
-    <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-16">
-      <article>
-        <h1 className="text-2xl font-mono text-gray-800 font-bold my-4 text-center md:text-7xl">
-          Free Plagiarism Checker
-        </h1>
-        <p className="text-lg text-gray-500 my-4 text-center">
-          Take your AI-generated text and turn it into something that reads like
-          it was written by a human. Just copy and paste your text into our
-          converter and watch it transform in seconds.
-        </p>
-      </article>
-      <article className="flex justify-center items-center">
-        <form
-          onSubmit={handleSubmit}
-          className="max-w-2xl w-full md:min-w-[700px] px-1.5"
-        >
-          <AutosizeTextarea
-            placeholder="Paste your AI-generated text here."
-            name="message"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            minHeight={100}
-            maxHeight={300}
-            className="text-base"
-          />
-
-          <div className="flex gap-4 mt-6 items-center flex-col sm:flex-row">
-            <Button
-              type="submit"
-              disabled={loading || isLoading}
-              className="rounded-lg border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground font-medium text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            >
-              {loading || isLoading ? "Loading..." : "Submit"}
-            </Button>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header Section */}
+        <div className="text-center mb-12 pt-8">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
+            Free AI Plagiarism Checker
+          </h1>
+          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-8 max-w-4xl mx-auto leading-relaxed">
+            Detect copied content and ensure academic integrity with our advanced AI-powered 
+            plagiarism checker. Get comprehensive reports and maintain originality in your work.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+            <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Deep Web Scanning
+            </span>
+            <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
+              <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+              Academic Integrity
+            </span>
+            <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
+              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+              Instant Results
+            </span>
           </div>
+        </div>
 
-          {loading || isLoading ? (
-            <div className="flex flex-col mt-6 space-y-3">
-              <Skeleton className="w-full h-40 rounded-xl" />
-            </div>
-          ) : null}
+        {/* Tool Component */}
+        <PlagiarismCheckerTool />
 
-          {response && (
-            <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-              <p className="flex gap-2 text-gray-500">
-                <span>{characterCount(response)} characters</span>
-                <span className="font-bold">&#183;</span>
-                <span>{wordCount(response)} words</span>
-                <span className="font-bold">&#183;</span>
-                <span>
-                  {parseMistakeCount(response)} grammatical mistakes
-                </span>{" "}
-                {/* Display mistakes count */}
-              </p>
-              <p
-                className="text-gray-800 text-lg mt-4 space-y-3"
-                dangerouslySetInnerHTML={{
-                  __html: response,
-                }} // Corrected paragraph
-              ></p>
+        {/* Bottom Content */}
+        <div className="mt-16 text-center">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 max-w-4xl mx-auto">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+              Why Choose Our AI Plagiarism Checker?
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+              Our advanced AI plagiarism detection technology scans billions of sources 
+              to ensure your content is original and properly cited. Perfect for students, 
+              researchers, content creators, and professionals who value academic integrity 
+              and original writing.
+            </p>
+            <div className="grid md:grid-cols-2 gap-6 text-left">
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                  For Academic Excellence
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Ensure your research papers, essays, and dissertations meet 
+                  academic integrity standards with comprehensive plagiarism detection.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                  Content Originality
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Verify the originality of your content, identify potential 
+                  issues, and maintain credibility in your professional work.
+                </p>
+              </div>
             </div>
-          )}
-        </form>
-      </article>
-    </section>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

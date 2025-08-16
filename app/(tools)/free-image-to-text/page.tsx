@@ -1,82 +1,119 @@
-"use client";
-/* eslint-disable no-unused-expressions */
-import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerateResponseMutation } from "@/redux/api/promptApi";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
-import { useEffect, useState } from "react";
-import { ImageUploader } from "./components/ImageUploader";
-import { free_image_to_text_prompt } from "./prompt";
+import type { Metadata } from "next";
+import ImageToTextTool from "./ImageToTextTool";
 
-export default function AiToHumanConverter() {
-  const [prompt, setPrompt] = useState<string>("");
-  const [response, setResponse] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [imageToText, setImageToText] = useState<string>("");
-  const [generateResponse, { isLoading, data, error }] =
-    useGenerateResponseMutation();
-  useEffect(() => {
-    if (imageToText) {
-      const handleGenerateResponse = async () => {
-        setLoading(true);
-        setResponse(null);
-        const modifiedPrompt = free_image_to_text_prompt(imageToText);
-        try {
-          const result = await generateResponse({
-            prompt: modifiedPrompt,
-            tool: "free-image-to-text",
-          }).unwrap();
-          setResponse(result ?? "No response received.");
-        } catch (err) {
-          console.error("Error generating response:", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      handleGenerateResponse();
-    }
-  }, [imageToText, generateResponse]);
+export const metadata: Metadata = {
+  title:
+    "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
+  description:
+    "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly. Convert images to editable text for free.",
+  keywords: [
+    "image to text",
+    "OCR online",
+    "text extraction",
+    "image text converter",
+    "photo to text",
+    "document scanner",
+    "text recognition",
+    "AI OCR",
+    "free image to text",
+    "extract text from image",
+  ],
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title:
+      "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
+    description:
+      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
+    url: "https://brainboomingai.com/free-image-to-text",
+    siteName: "BrainBoomingAI",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/image-to-text-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "BrainBoomingAI Free Image to Text Converter Tool",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free AI Image to Text Converter - OCR Extract Text from Images",
+    description:
+      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
+    images: ["/image-to-text-twitter.jpg"],
+    creator: "@brainboomingai",
+    site: "@brainboomingai",
+  },
+  alternates: {
+    canonical: "https://brainboomingai.com/free-image-to-text",
+  },
+  category: "AI Tools",
+  classification: "OCR Tools",
+  other: {
+    "application-name": "BrainBoomingAI",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Image to Text",
+    "msapplication-TileColor": "#6366f1",
+    "theme-color": "#6366f1",
+  },
+};
 
+export default function FreeImageToTextPage() {
   return (
-    <section className="max-w-4xl flex flex-col gap-10 justify-center mx-auto py-16">
-      <article>
-        <h1 className="text-2xl font-mono text-gray-800 font-bold my-4 text-center md:text-7xl">
-          Image to Text
-        </h1>
-        <p className="text-lg text-gray-500 my-4 text-center">
-          Take your AI-generated text and turn it into something that reads like
-          it was written by a human. Just copy and paste your text into our
-          converter and watch it transform in seconds.
-        </p>
-      </article>
-      <article className="">
-        <ImageUploader
-          imageToText={imageToText}
-          setImageToText={setImageToText}
-        />
-        {loading || isLoading ? (
-          <div className="flex flex-col mt-6 space-y-3">
-            <Skeleton className="w-full h-40 rounded-xl" />
-          </div>
-        ) : null}
-        {response && (
-          <div className="mt-6 p-4 bg-gray-100 rounded-lg">
-            <p className="flex gap-2 text-gray-500">
-              <span>{characterCount(response)} characters</span>
-              <span className="font-bold">&#183;</span>
-              <span>{wordCount(response)} words</span>
+    <>
+      <ImageToTextTool />
 
-              {/* Display mistakes count */}
-            </p>
-            <p
-              className="text-gray-800 text-lg mt-4 space-y-3"
-              dangerouslySetInnerHTML={{
-                __html: response,
-              }} // Corrected paragraph
-            ></p>
+      {/* Bottom Content */}
+      <div className="mt-16 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+            Why Choose Our AI Image to Text Converter?
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            Our advanced OCR technology uses cutting-edge AI to accurately
+            extract text from any image. Whether you need to digitize documents,
+            convert screenshots to text, or extract text from photos, our tool
+            provides fast and reliable results.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6 text-left">
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                Perfect for Students
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Quickly digitize handwritten notes, extract text from textbook
+                pages, and convert study materials into searchable text.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                Business Applications
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Convert business cards, receipts, invoices, and documents into
+                editable text for easy data entry and organization.
+              </p>
+            </div>
           </div>
-        )}
-      </article>
-    </section>
+        </div>
+      </div>
+    </>
   );
 }
