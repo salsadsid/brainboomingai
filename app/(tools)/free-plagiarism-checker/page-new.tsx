@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import PlagiarismCheckerTool from "./PlagiarismCheckerTool";
 
 export const metadata: Metadata = {
-  title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
-  description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection for students and professionals.",
+  title:
+    "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
+  description:
+    "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection for students and professionals.",
   keywords: [
     "plagiarism checker",
     "duplicate content detector",
@@ -14,7 +16,7 @@ export const metadata: Metadata = {
     "content verification",
     "AI plagiarism detection",
     "free plagiarism checker",
-    "online plagiarism tool"
+    "online plagiarism tool",
   ],
   authors: [{ name: "BrainBoomingAI" }],
   creator: "BrainBoomingAI",
@@ -31,8 +33,10 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
-    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection.",
+    title:
+      "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
+    description:
+      "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection.",
     url: "https://brainboomingai.com/free-plagiarism-checker",
     siteName: "BrainBoomingAI",
     locale: "en_US",
@@ -49,7 +53,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Free AI Plagiarism Checker - Detect Copied Content Instantly",
-    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly.",
+    description:
+      "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly.",
     images: ["/plagiarism-checker-twitter.jpg"],
     creator: "@brainboomingai",
     site: "@brainboomingai",
@@ -80,8 +85,9 @@ export default function FreePlagiarismCheckerPage() {
             Free AI Plagiarism Checker
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Detect copied content and ensure academic integrity with our advanced AI-powered 
-            plagiarism checker. Get comprehensive reports and maintain originality in your work.
+            Detect copied content and ensure academic integrity with our
+            advanced AI-powered plagiarism checker. Get comprehensive reports
+            and maintain originality in your work.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
@@ -109,10 +115,10 @@ export default function FreePlagiarismCheckerPage() {
               Why Choose Our AI Plagiarism Checker?
             </h2>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Our advanced AI plagiarism detection technology scans billions of sources 
-              to ensure your content is original and properly cited. Perfect for students, 
-              researchers, content creators, and professionals who value academic integrity 
-              and original writing.
+              Our advanced AI plagiarism detection technology scans billions of
+              sources to ensure your content is original and properly cited.
+              Perfect for students, researchers, content creators, and
+              professionals who value academic integrity and original writing.
             </p>
             <div className="grid md:grid-cols-2 gap-6 text-left">
               <div>
@@ -120,8 +126,9 @@ export default function FreePlagiarismCheckerPage() {
                   For Academic Excellence
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Ensure your research papers, essays, and dissertations meet 
-                  academic integrity standards with comprehensive plagiarism detection.
+                  Ensure your research papers, essays, and dissertations meet
+                  academic integrity standards with comprehensive plagiarism
+                  detection.
                 </p>
               </div>
               <div>
@@ -129,7 +136,7 @@ export default function FreePlagiarismCheckerPage() {
                   Content Originality
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Verify the originality of your content, identify potential 
+                  Verify the originality of your content, identify potential
                   issues, and maintain credibility in your professional work.
                 </p>
               </div>

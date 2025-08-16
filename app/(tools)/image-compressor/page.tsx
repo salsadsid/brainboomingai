@@ -1,161 +1,119 @@
-// app/components/image-compressor.tsx
-"use client";
+import type { Metadata } from "next";
+import ImageCompressorTool from "./ImageCompressorTool";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import imageCompression from "browser-image-compression";
-import { useRef, useState } from "react";
+export const metadata: Metadata = {
+  title:
+    "Free Online Image Compressor - Reduce Image File Size | BrainBoomingAI",
+  description:
+    "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly. Perfect for web optimization and storage.",
+  keywords: [
+    "image compressor",
+    "reduce image size",
+    "compress photos",
+    "optimize images",
+    "image optimization",
+    "file size reducer",
+    "web image compression",
+    "photo compressor",
+    "free image compressor",
+    "online image optimizer",
+  ],
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    title:
+      "Free Online Image Compressor - Reduce Image File Size | BrainBoomingAI",
+    description:
+      "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly.",
+    url: "https://brainboomingai.com/image-compressor",
+    siteName: "BrainBoomingAI",
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: "/image-compressor-og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "BrainBoomingAI Free Image Compressor Tool",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Online Image Compressor - Reduce Image File Size",
+    description:
+      "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly.",
+    images: ["/image-compressor-twitter.jpg"],
+    creator: "@brainboomingai",
+    site: "@brainboomingai",
+  },
+  alternates: {
+    canonical: "https://brainboomingai.com/image-compressor",
+  },
+  category: "Utility Tools",
+  classification: "Image Tools",
+  other: {
+    "application-name": "BrainBoomingAI",
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+    "apple-mobile-web-app-title": "Image Compressor",
+    "msapplication-TileColor": "#6366f1",
+    "theme-color": "#6366f1",
+  },
+};
 
-export default function ImageCompressor() {
-  const [originalImage, setOriginalImage] = useState<File | null>(null);
-  const [compressedImage, setCompressedImage] = useState<Blob | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        setError("Please upload an image file");
-        return;
-      }
-      setOriginalImage(file);
-      setCompressedImage(null);
-      setError(null);
-    }
-  };
-
-  const compressImage = async () => {
-    if (!originalImage) return;
-
-    setIsLoading(true);
-    setError(null);
-    setProgress(0);
-
-    try {
-      const options = {
-        maxSizeMB: 0.3, // Target 300KB
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-        onProgress: (percentage: number) => setProgress(percentage),
-      };
-
-      const compressedBlob = await imageCompression(originalImage, options);
-
-      // Verify the compressed size
-      //   if (compressedBlob.size > 307200) {
-      //     // 300KB in bytes
-      //     throw new Error("Compression failed to reach target size");
-      //   }
-
-      setCompressedImage(compressedBlob);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to compress image");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleDownload = () => {
-    if (compressedImage) {
-      const url = URL.createObjectURL(compressedImage);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `compressed-${originalImage?.name || "image"}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-  };
-
+export default function ImageCompressorPage() {
   return (
-    <Card className="w-full mx-auto py-8 my-8 max-w-2xl">
-      <CardHeader>
-        <CardTitle>Image Compressor</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid w-full items-center gap-4">
-          <Label htmlFor="image-upload">Upload Image</Label>
-          <Input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            ref={fileInputRef}
-            disabled={isLoading}
-          />
+    <>
+      <ImageCompressorTool />
 
-          {originalImage && (
-            <div className="mt-4">
-              <h4 className="text-sm font-medium mb-2">
-                Original Image Preview
-              </h4>
-              <img
-                src={URL.createObjectURL(originalImage)}
-                alt="Original preview"
-                className="max-h-48 object-contain rounded"
-              />
-              <p className="text-sm text-muted-foreground mt-2">
-                Original Size: {(originalImage.size / 1024).toFixed(2)}KB
+      {/* Bottom Content */}
+      <div className="mt-16 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 max-w-4xl mx-auto">
+          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+            Why Use Our Image Compressor?
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
+            Our advanced image compression technology reduces file sizes while
+            maintaining visual quality. Perfect for web developers, content
+            creators, and anyone who needs to optimize images for faster loading
+            times and reduced storage space.
+          </p>
+          <div className="grid md:grid-cols-2 gap-6 text-left">
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                Web Optimization
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Compress images for faster website loading times, improved SEO,
+                and better user experience across all devices.
               </p>
             </div>
-          )}
-
-          {isLoading && (
-            <div className="space-y-2">
-              {/* <Progress value={progress} className="h-2" /> */}
-              <p className="text-sm text-muted-foreground">
-                Compressing... {progress.toFixed(0)}%
+            <div>
+              <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                Storage Efficiency
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Reduce storage costs and save space by compressing images
+                without sacrificing visual quality for your projects.
               </p>
             </div>
-          )}
-
-          {error && (
-            // <Alert variant="destructive">
-            //   <AlertDescription>{error}</AlertDescription>
-            // </Alert>
-            <p>{error}</p>
-          )}
-
-          {compressedImage && (
-            <div className="mt-4">
-              <h4 className="text-sm font-medium mb-2">
-                Compressed Image Preview
-              </h4>
-              <img
-                src={URL.createObjectURL(compressedImage)}
-                alt="Compressed preview"
-                className="max-h-48 object-contain rounded"
-              />
-              <p className="text-sm text-muted-foreground mt-2">
-                Compressed Size: {(compressedImage.size / 1024).toFixed(2)}KB
-              </p>
-            </div>
-          )}
+          </div>
         </div>
-      </CardContent>
-      <CardFooter className="flex gap-2">
-        <Button onClick={compressImage} disabled={!originalImage || isLoading}>
-          {isLoading ? "Compressing..." : "Compress Image"}
-        </Button>
-
-        {compressedImage && (
-          <Button variant="outline" onClick={handleDownload}>
-            Download Compressed Image
-          </Button>
-        )}
-      </CardFooter>
-    </Card>
+      </div>
+    </>
   );
 }

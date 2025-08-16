@@ -1,5 +1,12 @@
 export const aiTools = [
   {
+    title: "AI Prompt Generator",
+    href: "/prompt-generator",
+    featuresImg: "/aitools.png",
+    shortTitle: "Prompt Generator",
+    description: "Generate creative and engaging prompts for any purpose using AI.",
+  },
+  {
     title: "AI To Human Text Converter",
     href: "/free-ai-to-human",
     featuresImg: "/aitools.png",

@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import PlagiarismCheckerTool from "./PlagiarismCheckerTool";
+import ImageToTextTool from "./ImageToTextTool";
 
 export const metadata: Metadata = {
-  title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
-  description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection for students and professionals.",
+  title:
+    "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
+  description:
+    "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly. Convert images to editable text for free.",
   keywords: [
-    "plagiarism checker",
-    "duplicate content detector",
-    "academic integrity",
-    "originality checker",
-    "copy detection",
-    "plagiarism scanner",
-    "content verification",
-    "AI plagiarism detection",
-    "free plagiarism checker",
-    "online plagiarism tool"
+    "image to text",
+    "OCR online",
+    "text extraction",
+    "image text converter",
+    "photo to text",
+    "document scanner",
+    "text recognition",
+    "AI OCR",
+    "free image to text",
+    "extract text from image",
   ],
   authors: [{ name: "BrainBoomingAI" }],
   creator: "BrainBoomingAI",
@@ -31,106 +33,110 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Free AI Plagiarism Checker - Detect Copied Content Instantly | BrainBoomingAI",
-    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly. Advanced plagiarism detection.",
-    url: "https://brainboomingai.com/free-plagiarism-checker",
+    title:
+      "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
+    description:
+      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
+    url: "https://brainboomingai.com/free-image-to-text",
     siteName: "BrainBoomingAI",
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/plagiarism-checker-og.jpg",
+        url: "/image-to-text-og.jpg",
         width: 1200,
         height: 630,
-        alt: "BrainBoomingAI Free Plagiarism Checker Tool",
+        alt: "BrainBoomingAI Free Image to Text Converter Tool",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Plagiarism Checker - Detect Copied Content Instantly",
-    description: "Free online AI plagiarism checker tool. Detect copied content, ensure academic integrity, and check for duplicate text instantly.",
-    images: ["/plagiarism-checker-twitter.jpg"],
+    title: "Free AI Image to Text Converter - OCR Extract Text from Images",
+    description:
+      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
+    images: ["/image-to-text-twitter.jpg"],
     creator: "@brainboomingai",
     site: "@brainboomingai",
   },
   alternates: {
-    canonical: "https://brainboomingai.com/free-plagiarism-checker",
+    canonical: "https://brainboomingai.com/free-image-to-text",
   },
   category: "AI Tools",
-  classification: "Academic Tools",
+  classification: "OCR Tools",
   other: {
     "application-name": "BrainBoomingAI",
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "Plagiarism Checker",
+    "apple-mobile-web-app-title": "Image to Text",
     "msapplication-TileColor": "#6366f1",
     "theme-color": "#6366f1",
   },
 };
 
-export default function FreePlagiarismCheckerPage() {
+export default function FreeImageToTextPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="text-center mb-12 pt-8">
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-6">
-            Free AI Plagiarism Checker
+            Free AI Image to Text Converter
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Detect copied content and ensure academic integrity with our advanced AI-powered 
-            plagiarism checker. Get comprehensive reports and maintain originality in your work.
+            Extract text from images instantly with our advanced AI-powered OCR
+            technology. Convert photos, documents, and screenshots to editable
+            text for free.
           </p>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Deep Web Scanning
+              Smart OCR Technology
             </span>
             <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
               <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-              Academic Integrity
+              Multiple Image Formats
             </span>
             <span className="flex items-center gap-2 bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700">
               <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-              Instant Results
+              Instant Processing
             </span>
           </div>
         </div>
 
         {/* Tool Component */}
-        <PlagiarismCheckerTool />
+        <ImageToTextTool />
 
         {/* Bottom Content */}
         <div className="mt-16 text-center">
           <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-              Why Choose Our AI Plagiarism Checker?
+              Why Choose Our AI Image to Text Converter?
             </h2>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">
-              Our advanced AI plagiarism detection technology scans billions of sources 
-              to ensure your content is original and properly cited. Perfect for students, 
-              researchers, content creators, and professionals who value academic integrity 
-              and original writing.
+              Our advanced OCR technology uses cutting-edge AI to accurately
+              extract text from any image. Whether you need to digitize
+              documents, convert screenshots to text, or extract text from
+              photos, our tool provides fast and reliable results.
             </p>
             <div className="grid md:grid-cols-2 gap-6 text-left">
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
-                  For Academic Excellence
+                  Perfect for Students
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Ensure your research papers, essays, and dissertations meet 
-                  academic integrity standards with comprehensive plagiarism detection.
+                  Quickly digitize handwritten notes, extract text from textbook
+                  pages, and convert study materials into searchable text.
                 </p>
               </div>
               <div>
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
-                  Content Originality
+                  Business Applications
                 </h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Verify the originality of your content, identify potential 
-                  issues, and maintain credibility in your professional work.
+                  Convert business cards, receipts, invoices, and documents into
+                  editable text for easy data entry and organization.
                 </p>
               </div>
             </div>
