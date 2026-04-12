@@ -23,7 +23,8 @@ import {
 import { FormEvent, useCallback, useRef, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
-import { free_grammer_checker_prompt } from "./prompt";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
+import { free_grammar_checker_prompt } from "./prompt";
 
 const MAX_INPUT_LENGTH = 5000;
 const schema = z.object({
@@ -57,7 +58,7 @@ export default function PlagiarismCheckerTool() {
           return;
         }
 
-        const modifiedPrompt = free_grammer_checker_prompt(input);
+        const modifiedPrompt = free_grammar_checker_prompt(input);
         const result = await generateResponse({
           prompt: modifiedPrompt,
           tool: "free-plagiarism-checker",
@@ -240,7 +241,7 @@ export default function PlagiarismCheckerTool() {
                 </div>
                 <div
                   className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: output }}
+                  dangerouslySetInnerHTML={{ __html: sanitizeHtml(output) }}
                 />
               </motion.div>
             ))}

@@ -1,4 +1,4 @@
-export const free_grammer_checker_prompt = (
+export const free_grammar_checker_prompt = (
   s: string
 ) => `You are an expert in spell checking and language refinement, specializing in detecting and correcting spelling mistakes. I will provide you with the following information:
 

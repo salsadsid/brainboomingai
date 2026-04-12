@@ -1,4 +1,4 @@
-export const free_grammer_checker_prompt = (
+export const free_grammar_checker_prompt = (
   s: string
 ) => `You are an expert in grammar and language refinement, specializing in correcting and improving the clarity, accuracy, and fluency of written text. I will provide you with the following information: Original Text: "${s}" Output Format: "html" Writing Style: "Detect from original text" Purpose of Correction: "Grammar and fluency improvement" Language: "Detect from original text"
 

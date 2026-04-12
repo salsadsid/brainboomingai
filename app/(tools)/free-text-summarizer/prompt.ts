@@ -1,4 +1,4 @@
-export const free_grammer_checker_prompt = (
+export const free_grammar_checker_prompt = (
   s: string
 ) => `You are an expert in summarizing written content, specializing in creating concise, accurate, and meaningful summaries. I will provide you with the following information:
 
