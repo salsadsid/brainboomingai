@@ -1,4 +1,4 @@
-export const free_grammer_checker_prompt = (
+export const free_grammar_checker_prompt = (
   s: string
 ) => `You are an expert in paraphrasing text, specializing in rewording and restructuring written content to enhance clarity, while retaining the original meaning. I will provide you with the following information:
 

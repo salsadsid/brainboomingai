@@ -14,10 +14,10 @@ export const aiTools = [
     description: "Convert AI-generated text into human-like text.",
   },
   {
-    title: "Free Grammer Checker",
+    title: "Free Grammar Checker",
     href: "/free-grammer-checker",
     featuresImg: "/aitools.png",
-    shortTitle: "Grammer Checker",
+    shortTitle: "Grammar Checker",
     description:
       "Check your text for grammar errors and improve your writing with our free grammar checker.",
   },

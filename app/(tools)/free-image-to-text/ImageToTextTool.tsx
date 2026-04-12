@@ -18,6 +18,7 @@ import {
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { ImageUploader } from "./components/ImageUploader";
+import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { free_image_to_text_prompt } from "./prompt";
 
 export default function ImageToTextTool() {
@@ -120,7 +121,7 @@ export default function ImageToTextTool() {
             </div>
             <div
               className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: response }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(response) }}
             />
           </motion.div>
         )}

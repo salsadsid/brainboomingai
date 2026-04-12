@@ -6,7 +6,7 @@ interface GeneratedResponse extends Document {
   prompt: string;
   response: string;
   tool: string;
-  responseRaw: any;
+  responseRaw: Record<string, unknown>;
 }
 
 // Define the schema for generated responses

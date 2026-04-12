@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGO_URI = process.env.NEXT_PUBLIC_MONGODB_URI as string;
+const MONGO_URI = process.env.MONGODB_URI as string;
 
 // console.log(MONGO_URI, "MONGO_URI");
 

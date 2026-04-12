@@ -1,29 +1,31 @@
-// app/api/generate/route.ts
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { generateResponse } from "@/lib/googleAIService";
 import dbConnect from "@/lib/mongoose";
-
+import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
-
 import { NextResponse } from "next/server";
-
-// Initialize the model
 
 export async function POST(req: Request) {
   try {
-    await dbConnect(); // Ensure DB connection
+    const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
+    if (!rateLimit(ip).success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 }
+      );
+    }
+
+    await dbConnect();
     const { prompt, tool } = await req.json();
+
+    if (!prompt || typeof prompt !== "string") {
+      return NextResponse.json(
+        { error: "Prompt is required and must be a string." },
+        { status: 400 }
+      );
+    }
 
     // Generate the response
     const generatedResponse = await generateResponse(prompt);
-
-    // Check if the generatedResponse is null
-    if (!generatedResponse) {
-      return NextResponse.json(
-        { error: "Failed to generate a response." },
-        { status: 500 }
-      );
-    }
 
     const { response: aiResponse, responseRaw } = generatedResponse;
 
@@ -36,8 +38,10 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(savedResponse.response, { status: 201 });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error generating response:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const message =
+      error instanceof Error ? error.message : "Failed to generate a response.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

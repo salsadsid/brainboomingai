@@ -95,14 +95,6 @@ const toolsData = {
     bgGradient:
       "from-gray-50 to-slate-50 dark:from-gray-950/30 dark:to-slate-950/30",
   },
-  "/todo-app": {
-    title: "Todo App",
-    description: "Organize your tasks with a simple todo application",
-    icon: "📋",
-    gradient: "from-emerald-500 to-teal-600",
-    bgGradient:
-      "from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/30",
-  },
 };
 
 export default function AiToolLayout({

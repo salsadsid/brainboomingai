@@ -1,10 +1,8 @@
 import { combineReducers } from "redux";
-import { todosApi } from "./api/todosApi";
-
-// import slices
+import api from "./api/api";
 
 const rootReducer = combineReducers({
-  [todosApi.reducerPath]: todosApi.reducer,
+  [api.reducerPath]: api.reducer,
 });
 
 export default rootReducer;
