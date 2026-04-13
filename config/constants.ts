@@ -15,7 +15,7 @@ export const aiTools = [
   },
   {
     title: "Free Grammar Checker",
-    href: "/free-grammer-checker",
+    href: "/free-grammar-checker",
     featuresImg: "/aitools.png",
     shortTitle: "Grammar Checker",
     description:

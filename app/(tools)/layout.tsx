@@ -23,7 +23,7 @@ const toolsData = {
     bgGradient:
       "from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30",
   },
-  "/free-grammer-checker": {
+  "/free-grammar-checker": {
     title: "Grammar Checker",
     description: "Check and improve your text for grammar errors",
     icon: "📝",

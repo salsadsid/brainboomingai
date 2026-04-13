@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     title: "Free Grammar Checker - AI-Powered Writing Tool | Brain Booming",
     description:
       "Check grammar, spelling, and punctuation errors instantly with our free AI-powered grammar checker. Perfect your writing with intelligent corrections.",
-    url: "https://brainbooming.com/free-grammer-checker",
+    url: "https://brainbooming.com/free-grammar-checker",
     siteName: "Brain Booming",
     type: "website",
     images: [
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/free-grammer-checker",
+    canonical: "https://brainbooming.com/free-grammar-checker",
   },
 };
 

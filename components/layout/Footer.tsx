@@ -6,7 +6,7 @@ export default function Footer() {
 
   const toolsLinks = [
     { name: "AI to Human Converter", href: "/free-ai-to-human" },
-    { name: "Grammar Checker", href: "/free-grammer-checker" },
+    { name: "Grammar Checker", href: "/free-grammar-checker" },
     { name: "Prompt Generator", href: "/prompt-generator" },
     { name: "Paraphrasing Tool", href: "/free-paraphrasing-tool" },
     { name: "Text Summarizer", href: "/free-text-summarizer" },

@@ -12,7 +12,7 @@ import { free_grammar_checker_prompt } from "./prompt";
 import { parseCorrectedParagraph, parseMistakeCount } from "./utils";
 
 const config: TextToolConfig = {
-  toolSlug: "free-grammer-checker",
+  toolSlug: "free-grammar-checker",
   placeholder: "Paste your text here for grammar analysis...",
   minInputLength: 1,
   buildPrompt: free_grammar_checker_prompt,
