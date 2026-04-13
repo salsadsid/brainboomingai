@@ -16,7 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { ImageUploader } from "./components/ImageUploader";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { free_image_to_text_prompt } from "./prompt";
@@ -65,15 +65,6 @@ export default function ImageToTextTool() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          className:
-            "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
-        }}
-      />
-
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
         <ImageUploader
           imageToText={imageToText}

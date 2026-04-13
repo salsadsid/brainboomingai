@@ -90,7 +90,14 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Toaster position="top-center" />
+            <Toaster
+              position="top-center"
+              toastOptions={{
+                duration: 3000,
+                className:
+                  "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
+              }}
+            />
             <div className="flex flex-col min-h-screen">
               <Navbar />
               <main className="relative flex-1">{children}</main>

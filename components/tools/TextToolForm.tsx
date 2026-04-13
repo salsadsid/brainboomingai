@@ -26,8 +26,8 @@ const MAX_INPUT_LENGTH = 5000;
 
 export default function TextToolForm({ config }: { config: TextToolConfig }) {
   const [input, setInput] = useState("");
-  const [outputs, setOutputs] = useState<string[]>([]);
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [outputs, setOutputs] = useState<{ id: string; content: string }[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [generateResponse, { isLoading }] = useGenerate();
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<AutosizeTextAreaRef>(null);
@@ -73,7 +73,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         });
 
         setOutputs((prev) => [
-          result || config.fallbackMessage,
+          { id: crypto.randomUUID(), content: result || config.fallbackMessage },
           ...prev,
         ]);
         toast.success(config.successMessage);
@@ -93,13 +93,13 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
     [input, processResult]
   );
 
-  const copyToClipboard = async (text: string, index: number) => {
+  const copyToClipboard = async (text: string, id: string) => {
     try {
       const copyText = config.parseCopyText ? config.parseCopyText(text) : text;
       await navigator.clipboard.writeText(copyText);
-      setCopiedIndex(index);
+      setCopiedId(id);
       toast.success("Copied to clipboard!");
-      setTimeout(() => setCopiedIndex(null), 2000);
+      setTimeout(() => setCopiedId(null), 2000);
     } catch {
       toast.error("Failed to copy text");
     }
@@ -213,12 +213,11 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         )}
 
         <div className="space-y-6">
-          {outputs.map((output, index) => (
+          {outputs.map((output) => (
             <motion.div
-              key={index}
+              key={output.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
               className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900
                 rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50"
             >
@@ -232,17 +231,17 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
                     </span>
                   </div>
                   <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                    {formatStats(output)}
+                    {formatStats(output.content)}
                   </span>
                 </div>
                 <Button
-                  onClick={() => copyToClipboard(output, index)}
+                  onClick={() => copyToClipboard(output.content, output.id)}
                   size="sm"
                   variant="ghost"
                   className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200
                     hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
-                  {copiedIndex === index ? (
+                  {copiedId === output.id ? (
                     <ClipboardCheck className="w-4 h-4 text-green-600" />
                   ) : (
                     <Clipboard className="w-4 h-4" />
@@ -251,7 +250,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
               </div>
               <div
                 className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(output) }}
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(output.content) }}
               />
             </motion.div>
           ))}

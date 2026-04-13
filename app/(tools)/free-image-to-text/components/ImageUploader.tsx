@@ -18,18 +18,19 @@ import { useForm } from "react-hook-form";
 import { createWorker } from "tesseract.js";
 import { z } from "zod";
 
+const formSchema = z.object({
+  image: z
+    //Rest of validations done via react dropzone
+    .instanceof(File)
+    .refine((file) => file.size !== 0, "Please upload an image"),
+});
+
 export const ImageUploader: React.FC<{
   imageToText: string;
   setImageToText: (imageToText: string) => void;
 }> = ({ imageToText, setImageToText }) => {
   const [preview, setPreview] = React.useState<string | ArrayBuffer | null>("");
   const [loading, setLoading] = React.useState<boolean>(false);
-  const formSchema = z.object({
-    image: z
-      //Rest of validations done via react dropzone
-      .instanceof(File)
-      .refine((file) => file.size !== 0, "Please upload an image"),
-  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
