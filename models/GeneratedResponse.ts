@@ -7,6 +7,7 @@ interface GeneratedResponse extends Document {
   response: string;
   tool: string;
   responseRaw: Record<string, unknown>;
+  userId: mongoose.Types.ObjectId | null;
 }
 
 // Define the schema for generated responses
@@ -16,6 +17,7 @@ const GeneratedResponseSchema = new Schema<GeneratedResponse>(
     response: { type: String, required: true },
     tool: { type: String, required: true },
     responseRaw: { type: Object, required: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null, index: true },
   },
   { timestamps: true }
 );

@@ -1,5 +1,7 @@
 "use client";
 
+import AuthCTA from "@/components/auth/AuthCTA";
+import { logger } from "@/lib/logger";
 import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
@@ -78,7 +80,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         ]);
         toast.success(config.successMessage);
       } catch (err) {
-        console.error(`${config.toolSlug} error:`, err);
+        logger.error(`${config.toolSlug} error`, err);
         toast.error(config.errorMessage);
       }
     },
@@ -255,6 +257,8 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
             </motion.div>
           ))}
         </div>
+
+        {outputs.length > 0 && <AuthCTA />}
       </form>
     </div>
   );

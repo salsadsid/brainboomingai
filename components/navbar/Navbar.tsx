@@ -1,5 +1,6 @@
 "use client";
 
+import UserMenu from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { aiTools } from "@/config/constants";
@@ -122,7 +123,10 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Auth + Mobile Menu */}
+          <div className="flex items-center gap-3">
+            <UserMenu />
+
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button
@@ -217,6 +221,7 @@ export default function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </div>
     </header>

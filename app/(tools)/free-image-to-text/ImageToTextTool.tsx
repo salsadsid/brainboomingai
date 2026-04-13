@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerate } from "@/hooks/useGenerate";
@@ -42,7 +43,7 @@ export default function ImageToTextTool() {
           setResponse(result ?? "No text could be extracted from the image.");
           toast.success("Text extraction complete!");
         } catch (err) {
-          console.error("Error generating response:", err);
+          logger.error("Image to text error", err);
           toast.error("Failed to extract text. Please try again.");
         } finally {
           setLoading(false);

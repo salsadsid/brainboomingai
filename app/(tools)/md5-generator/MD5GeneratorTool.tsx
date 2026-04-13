@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
@@ -68,7 +69,7 @@ export default function MD5GeneratorTool() {
         throw new Error("Failed to generate MD5 hash");
       }
     } catch (err) {
-      console.error("MD5 generation error:", err);
+      logger.error("MD5 generation error", err);
       toast.error("Failed to generate MD5 hash. Please try again.");
     } finally {
       setLoading(false);
