@@ -52,9 +52,9 @@ const features: FeatureItem[] = [
   {
     icon: Shield,
     gradient: "from-teal-500 to-cyan-500",
-    title: "Privacy Protected",
+    title: "Secure Processing",
     description:
-      "Your text is processed securely and never stored. We prioritize your privacy and ensure complete confidentiality of your documents and content.",
+      "Your text and results are stored to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
   },
 ];
 

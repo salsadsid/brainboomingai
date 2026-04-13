@@ -346,10 +346,9 @@ export default function ImageToTextTool() {
                   Is my uploaded image stored or shared?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  No, we prioritize your privacy. Images are processed
-                  temporarily for text extraction and are not stored on our
-                  servers or shared with third parties. Your data remains
-                  confidential.
+                  Your extracted text and prompts are stored on our servers to
+                  improve our service. We do not share your data with third
+                  parties. All processing happens over encrypted connections.
                 </p>
               </div>
             </div>

@@ -100,7 +100,7 @@ const faqs: FAQItem[] = [
     gradient: "from-red-500 to-orange-500",
     question: "Is my content stored or shared?",
     answer:
-      "No, we prioritize your privacy. Your text is processed temporarily for summarization and is not stored on our servers or shared with third parties. All processing happens securely.",
+      "Your prompts and generated summaries are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
   },
 ];
 

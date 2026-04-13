@@ -6,15 +6,15 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
+    await dbConnect();
+
     const ip = req.headers.get("x-forwarded-for") ?? "127.0.0.1";
-    if (!rateLimit(ip).success) {
+    if (!(await rateLimit(ip)).success) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
       );
     }
-
-    await dbConnect();
     const { prompt, tool } = await req.json();
 
     if (!prompt || typeof prompt !== "string") {

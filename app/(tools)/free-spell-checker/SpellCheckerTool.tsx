@@ -102,7 +102,7 @@ const faqs: FAQItem[] = [
     gradient: "from-red-500 to-orange-500",
     question: "Is my text stored or shared when using the spell checker?",
     answer:
-      "No, we prioritize your privacy. Your text is processed securely and is not stored on our servers or shared with third parties. All spell checking happens in real-time without data retention.",
+      "Your text and corrections are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
   },
 ];
 

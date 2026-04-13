@@ -48,7 +48,7 @@ const features: FeatureItem[] = [
     gradient: "from-cyan-500 to-teal-500",
     title: "100% Free & Secure",
     description:
-      "Completely free to use with no registration required. Your data is processed securely and we don't store your prompts or personal information.",
+      "Completely free to use with no registration required. Your prompts and generated results are stored to improve our service. We do not share your data with third parties.",
   },
 ];
 

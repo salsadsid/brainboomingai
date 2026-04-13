@@ -41,7 +41,7 @@ const features: FeatureItem[] = [
     gradient: "from-green-500 to-emerald-500",
     title: "100% Free & Secure",
     description:
-      "No registration required. Your text is processed securely and never stored on our servers.",
+      "No registration required. Your text and results are stored to improve our service. We do not share your data with third parties.",
   },
   {
     icon: CheckCircle,
