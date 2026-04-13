@@ -10,7 +10,7 @@ export default function Footer() {
     { name: "Prompt Generator", href: "/prompt-generator" },
     { name: "Paraphrasing Tool", href: "/free-paraphrasing-tool" },
     { name: "Text Summarizer", href: "/free-text-summarizer" },
-    { name: "Plagiarism Checker", href: "/free-plagiarism-checker" },
+    { name: "Originality Analyzer", href: "/free-plagiarism-checker" },
   ];
 
   const utilityLinks = [

@@ -7,20 +7,20 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
-import { Search, Shield, Zap } from "lucide-react";
-import { free_grammar_checker_prompt } from "./prompt";
+import { Brain, Fingerprint, Search, Sparkles } from "lucide-react";
+import { originality_analysis_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-plagiarism-checker",
-  placeholder: "Paste your text here to check for plagiarism...",
-  minInputLength: 1,
-  buildPrompt: free_grammar_checker_prompt,
-  submitLabel: "Check Plagiarism",
-  loadingLabel: "Checking...",
-  regenerateLabel: "Recheck",
-  successMessage: "Plagiarism check complete!",
-  errorMessage: "Failed to check for plagiarism. Please try again.",
-  fallbackMessage: "Could not check for plagiarism. Please try again.",
+  placeholder: "Paste your text here to analyze its originality...",
+  minInputLength: 10,
+  buildPrompt: originality_analysis_prompt,
+  submitLabel: "Analyze Originality",
+  loadingLabel: "Analyzing...",
+  regenerateLabel: "Re-analyze",
+  successMessage: "Originality analysis complete!",
+  errorMessage: "Failed to analyze text. Please try again.",
+  fallbackMessage: "Could not complete the analysis. Please try again.",
   submitIcon: Search,
   accentGradient: "from-indigo-600 to-purple-600",
   accentHoverGradient: "from-indigo-700 to-purple-700",
@@ -34,73 +34,73 @@ const config: TextToolConfig = {
 
 const features: FeatureItem[] = [
   {
-    icon: Search,
+    icon: Brain,
     gradient: "from-indigo-500 to-purple-500",
-    title: "Deep Web Scanning",
+    title: "AI Content Detection",
     description:
-      "Our AI scans billions of web pages, academic papers, and published content to detect potential plagiarism with high accuracy.",
+      "Detects patterns commonly found in AI-generated text, including uniform sentence structure, hedging language, and generic phrasing that lacks personal voice.",
   },
   {
-    icon: Shield,
+    icon: Fingerprint,
     gradient: "from-purple-500 to-pink-500",
-    title: "Academic Integrity",
+    title: "Writing Voice Analysis",
     description:
-      "Ensure academic integrity with thorough plagiarism detection that identifies paraphrased content and citation issues.",
+      "Evaluates whether your text has a distinct authorial voice or reads as template-like. Helps you identify where your writing could be more authentic and personal.",
   },
   {
-    icon: Zap,
+    icon: Sparkles,
     gradient: "from-pink-500 to-red-500",
-    title: "Instant Results",
+    title: "Style & Expression Review",
     description:
-      "Get comprehensive plagiarism reports in seconds. Detailed analysis with similarity percentages and source identification.",
+      "Flags cliches, boilerplate phrases, and formulaic structures. Provides actionable suggestions to make your writing more original and engaging.",
   },
 ];
 
 const steps: StepItem[] = [
   {
     gradient: "from-indigo-500 to-purple-500",
-    title: "Upload Your Text",
+    title: "Paste Your Text",
     description:
-      "Copy and paste your document, essay, or article into our plagiarism checker. We support various text formats and file types.",
+      "Copy and paste the text you want to analyze. Works with essays, articles, blog posts, or any written content.",
   },
   {
     gradient: "from-purple-500 to-pink-500",
-    title: "AI Analysis",
+    title: "AI Pattern Analysis",
     description:
-      "Our advanced AI algorithms scan your text against billions of sources including web pages, academic databases, and published materials.",
+      "Our AI examines your writing for originality indicators, AI-generated content patterns, voice distinctiveness, and structural repetition.",
   },
   {
     gradient: "from-pink-500 to-red-500",
-    title: "Get Detailed Report",
+    title: "Get Your Report",
     description:
-      "Receive a comprehensive plagiarism report with similarity percentages, source identification, and suggestions for improvement.",
+      "Receive an originality score with detailed breakdown of AI indicators, expression quality, voice assessment, and specific improvement suggestions.",
   },
 ];
 
 const faqs: FAQItem[] = [
   {
     gradient: "from-indigo-500 to-purple-500",
-    question: "How accurate is the plagiarism detection?",
+    question: "Does this tool compare my text against external sources?",
     answer:
-      "Our AI-powered plagiarism checker has high accuracy rates and can detect various forms of plagiarism including direct copying, paraphrasing, and mosaic plagiarism with advanced pattern recognition.",
+      "No. This tool performs pattern-based analysis of your writing style and structure. It does NOT search the web, academic databases, or any external sources. It evaluates how original and human-like your writing appears based on language patterns, not source matching.",
   },
   {
     gradient: "from-purple-500 to-pink-500",
-    question: "What sources does the checker scan against?",
+    question: "What does the originality score mean?",
     answer:
-      "Our tool scans against billions of web pages, academic papers, journals, books, and other published content to provide comprehensive plagiarism detection coverage across multiple databases.",
+      "The score reflects how original and distinctly human your writing appears based on AI analysis of your language patterns. A high score means strong personal voice and fresh expression. A low score suggests generic, formulaic, or AI-like writing patterns. It is not a plagiarism percentage.",
   },
   {
     gradient: "from-pink-500 to-red-500",
-    question: "Is my document stored or shared after checking?",
+    question: "Can this detect if text was written by AI?",
     answer:
-      "No, we prioritize your privacy and confidentiality. Your documents are processed securely and are not stored on our servers or shared with third parties after the plagiarism check is complete.",
+      "It can identify common patterns associated with AI-generated text, such as uniform sentence length, hedging language, lack of personal anecdotes, and overly balanced arguments. However, no AI detection tool is 100% accurate, and well-edited AI text may score higher on originality.",
   },
   {
     gradient: "from-red-500 to-orange-500",
-    question: "Can I use this for academic papers and essays?",
+    question: "Is this a replacement for a real plagiarism checker?",
     answer:
-      "Absolutely! Our plagiarism checker is perfect for students, researchers, and academics. It helps ensure academic integrity and identifies areas that need proper citation or rephrasing.",
+      "No. If you need to verify that your text isn't copied from specific sources, use a dedicated plagiarism detection service like Turnitin or Copyscape that actually compares against indexed content. This tool analyzes writing quality and patterns, not source overlap.",
   },
 ];
 
@@ -108,9 +108,9 @@ export default function PlagiarismCheckerTool() {
   return (
     <div className="max-w-4xl mx-auto">
       <TextToolForm config={config} />
-      <ToolFeatures title="Advanced Plagiarism Detection Features" features={features} />
-      <ToolHowItWorks title="How Our Plagiarism Checker Works" steps={steps} />
-      <ToolFAQ title="Plagiarism Checker FAQ" faqs={faqs} />
+      <ToolFeatures title="What This Tool Analyzes" features={features} />
+      <ToolHowItWorks title="How the Originality Analyzer Works" steps={steps} />
+      <ToolFAQ title="Originality Analyzer FAQ" faqs={faqs} />
     </div>
   );
 }

@@ -5,7 +5,7 @@
   CRITICAL: Leaked Secrets in Git
                                                                                                                         
   Your .env file is committed to the repository with real credentials:                                                  
-  - Google API key: AIzaSyDqzIlEinn6NKV9ftjw81xx4R7Cbo1A74A                                                             
+  - Google API key:                                                            
   - Full MongoDB connection string with username/password                                                               
                                                          
   This is a disqualifying red flag in an interview. Anyone with repo access has your database credentials and can rack  
