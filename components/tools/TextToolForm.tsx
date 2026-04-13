@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerateResponseMutation } from "@/redux/api/promptApi";
+import { useGenerate } from "@/hooks/useGenerate";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
@@ -28,7 +28,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
   const [input, setInput] = useState("");
   const [outputs, setOutputs] = useState<string[]>([]);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
-  const [generateResponse, { isLoading }] = useGenerateResponseMutation();
+  const [generateResponse, { isLoading }] = useGenerate();
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<AutosizeTextAreaRef>(null);
 
@@ -70,7 +70,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         const result = await generateResponse({
           prompt: modifiedPrompt,
           tool: config.toolSlug,
-        }).unwrap();
+        });
 
         setOutputs((prev) => [
           result || config.fallbackMessage,

@@ -1,7 +1,6 @@
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Providers } from "@/redux/provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
@@ -85,8 +84,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
-          <ThemeProvider
+        <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
@@ -99,7 +97,6 @@ export default function RootLayout({
               <Footer />
             </div>
           </ThemeProvider>
-        </Providers>
       </body>
     </html>
   );

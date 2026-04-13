@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerateResponseMutation } from "@/redux/api/promptApi";
+import { useGenerate } from "@/hooks/useGenerate";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { motion } from "framer-motion";
@@ -26,7 +26,7 @@ export default function ImageToTextTool() {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<boolean>(false);
-  const [generateResponse, { isLoading }] = useGenerateResponseMutation();
+  const [generateResponse, { isLoading }] = useGenerate();
 
   useEffect(() => {
     if (imageToText) {
@@ -38,7 +38,7 @@ export default function ImageToTextTool() {
           const result = await generateResponse({
             prompt: modifiedPrompt,
             tool: "free-image-to-text",
-          }).unwrap();
+          });
           setResponse(result ?? "No text could be extracted from the image.");
           toast.success("Text extraction complete!");
         } catch (err) {
