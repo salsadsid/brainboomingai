@@ -11,7 +11,7 @@ import { Brain, Fingerprint, Search, Sparkles } from "lucide-react";
 import { originality_analysis_prompt } from "./prompt";
 
 const config: TextToolConfig = {
-  toolSlug: "free-plagiarism-checker",
+  toolSlug: "free-originality-analyzer",
   placeholder: "Paste your text here to analyze its originality...",
   minInputLength: 10,
   buildPrompt: originality_analysis_prompt,
@@ -104,7 +104,7 @@ const faqs: FAQItem[] = [
   },
 ];
 
-export default function PlagiarismCheckerTool() {
+export default function OriginalityAnalyzerTool() {
   return (
     <div className="max-w-4xl mx-auto">
       <TextToolForm config={config} />

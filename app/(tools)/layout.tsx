@@ -63,7 +63,7 @@ const toolsData = {
     bgGradient:
       "from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30",
   },
-  "/free-plagiarism-checker": {
+  "/free-originality-analyzer": {
     title: "Content Originality Analyzer",
     description: "Analyze writing patterns and detect AI-generated content",
     icon: "🔍",

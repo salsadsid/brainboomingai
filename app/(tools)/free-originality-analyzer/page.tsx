@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import PlagiarismCheckerTool from "./PlagiarismCheckerTool";
+import OriginalityAnalyzerTool from "./OriginalityAnalyzerTool";
 
 export const metadata: Metadata = {
   title:
@@ -35,7 +35,7 @@ export const metadata: Metadata = {
       "Free AI Content Originality Analyzer | BrainBoomingAI",
     description:
       "Analyze your writing for originality, detect AI-generated content patterns, and get suggestions to improve your authorial voice. Free, honest, pattern-based analysis.",
-    url: "https://brainboomingai.com/free-plagiarism-checker",
+    url: "https://brainboomingai.com/free-originality-analyzer",
     siteName: "BrainBoomingAI",
     locale: "en_US",
     type: "website",
@@ -58,12 +58,12 @@ export const metadata: Metadata = {
     site: "@brainboomingai",
   },
   alternates: {
-    canonical: "https://brainboomingai.com/free-plagiarism-checker",
+    canonical: "https://brainboomingai.com/free-originality-analyzer",
   },
   category: "AI Tools",
   classification: "Writing Tools",
 };
 
-export default function FreePlagiarismCheckerPage() {
-  return <PlagiarismCheckerTool />;
+export default function OriginalityAnalyzerPage() {
+  return <OriginalityAnalyzerTool />;
 }
