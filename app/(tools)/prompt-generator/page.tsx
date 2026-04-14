@@ -3,7 +3,7 @@ import PromptGeneratorTool from "./PromptGeneratorTool";
 
 export const metadata: Metadata = {
   title:
-    "Free AI Prompt Generator - Create Custom Prompts Instantly | Brain Booming",
+    "Free AI Prompt Generator - Create Custom Prompts Instantly | BrainBoomingAI",
   description:
     "Generate creative and engaging prompts for any purpose with our AI-powered prompt generator. Perfect for writers, content creators, and educators. 100% free and instant.",
   keywords: [
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     "creative prompts",
     "writing prompts generator",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -33,11 +33,11 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Free AI Prompt Generator - Brain Booming",
+    title: "Free AI Prompt Generator - BrainBoomingAI",
     description:
       "Generate creative and engaging prompts for any purpose with our AI-powered prompt generator. Perfect for writers, content creators, and educators.",
-    url: "https://brainbooming.com/prompt-generator",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app/prompt-generator",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
@@ -50,13 +50,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Prompt Generator - Brain Booming",
+    title: "Free AI Prompt Generator - BrainBoomingAI",
     description:
       "Generate creative and engaging prompts for any purpose with our AI-powered prompt generator.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/prompt-generator",
+    canonical: "https://brainboomingai.vercel.app/prompt-generator",
   },
 };
 

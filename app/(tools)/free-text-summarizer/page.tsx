@@ -3,7 +3,7 @@ import TextSummarizerTool from "./TextSummarizerTool";
 
 export const metadata: Metadata = {
   title:
-    "Free AI Text Summarizer - Summarize Long Content Instantly | Brain Booming",
+    "Free AI Text Summarizer - Summarize Long Content Instantly | BrainBoomingAI",
   description:
     "Summarize long articles, documents, and content instantly with our free AI text summarizer. Extract key points and create concise summaries in seconds.",
   keywords: [
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     "text condensing tool",
     "content compression",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -34,11 +34,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Free AI Text Summarizer - Instant Content Summarization | Brain Booming",
+      "Free AI Text Summarizer - Instant Content Summarization | BrainBoomingAI",
     description:
       "Summarize long articles, documents, and content instantly with our free AI text summarizer. Extract key points efficiently.",
-    url: "https://brainbooming.com/free-text-summarizer",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app/free-text-summarizer",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
@@ -51,13 +51,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI Text Summarizer - Brain Booming",
+    title: "Free AI Text Summarizer - BrainBoomingAI",
     description:
       "Summarize long articles, documents, and content instantly with our free AI text summarizer.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/free-text-summarizer",
+    canonical: "https://brainboomingai.vercel.app/free-text-summarizer",
   },
 };
 

@@ -3,7 +3,7 @@ import GrammarCheckerTool from "./GrammarCheckerTool";
 
 export const metadata: Metadata = {
   title:
-    "Free Grammar Checker - AI-Powered Grammar & Spell Check Tool | Brain Booming",
+    "Free Grammar Checker - AI-Powered Grammar & Spell Check Tool | BrainBoomingAI",
   description:
     "Check grammar, spelling, and punctuation errors instantly with our free AI-powered grammar checker. Improve your writing with intelligent suggestions and corrections.",
   keywords: [
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     "writing assistant",
     "proofreading tool",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -33,11 +33,11 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Free Grammar Checker - AI-Powered Writing Tool | Brain Booming",
+    title: "Free Grammar Checker - AI-Powered Writing Tool | BrainBoomingAI",
     description:
       "Check grammar, spelling, and punctuation errors instantly with our free AI-powered grammar checker. Perfect your writing with intelligent corrections.",
-    url: "https://brainbooming.com/free-grammar-checker",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app/free-grammar-checker",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
@@ -50,13 +50,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free Grammar Checker - AI-Powered Writing Tool | Brain Booming",
+    title: "Free Grammar Checker - AI-Powered Writing Tool | BrainBoomingAI",
     description:
       "Check grammar, spelling, and punctuation errors instantly with our free AI-powered grammar checker.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/free-grammar-checker",
+    canonical: "https://brainboomingai.vercel.app/free-grammar-checker",
   },
 };
 

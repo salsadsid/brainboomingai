@@ -123,7 +123,11 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="space-y-4">
           <div className="relative">
+            <label htmlFor="tool-input" className="sr-only">
+              {config.placeholder}
+            </label>
             <AutosizeTextarea
+              id="tool-input"
               ref={textareaRef}
               value={input}
               onChange={(e) => {
@@ -134,6 +138,8 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
               minHeight={180}
               maxHeight={400}
               maxLength={MAX_INPUT_LENGTH}
+              aria-describedby={error ? "tool-input-error" : undefined}
+              aria-invalid={error ? true : undefined}
               className={`w-full ring-2 ring-slate-200 dark:ring-slate-600 ${config.focusRingColor}
                  rounded-xl p-4 text-base text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-900
                  shadow-sm border-0 resize-none transition-all duration-200
@@ -163,8 +169,12 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
           )}
 
           {error && (
-            <div className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
-              <FileWarning className="w-4 h-4" />
+            <div
+              id="tool-input-error"
+              role="alert"
+              className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800"
+            >
+              <FileWarning className="w-4 h-4" aria-hidden="true" />
               {error}
             </div>
           )}
@@ -208,13 +218,14 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         </div>
 
         {isLoading && (
-          <div className="space-y-4 animate-pulse">
+          <div role="status" aria-label="Processing your text" className="space-y-4 animate-pulse">
             <Skeleton className="h-4 w-40 bg-slate-200 dark:bg-slate-700 rounded-lg" />
             <Skeleton className="h-40 w-full bg-slate-200 dark:bg-slate-700 rounded-xl" />
+            <span className="sr-only">{config.loadingLabel}</span>
           </div>
         )}
 
-        <div className="space-y-6">
+        <div aria-live="polite" className="space-y-6">
           {outputs.map((output) => (
             <motion.div
               key={output.id}
@@ -240,13 +251,14 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
                   onClick={() => copyToClipboard(output.content, output.id)}
                   size="sm"
                   variant="ghost"
+                  aria-label={copiedId === output.id ? "Copied to clipboard" : "Copy result to clipboard"}
                   className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200
                     hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
                 >
                   {copiedId === output.id ? (
-                    <ClipboardCheck className="w-4 h-4 text-green-600" />
+                    <ClipboardCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
                   ) : (
-                    <Clipboard className="w-4 h-4" />
+                    <Clipboard className="w-4 h-4" aria-hidden="true" />
                   )}
                 </Button>
               </div>

@@ -3,7 +3,7 @@ import AiToHumanConverter from "./AiToHumanConverter";
 
 export const metadata: Metadata = {
   title:
-    "Free AI to Human Text Converter - Transform AI Content to Natural Text | Brain Booming",
+    "Free AI to Human Text Converter - Transform AI Content to Natural Text | BrainBoomingAI",
   description:
     "Convert AI-generated text into natural, human-like content instantly. Free AI to human text converter with advanced algorithms. No registration required.",
   keywords: [
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     "text humanization",
     "AI writing assistant",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -31,11 +31,11 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Free AI to Human Text Converter - Brain Booming",
+    title: "Free AI to Human Text Converter - BrainBoomingAI",
     description:
       "Transform AI-generated content into natural, human-like text instantly. Free, fast, and accurate AI to human text conversion.",
-    url: "https://brainbooming.com/free-ai-to-human",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app/free-ai-to-human",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
@@ -48,13 +48,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free AI to Human Text Converter - Brain Booming",
+    title: "Free AI to Human Text Converter - BrainBoomingAI",
     description:
       "Transform AI-generated content into natural, human-like text instantly.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/free-ai-to-human",
+    canonical: "https://brainboomingai.vercel.app/free-ai-to-human",
   },
 };
 

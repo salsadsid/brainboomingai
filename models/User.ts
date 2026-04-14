@@ -25,6 +25,9 @@ const UserSchema = new Schema<IUser>(
   { timestamps: true }
 );
 
+// Index: admin list sorted by newest, countDocuments by date range
+UserSchema.index({ createdAt: -1 });
+
 const User =
   mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
 
