@@ -1,6 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock external dependencies before importing the route
+vi.mock("@/auth", () => ({
+  auth: vi.fn().mockResolvedValue(null),
+}));
+
 vi.mock("@/lib/mongoose", () => ({
   default: vi.fn(),
 }));
@@ -16,6 +20,20 @@ vi.mock("@/lib/googleAIService", () => ({
 vi.mock("@/models/GeneratedResponse", () => ({
   default: {
     create: vi.fn(),
+  },
+}));
+
+vi.mock("@/models/UserActivity", () => ({
+  default: {
+    create: vi.fn(),
+  },
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logger: {
+    error: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
   },
 }));
 
@@ -43,7 +61,7 @@ describe("POST /api/generate", () => {
   it("returns 429 when rate limited", async () => {
     vi.mocked(rateLimit).mockResolvedValue({ success: false });
 
-    const res = await POST(jsonRequest({ prompt: "test", tool: "test" }));
+    const res = await POST(jsonRequest({ prompt: "test", tool: "free-ai-to-human" }));
     expect(res.status).toBe(429);
 
     const data = await res.json();
@@ -53,7 +71,7 @@ describe("POST /api/generate", () => {
   it("returns 400 when prompt is missing", async () => {
     vi.mocked(rateLimit).mockResolvedValue({ success: true });
 
-    const res = await POST(jsonRequest({ tool: "test" }));
+    const res = await POST(jsonRequest({ tool: "free-ai-to-human" }));
     expect(res.status).toBe(400);
 
     const data = await res.json();
@@ -63,7 +81,7 @@ describe("POST /api/generate", () => {
   it("returns 400 when prompt is not a string", async () => {
     vi.mocked(rateLimit).mockResolvedValue({ success: true });
 
-    const res = await POST(jsonRequest({ prompt: 123, tool: "test" }));
+    const res = await POST(jsonRequest({ prompt: 123, tool: "free-ai-to-human" }));
     expect(res.status).toBe(400);
   });
 
@@ -78,7 +96,7 @@ describe("POST /api/generate", () => {
     } as never);
 
     const res = await POST(
-      jsonRequest({ prompt: "say hello", tool: "test-tool" }),
+      jsonRequest({ prompt: "say hello", tool: "free-grammar-checker" }),
     );
     expect(res.status).toBe(201);
 
@@ -91,7 +109,7 @@ describe("POST /api/generate", () => {
     vi.mocked(generateResponse).mockRejectedValue(new Error("API down"));
 
     const res = await POST(
-      jsonRequest({ prompt: "say hello", tool: "test-tool" }),
+      jsonRequest({ prompt: "say hello", tool: "free-grammar-checker" }),
     );
     expect(res.status).toBe(500);
 

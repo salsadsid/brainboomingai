@@ -15,7 +15,7 @@ describe("POST /api/md5", () => {
     expect(res.status).toBe(400);
 
     const data = await res.json();
-    expect(data.error).toBe("Text is required");
+    expect(data.error).toBe("Text is required and must be a string.");
   });
 
   it("returns correct MD5 hash for known input", async () => {
