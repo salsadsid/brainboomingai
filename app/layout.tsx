@@ -20,6 +20,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://brainboomingai.vercel.app"),
   title: "🧠 BrainBoomingAI - Free AI Tools for Content Creation",
   description:
     "Discover powerful free AI tools for writing, content creation, and productivity. Transform your workflow with our AI-powered grammar checker, text converter, and more.",

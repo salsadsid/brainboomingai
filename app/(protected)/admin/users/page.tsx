@@ -5,8 +5,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import ToggleActiveButton from "./ToggleActiveButton";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Manage Users - Admin - Brain Booming",
+  title: "Manage Users - Admin - BrainBoomingAI",
 };
 
 export default async function AdminUsersPage() {

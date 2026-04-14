@@ -36,7 +36,7 @@ export const useAutosizeTextArea = ({
 
       textAreaElement.style.height = `${newHeight}px`;
     });
-  }, [triggerAutoSize]);
+  }, [triggerAutoSize, textAreaRef, maxHeight, minHeight]);
 };
 
 export type AutosizeTextAreaRef = {

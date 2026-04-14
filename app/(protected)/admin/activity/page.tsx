@@ -3,8 +3,10 @@ import UserActivity from "@/models/UserActivity";
 import { Activity } from "lucide-react";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Activity Feed - Admin - Brain Booming",
+  title: "Activity Feed - Admin - BrainBoomingAI",
 };
 
 export default async function AdminActivityPage() {

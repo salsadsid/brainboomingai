@@ -5,8 +5,10 @@ import UserActivity from "@/models/UserActivity";
 import { Activity, BarChart3, Users, Wrench } from "lucide-react";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
-  title: "Admin - Brain Booming",
+  title: "Admin - BrainBoomingAI",
 };
 
 export default async function AdminOverviewPage() {
