@@ -19,7 +19,7 @@ Elevate this app from “works” to “interview standout” by hardening secur
 - [lib/mongoose.ts](lib/mongoose.ts) — connection resilience and error propagation
 - [redux/api/promptApi.tsx](redux/api/promptApi.tsx) — client API consistency and error mapping
 - [config/constants.ts](config/constants.ts) — tool metadata normalization
-- [app/(tools)/free-grammer-checker/GrammarCheckerTool.tsx](app/(tools)/free-grammer-checker/GrammarCheckerTool.tsx) — template for validation + UX patterns
+- [app/(tools)/free-grammar-checker/GrammarCheckerTool.tsx](app/(tools)/free-grammar-checker/GrammarCheckerTool.tsx) — template for validation + UX patterns
 - [components/ui/](components/ui/) — shared form patterns
 - [next.config.ts](next.config.ts) — env exposure audit
 

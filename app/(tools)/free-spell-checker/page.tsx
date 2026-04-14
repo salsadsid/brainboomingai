@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       "Free AI Spell Checker - Fix Spelling Mistakes Instantly | BrainBoomingAI",
     description:
       "Free online AI spell checker tool. Detect and correct spelling mistakes, typos, and errors instantly. Advanced context-aware spell checking for perfect writing.",
-    url: "https://brainboomingai.com/free-spell-checker",
+    url: "https://brainboomingai.vercel.app/free-spell-checker",
     siteName: "BrainBoomingAI",
     locale: "en_US",
     type: "website",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     site: "@brainboomingai",
   },
   alternates: {
-    canonical: "https://brainboomingai.com/free-spell-checker",
+    canonical: "https://brainboomingai.vercel.app/free-spell-checker",
   },
   category: "AI Tools",
   classification: "Writing Tools",

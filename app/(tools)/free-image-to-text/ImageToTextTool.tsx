@@ -1,8 +1,9 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerateResponseMutation } from "@/redux/api/promptApi";
+import { useGenerate } from "@/hooks/useGenerate";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { motion } from "framer-motion";
@@ -16,7 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { ImageUploader } from "./components/ImageUploader";
 import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { free_image_to_text_prompt } from "./prompt";
@@ -26,7 +27,7 @@ export default function ImageToTextTool() {
   const [response, setResponse] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<boolean>(false);
-  const [generateResponse, { isLoading }] = useGenerateResponseMutation();
+  const [generateResponse, { isLoading }] = useGenerate();
 
   useEffect(() => {
     if (imageToText) {
@@ -38,11 +39,11 @@ export default function ImageToTextTool() {
           const result = await generateResponse({
             prompt: modifiedPrompt,
             tool: "free-image-to-text",
-          }).unwrap();
+          });
           setResponse(result ?? "No text could be extracted from the image.");
           toast.success("Text extraction complete!");
         } catch (err) {
-          console.error("Error generating response:", err);
+          logger.error("Image to text error", err);
           toast.error("Failed to extract text. Please try again.");
         } finally {
           setLoading(false);
@@ -65,15 +66,6 @@ export default function ImageToTextTool() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          className:
-            "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
-        }}
-      />
-
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
         <ImageUploader
           imageToText={imageToText}
@@ -346,10 +338,9 @@ export default function ImageToTextTool() {
                   Is my uploaded image stored or shared?
                 </h3>
                 <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  No, we prioritize your privacy. Images are processed
-                  temporarily for text extraction and are not stored on our
-                  servers or shared with third parties. Your data remains
-                  confidential.
+                  Your extracted text and prompts are stored on our servers to
+                  improve our service. We do not share your data with third
+                  parties. All processing happens over encrypted connections.
                 </p>
               </div>
             </div>

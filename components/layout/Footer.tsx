@@ -6,11 +6,11 @@ export default function Footer() {
 
   const toolsLinks = [
     { name: "AI to Human Converter", href: "/free-ai-to-human" },
-    { name: "Grammar Checker", href: "/free-grammer-checker" },
+    { name: "Grammar Checker", href: "/free-grammar-checker" },
     { name: "Prompt Generator", href: "/prompt-generator" },
     { name: "Paraphrasing Tool", href: "/free-paraphrasing-tool" },
     { name: "Text Summarizer", href: "/free-text-summarizer" },
-    { name: "Plagiarism Checker", href: "/free-plagiarism-checker" },
+    { name: "Originality Analyzer", href: "/free-originality-analyzer" },
   ];
 
   const utilityLinks = [
@@ -51,39 +51,43 @@ export default function Footer() {
                 href="https://twitter.com/brainbooming"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Follow us on Twitter"
                 className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
               >
-                <Twitter className="w-5 h-5" />
+                <Twitter className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
                 href="https://facebook.com/brainbooming"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Follow us on Facebook"
                 className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
               >
-                <Facebook className="w-5 h-5" />
+                <Facebook className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
                 href="https://linkedin.com/company/brainbooming"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Follow us on LinkedIn"
                 className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors"
               >
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
                 href="https://github.com/brainbooming"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="View our GitHub"
                 className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors"
               >
-                <Github className="w-5 h-5" />
+                <Github className="w-5 h-5" aria-hidden="true" />
               </a>
             </div>
           </div>
 
           {/* AI Writing Tools */}
-          <div>
+          <nav aria-label="AI Writing Tools">
             <h4 className="text-lg font-semibold text-white mb-4">
               AI Writing Tools
             </h4>
@@ -99,10 +103,10 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Utility Tools */}
-          <div>
+          <nav aria-label="Utility Tools">
             <h4 className="text-lg font-semibold text-white mb-4">
               Utility Tools
             </h4>
@@ -118,10 +122,10 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Company */}
-          <div>
+          <nav aria-label="Company">
             <h4 className="text-lg font-semibold text-white mb-4">Company</h4>
             <ul className="space-y-3">
               {companyLinks.map((link) => (
@@ -142,11 +146,11 @@ export default function Footer() {
                 href="mailto:hello@brainbooming.com"
                 className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
-                <Mail className="w-4 h-4" />
+                <Mail className="w-4 h-4" aria-hidden="true" />
                 hello@brainbooming.com
               </a>
             </div>
-          </div>
+          </nav>
         </div>
 
         {/* Newsletter Signup */}
@@ -159,9 +163,14 @@ export default function Footer() {
               Get notified about new tools and features. No spam, ever.
             </p>
             <form className="flex gap-2">
+              <label htmlFor="newsletter-email" className="sr-only">
+                Email address
+              </label>
               <input
+                id="newsletter-email"
                 type="email"
                 placeholder="Enter your email"
+                autoComplete="email"
                 className="flex-1 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
@@ -178,7 +187,7 @@ export default function Footer() {
         <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <div className="flex items-center gap-2 text-slate-400 mb-4 md:mb-0">
             <span>© {currentYear} Brain Booming. Made with</span>
-            <Heart className="w-4 h-4 text-red-500 fill-current" />
+            <Heart className="w-4 h-4 text-red-500 fill-current" aria-hidden="true" />
             <span>for creators worldwide.</span>
           </div>
 

@@ -3,7 +3,7 @@ import ParaphrasingTool from "./ParaphrasingTool";
 
 export const metadata: Metadata = {
   title:
-    "Free Paraphrasing Tool - Rewrite Text & Avoid Plagiarism | Brain Booming",
+    "Free Paraphrasing Tool - Rewrite Text & Avoid Plagiarism | BrainBoomingAI",
   description:
     "Paraphrase and rewrite text instantly with our free AI-powered paraphrasing tool. Create unique content while maintaining original meaning. 100% free and secure.",
   keywords: [
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
     "article rewriter",
     "sentence rephraser",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -34,11 +34,11 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Free Paraphrasing Tool - Rewrite Text & Avoid Plagiarism | Brain Booming",
+      "Free Paraphrasing Tool - Rewrite Text & Avoid Plagiarism | BrainBoomingAI",
     description:
       "Paraphrase and rewrite text instantly with our free AI-powered paraphrasing tool. Create unique content while maintaining original meaning.",
-    url: "https://brainbooming.com/free-paraphrasing-tool",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app/free-paraphrasing-tool",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
@@ -51,13 +51,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free Paraphrasing Tool - Brain Booming",
+    title: "Free Paraphrasing Tool - BrainBoomingAI",
     description:
       "Paraphrase and rewrite text instantly with our free AI-powered paraphrasing tool.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com/free-paraphrasing-tool",
+    canonical: "https://brainboomingai.vercel.app/free-paraphrasing-tool",
   },
 };
 

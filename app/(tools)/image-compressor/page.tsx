@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       "Free Online Image Compressor - Reduce Image File Size | BrainBoomingAI",
     description:
       "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly.",
-    url: "https://brainboomingai.com/image-compressor",
+    url: "https://brainboomingai.vercel.app/image-compressor",
     siteName: "BrainBoomingAI",
     locale: "en_US",
     type: "website",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     site: "@brainboomingai",
   },
   alternates: {
-    canonical: "https://brainboomingai.com/image-compressor",
+    canonical: "https://brainboomingai.vercel.app/image-compressor",
   },
   category: "Utility Tools",
   classification: "Image Tools",

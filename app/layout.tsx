@@ -1,7 +1,7 @@
+import SessionProvider from "@/components/auth/SessionProvider";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Providers } from "@/redux/provider";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
@@ -20,7 +20,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "🧠 Brain Booming - Free AI Tools for Content Creation",
+  metadataBase: new URL("https://brainboomingai.vercel.app"),
+  title: "🧠 BrainBoomingAI - Free AI Tools for Content Creation",
   description:
     "Discover powerful free AI tools for writing, content creation, and productivity. Transform your workflow with our AI-powered grammar checker, text converter, and more.",
   keywords: [
@@ -33,9 +34,9 @@ export const metadata: Metadata = {
     "text converter",
     "AI writing assistant",
   ],
-  authors: [{ name: "Brain Booming" }],
-  creator: "Brain Booming",
-  publisher: "Brain Booming",
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
   robots: {
     index: true,
     follow: true,
@@ -48,30 +49,30 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "🧠 Brain Booming - Free AI Tools for Content Creation",
+    title: "🧠 BrainBoomingAI - Free AI Tools for Content Creation",
     description:
       "Discover powerful free AI tools for writing, content creation, and productivity. Transform your workflow with our AI-powered tools.",
-    url: "https://brainbooming.com",
-    siteName: "Brain Booming",
+    url: "https://brainboomingai.vercel.app",
+    siteName: "BrainBoomingAI",
     type: "website",
     images: [
       {
         url: "/aitools.png",
         width: 1200,
         height: 630,
-        alt: "Brain Booming - Free AI Tools",
+        alt: "BrainBoomingAI - Free AI Tools",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "🧠 Brain Booming - Free AI Tools",
+    title: "🧠 BrainBoomingAI - Free AI Tools",
     description:
       "Discover powerful free AI tools for writing, content creation, and productivity.",
     images: ["/aitools.png"],
   },
   alternates: {
-    canonical: "https://brainbooming.com",
+    canonical: "https://brainboomingai.vercel.app",
   },
 };
 
@@ -85,21 +86,31 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers>
+        <SessionProvider>
           <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Toaster position="top-center" />
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="relative flex-1">{children}</main>
-              <Footer />
-            </div>
-          </ThemeProvider>
-        </Providers>
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Toaster
+                position="top-center"
+                toastOptions={{
+                  duration: 3000,
+                  className:
+                    "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
+                }}
+              />
+              <div className="flex flex-col min-h-screen">
+                <a href="#main-content" className="skip-to-content">
+                  Skip to main content
+                </a>
+                <Navbar />
+                <main id="main-content" className="relative flex-1">{children}</main>
+                <Footer />
+              </div>
+            </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

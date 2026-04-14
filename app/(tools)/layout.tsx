@@ -23,7 +23,7 @@ const toolsData = {
     bgGradient:
       "from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30",
   },
-  "/free-grammer-checker": {
+  "/free-grammar-checker": {
     title: "Grammar Checker",
     description: "Check and improve your text for grammar errors",
     icon: "📝",
@@ -63,9 +63,9 @@ const toolsData = {
     bgGradient:
       "from-teal-50 to-cyan-50 dark:from-teal-950/30 dark:to-cyan-950/30",
   },
-  "/free-plagiarism-checker": {
-    title: "Plagiarism Checker",
-    description: "Check your content for originality and plagiarism",
+  "/free-originality-analyzer": {
+    title: "Content Originality Analyzer",
+    description: "Analyze writing patterns and detect AI-generated content",
     icon: "🔍",
     gradient: "from-rose-500 to-pink-600",
     bgGradient:

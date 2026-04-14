@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
     description:
       "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
-    url: "https://brainboomingai.com/free-image-to-text",
+    url: "https://brainboomingai.vercel.app/free-image-to-text",
     siteName: "BrainBoomingAI",
     locale: "en_US",
     type: "website",
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     site: "@brainboomingai",
   },
   alternates: {
-    canonical: "https://brainboomingai.com/free-image-to-text",
+    canonical: "https://brainboomingai.vercel.app/free-image-to-text",
   },
   category: "AI Tools",
   classification: "OCR Tools",

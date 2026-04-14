@@ -18,12 +18,28 @@ export const metadata: Metadata = {
     "online hash converter",
     "digital signature",
   ],
+  authors: [{ name: "BrainBoomingAI" }],
+  creator: "BrainBoomingAI",
+  publisher: "BrainBoomingAI",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   openGraph: {
     title: "Free MD5 Hash Generator - Secure Text to MD5 Converter",
     description:
       "Generate MD5 hashes instantly with our free online tool. Perfect for data integrity verification, checksums, and digital signatures.",
     type: "website",
-    url: "https://brainboomingai.com/md5-generator",
+    url: "https://brainboomingai.vercel.app/md5-generator",
+    siteName: "BrainBoomingAI",
+    locale: "en_US",
     images: [
       {
         url: "/api/og?title=MD5%20Hash%20Generator&description=Generate%20MD5%20hashes%20instantly",
@@ -43,7 +59,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "https://brainboomingai.com/md5-generator",
+    canonical: "https://brainboomingai.vercel.app/md5-generator",
   },
 };
 

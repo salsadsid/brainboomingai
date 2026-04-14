@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
@@ -20,7 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import { FormEvent, useCallback, useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import { z } from "zod";
 
 const MAX_INPUT_LENGTH = 10000;
@@ -33,66 +34,65 @@ const schema = z.object({
 
 export default function MD5GeneratorTool() {
   const [input, setInput] = useState("");
-  const [hashes, setHashes] = useState<string[]>([]);
-  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [hashes, setHashes] = useState<{ id: string; hash: string }[]>([]);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const textareaRef = useRef<AutosizeTextAreaRef>(null);
 
+  const generateHash = useCallback(async () => {
+    setError(null);
+    try {
+      const validation = schema.safeParse({ content: input });
+      if (!validation.success) {
+        validation.error.issues.forEach((issue) => {
+          setError(issue.message);
+          if (issue.message === "Input cannot be empty") {
+            textareaRef.current?.textArea.focus();
+          }
+        });
+        return;
+      }
+
+      setLoading(true);
+      const response = await fetch("/api/md5", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: input }),
+      });
+
+      const data = await response.json();
+      if (data.md5) {
+        setHashes((prev) => [{ id: crypto.randomUUID(), hash: data.md5 }, ...prev]);
+        toast.success("MD5 hash generated successfully!");
+      } else {
+        throw new Error("Failed to generate MD5 hash");
+      }
+    } catch (err) {
+      logger.error("MD5 generation error", err);
+      toast.error("Failed to generate MD5 hash. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, [input]);
+
   const handleSubmit = useCallback(
     async (e: FormEvent) => {
       e.preventDefault();
-      setError(null);
-      try {
-        const validation = schema.safeParse({ content: input });
-        if (!validation.success) {
-          validation.error.issues.forEach((issue) => {
-            setError(issue.message);
-            if (issue.message === "Input cannot be empty") {
-              textareaRef.current?.textArea.focus();
-            }
-          });
-          return;
-        }
-
-        setLoading(true);
-        const response = await fetch("/api/md5", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ text: input }),
-        });
-
-        const data = await response.json();
-        if (data.md5) {
-          setHashes((prev) => [data.md5, ...prev]);
-          toast.success("MD5 hash generated successfully!");
-        } else {
-          throw new Error("Failed to generate MD5 hash");
-        }
-      } catch (err) {
-        console.error("MD5 generation error:", err);
-        toast.error("Failed to generate MD5 hash. Please try again.");
-      } finally {
-        setLoading(false);
-      }
+      await generateHash();
     },
-    [input]
+    [generateHash]
   );
 
-  const copyToClipboard = async (hash: string, index: number) => {
+  const copyToClipboard = async (hash: string, id: string) => {
     try {
       await navigator.clipboard.writeText(hash);
-      setCopiedIndex(index);
+      setCopiedId(id);
       toast.success("MD5 hash copied to clipboard!");
-      setTimeout(() => setCopiedIndex(null), 2000);
+      setTimeout(() => setCopiedId(null), 2000);
     } catch (err) {
       toast.error("Failed to copy hash");
     }
-  };
-
-  const generateAnother = async () => {
-    if (!input) return;
-    await handleSubmit(new Event("submit") as unknown as FormEvent);
   };
 
   const inputStats = `${wordCount(input)} words · ${characterCount(
@@ -103,15 +103,6 @@ export default function MD5GeneratorTool() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          className:
-            "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
-        }}
-      />
-
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
         <form onSubmit={handleSubmit} className="space-y-8">
           <div className="space-y-4">
@@ -187,7 +178,7 @@ export default function MD5GeneratorTool() {
             {hashes.length > 0 && (
               <Button
                 type="button"
-                onClick={generateAnother}
+                onClick={generateHash}
                 variant="outline"
                 disabled={loading}
                 className="sm:w-auto bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 
@@ -208,13 +199,12 @@ export default function MD5GeneratorTool() {
           )}
 
           <div className="space-y-6">
-            {hashes.map((hash, index) => (
+            {hashes.map((item) => (
               <motion.div
-                key={index}
+                key={item.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 
+                className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900
                   rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50"
               >
                 <div className="flex justify-between items-center mb-4">
@@ -227,13 +217,13 @@ export default function MD5GeneratorTool() {
                     </span>
                   </div>
                   <Button
-                    onClick={() => copyToClipboard(hash, index)}
+                    onClick={() => copyToClipboard(item.hash, item.id)}
                     size="sm"
                     variant="ghost"
-                    className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 
+                    className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200
                       hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
                   >
-                    {copiedIndex === index ? (
+                    {copiedId === item.id ? (
                       <ClipboardCheck className="w-4 h-4 text-green-600" />
                     ) : (
                       <Clipboard className="w-4 h-4" />
@@ -242,7 +232,7 @@ export default function MD5GeneratorTool() {
                 </div>
                 <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
                   <code className="text-slate-800 dark:text-slate-200 font-mono text-sm break-all">
-                    {hash}
+                    {item.hash}
                   </code>
                 </div>
               </motion.div>

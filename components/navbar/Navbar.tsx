@@ -1,5 +1,6 @@
 "use client";
 
+import UserMenu from "@/components/auth/UserMenu";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { aiTools } from "@/config/constants";
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -58,9 +60,10 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-1">
+          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
             <Link
               href="/"
+              aria-current={isActive("/") ? "page" : undefined}
               className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive("/")
                   ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/25"
@@ -78,6 +81,7 @@ export default function Navbar() {
               <Link
                 key={tool.href}
                 href={tool.href}
+                aria-current={isActive(tool.href) ? "page" : undefined}
                 className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive(tool.href)
                     ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/25"
@@ -93,20 +97,43 @@ export default function Navbar() {
             ))}
 
             {aiTools.length > 6 && (
-              <div className="relative group">
+              <div
+                className="relative"
+                onMouseEnter={() => setIsMoreOpen(true)}
+                onMouseLeave={() => setIsMoreOpen(false)}
+              >
                 <Button
                   variant="ghost"
+                  aria-expanded={isMoreOpen}
+                  aria-haspopup="true"
+                  onClick={() => setIsMoreOpen((prev) => !prev)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Escape") setIsMoreOpen(false);
+                  }}
                   className="px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl"
                 >
                   More
-                  <ChevronDown className="w-4 h-4 ml-1 transition-transform group-hover:rotate-180" />
+                  <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMoreOpen ? "rotate-180" : ""}`} aria-hidden="true" />
                 </Button>
 
-                <div className="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform group-hover:translate-y-0 translate-y-2">
+                <div
+                  role="menu"
+                  className={`absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 transition-all duration-200 ${
+                    isMoreOpen
+                      ? "opacity-100 visible translate-y-0"
+                      : "opacity-0 invisible translate-y-2"
+                  }`}
+                >
                   {aiTools.slice(6).map((tool) => (
                     <Link
                       key={tool.href}
                       href={tool.href}
+                      role="menuitem"
+                      aria-current={isActive(tool.href) ? "page" : undefined}
+                      onClick={() => setIsMoreOpen(false)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Escape") setIsMoreOpen(false);
+                      }}
                       className={`block px-4 py-3 text-sm font-medium transition-colors ${
                         isActive(tool.href)
                           ? "text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-900/20"
@@ -122,7 +149,10 @@ export default function Navbar() {
             )}
           </nav>
 
-          {/* Mobile Menu Button */}
+          {/* Auth + Mobile Menu */}
+          <div className="flex items-center gap-3">
+            <UserMenu />
+
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button
@@ -162,16 +192,18 @@ export default function Navbar() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  aria-label="Close navigation menu"
                   className="w-8 h-8 rounded-lg"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
 
-              <div className="py-6 space-y-2">
+              <nav aria-label="Mobile navigation" className="py-6 space-y-2">
                 <Link
                   href="/"
                   onClick={() => setIsMobileMenuOpen(false)}
+                  aria-current={isActive("/") ? "page" : undefined}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                     isActive("/")
                       ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
@@ -179,7 +211,7 @@ export default function Navbar() {
                   }`}
                   prefetch={false}
                 >
-                  <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center" aria-hidden="true">
                     <span className="text-xs">🏠</span>
                   </div>
                   Home
@@ -190,6 +222,7 @@ export default function Navbar() {
                     key={tool.href}
                     href={tool.href}
                     onClick={() => setIsMobileMenuOpen(false)}
+                    aria-current={isActive(tool.href) ? "page" : undefined}
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
                       isActive(tool.href)
                         ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
@@ -197,13 +230,13 @@ export default function Navbar() {
                     }`}
                     prefetch={false}
                   >
-                    <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center" aria-hidden="true">
                       <span className="text-xs">🤖</span>
                     </div>
                     {tool.shortTitle}
                   </Link>
                 ))}
-              </div>
+              </nav>
 
               <div className="absolute bottom-4 left-4 right-4">
                 <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-indigo-200 dark:border-indigo-800">
@@ -217,6 +250,7 @@ export default function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
+          </div>
         </div>
       </div>
     </header>

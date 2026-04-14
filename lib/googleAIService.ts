@@ -1,42 +1,34 @@
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import type { AIMessage } from "@langchain/core/messages";
-import type { MessageContentComplex } from "@langchain/core/messages";
+import { GoogleGenAI } from "@google/genai";
 
-let model: ChatGoogleGenerativeAI | null = null;
+let client: GoogleGenAI | null = null;
 
-function getModel(): ChatGoogleGenerativeAI {
-  if (model) return model;
+function getClient(): GoogleGenAI {
+  if (client) return client;
   const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) {
     throw new Error("API key for Google GenerativeAI is not set.");
   }
-  model = new ChatGoogleGenerativeAI({
-    model: "gemini-2.5-flash-lite",
-    maxOutputTokens: 2048,
-    apiKey,
-  });
-  return model;
+  client = new GoogleGenAI({ apiKey });
+  return client;
 }
 
 export async function generateResponse(
-  prompt: string
-): Promise<{ response: string; responseRaw: AIMessage }> {
-  const response = await getModel().invoke(prompt);
+  prompt: string,
+): Promise<{ response: string; responseRaw: Record<string, unknown> }> {
+  const result = await getClient().models.generateContent({
+    model: "gemini-2.5-flash-lite",
+    contents: prompt,
+    config: { maxOutputTokens: 2048 },
+  });
 
-  // If content is an array, handle it accordingly
-  if (Array.isArray(response.content)) {
-    const combinedContent = response.content
-      .map((msg: MessageContentComplex) => ("text" in msg ? msg.text : ""))
-      .join(" ");
-    if (!combinedContent.trim()) {
-      throw new Error("No valid content returned from the API.");
-    }
-    return { response: combinedContent.trim(), responseRaw: response };
-  }
+  const text = result.text;
 
-  if (!response?.content || typeof response.content !== "string") {
+  if (!text?.trim()) {
     throw new Error("No valid content returned from the API.");
   }
 
-  return { response: response.content, responseRaw: response };
+  return {
+    response: text.trim(),
+    responseRaw: result as unknown as Record<string, unknown>,
+  };
 }

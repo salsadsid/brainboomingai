@@ -14,7 +14,7 @@ import imageCompression from "browser-image-compression";
 import { motion } from "framer-motion";
 import { Archive, Download, FileImage, HelpCircle, Zap } from "lucide-react";
 import { useRef, useState } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function ImageCompressorTool() {
   const [originalImage, setOriginalImage] = useState<File | null>(null);
@@ -91,15 +91,6 @@ export default function ImageCompressorTool() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <Toaster
-        position="top-center"
-        toastOptions={{
-          duration: 3000,
-          className:
-            "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
-        }}
-      />
-
       <Card className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 rounded-2xl p-6 md:p-8">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white flex items-center justify-center gap-3">

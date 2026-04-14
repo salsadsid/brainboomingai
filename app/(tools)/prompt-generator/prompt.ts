@@ -1,4 +1,4 @@
-
+import { logger } from "@/lib/logger";
 import { generateResponse } from "@/lib/googleAIService";
 import getRandomAIWord from "@/utils/aiWords";
 
@@ -12,7 +12,7 @@ export async function generatePrompt(input: string): Promise<string> {
     if (!response) return "Could not generate a prompt. Please try again.";
     return response.response;
   } catch (error) {
-    console.error("Error in prompt generation:", error);
+    logger.error("Prompt generation error", error);
     throw new Error("Failed to generate prompt");
   }
 }
