@@ -6,14 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { toolIcons, type ToolIconName } from "@/config/toolIcons";
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 
 interface Tool {
   title: string;
   href: string;
-  featuresImg: string;
+  icon: ToolIconName;
   description?: string;
 }
 
@@ -34,18 +34,14 @@ const cardVariants = {
 };
 
 function ToolCard({ tool }: { tool: Tool }) {
+  const Icon = toolIcons[tool.icon];
   return (
     <motion.div variants={cardVariants} className="h-full">
       <Link href={tool.href} className="group relative block h-full">
         <Card className="h-full transition-all duration-500 hover:border-blue-400/50 hover:shadow-2xl hover:shadow-blue-500/10 dark:bg-slate-800/90 dark:border-slate-700 dark:hover:border-blue-500/50 dark:hover:shadow-blue-500/20 backdrop-blur-sm border-2 border-gray-200/50 flex flex-col">
           <CardHeader className="flex flex-col items-center gap-6 p-6 flex-grow">
-            <div className="relative w-16 h-16 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-              <Image
-                src={tool.featuresImg}
-                fill
-                className="object-contain dark:invert-[0.1]"
-                alt={tool.title}
-              />
+            <div className="flex items-center justify-center w-16 h-16 p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+              <Icon className="w-8 h-8" strokeWidth={1.75} aria-hidden="true" />
             </div>
             <div className="text-center space-y-3 flex-grow flex flex-col justify-center">
               <CardTitle className="text-lg font-bold dark:text-slate-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">

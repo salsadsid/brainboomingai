@@ -4,12 +4,15 @@ import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend";
+import Nodemailer from "next-auth/providers/nodemailer";
 
 import authConfig from "@/auth.config";
 import clientPromise from "@/lib/mongodb-client";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
+
+// SMTP port: 465 uses implicit TLS, 587 uses STARTTLS.
+const emailPort = Number(process.env.EMAIL_SERVER_PORT ?? 465);
 
 const config: NextAuthConfig = {
   ...authConfig,
@@ -17,8 +20,17 @@ const config: NextAuthConfig = {
   session: { strategy: "jwt" },
   providers: [
     Google,
-    Resend({
-      from: process.env.AUTH_EMAIL_FROM ?? "noreply@brainbooming.com",
+    Nodemailer({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST ?? "smtp.gmail.com",
+        port: emailPort,
+        secure: emailPort === 465,
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
+      from: process.env.EMAIL_FROM,
     }),
     Credentials({
       credentials: {
