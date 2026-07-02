@@ -4,9 +4,9 @@ import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import Resend from "next-auth/providers/resend";
 
 import authConfig from "@/auth.config";
+import Brevo from "@/lib/email/brevo-provider";
 import clientPromise from "@/lib/mongodb-client";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
@@ -17,8 +17,10 @@ const config: NextAuthConfig = {
   session: { strategy: "jwt" },
   providers: [
     Google,
-    Resend({
-      from: process.env.AUTH_EMAIL_FROM ?? "noreply@brainbooming.com",
+    Brevo({
+      apiKey: process.env.BREVO_API_KEY ?? "",
+      from: process.env.EMAIL_FROM ?? "",
+      fromName: process.env.EMAIL_FROM_NAME ?? "Brain Booming",
     }),
     Credentials({
       credentials: {

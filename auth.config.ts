@@ -25,6 +25,14 @@ export default {
 
       return true;
     },
+    // Map custom JWT fields to the session so middleware can read them.
+    // Without this, token.role is never surfaced to req.auth.user.role.
+    session({ session, token }) {
+      if (token.role) {
+        session.user.role = token.role as "user" | "admin";
+      }
+      return session;
+    },
   },
   providers: [], // Providers are defined in auth.ts, not here
 } satisfies NextAuthConfig;

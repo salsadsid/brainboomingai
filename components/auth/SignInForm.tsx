@@ -50,7 +50,7 @@ export default function SignInForm() {
     e.preventDefault();
     setMagicLoading(true);
     try {
-      await signIn("resend", {
+      await signIn("email", {
         email: magicEmail,
         callbackUrl,
       });
