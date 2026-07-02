@@ -4,15 +4,12 @@ import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import Nodemailer from "next-auth/providers/nodemailer";
 
 import authConfig from "@/auth.config";
+import Brevo from "@/lib/email/brevo-provider";
 import clientPromise from "@/lib/mongodb-client";
 import dbConnect from "@/lib/mongoose";
 import User from "@/models/User";
-
-// SMTP port: 465 uses implicit TLS, 587 uses STARTTLS.
-const emailPort = Number(process.env.EMAIL_SERVER_PORT ?? 465);
 
 const config: NextAuthConfig = {
   ...authConfig,
@@ -20,17 +17,10 @@ const config: NextAuthConfig = {
   session: { strategy: "jwt" },
   providers: [
     Google,
-    Nodemailer({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST ?? "smtp.gmail.com",
-        port: emailPort,
-        secure: emailPort === 465,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
-        },
-      },
-      from: process.env.EMAIL_FROM,
+    Brevo({
+      apiKey: process.env.BREVO_API_KEY ?? "",
+      from: process.env.EMAIL_FROM ?? "",
+      fromName: process.env.EMAIL_FROM_NAME ?? "Brain Booming",
     }),
     Credentials({
       credentials: {
