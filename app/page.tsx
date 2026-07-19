@@ -1,7 +1,26 @@
 import AnimatedToolsGrid from "@/components/home/AnimatedToolsGrid";
 import HeroSection from "@/components/home/HeroSection";
-import { aiTools, otherTools } from "@/config/constants";
+import JsonLd from "@/components/seo/JsonLd";
+import { aiTools, allTools, otherTools } from "@/config/constants";
+import { absoluteUrl } from "@/config/site";
+import { jsonLdGraph } from "@/lib/seo";
 import { MagicWandIcon, RocketIcon } from "@radix-ui/react-icons";
+
+/**
+ * The home page is the site's hub. An ItemList naming every tool gives crawlers
+ * an explicit inventory rather than making them infer it from the grid markup.
+ */
+const toolListSchema = {
+  "@type": "ItemList",
+  name: "Free AI tools",
+  itemListElement: allTools.map((tool, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    name: tool.title,
+    description: tool.description,
+    url: absoluteUrl(tool.href),
+  })),
+};
 
 function SectionTitle({
   title,
@@ -26,6 +45,8 @@ function SectionTitle({
 export default function Home() {
   return (
     <div className="min-h-screen">
+      <JsonLd data={jsonLdGraph(toolListSchema)} />
+
       {/* Hero Section - Client Island */}
       <HeroSection />
 

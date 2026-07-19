@@ -1,83 +1,19 @@
-import type { Metadata } from "next";
+import ToolSeo from "@/components/seo/ToolSeo";
+import { toolKeywords } from "@/config/constants";
+import { buildMetadata } from "@/lib/seo";
 import SpellCheckerTool from "./SpellCheckerTool";
 
-export const metadata: Metadata = {
-  title:
-    "Free AI Spell Checker - Fix Spelling Mistakes Instantly | BrainBoomingAI",
-  description:
-    "Free online AI spell checker tool. Detect and correct spelling mistakes, typos, and errors instantly. Advanced context-aware spell checking for perfect writing. No signup required.",
-  keywords: [
-    "spell checker",
-    "spelling mistakes",
-    "typo checker",
-    "grammar checker",
-    "writing tool",
-    "proofreading",
-    "text correction",
-    "AI spell check",
-    "free spell checker",
-    "online spell checker",
-  ],
-  authors: [{ name: "BrainBoomingAI" }],
-  creator: "BrainBoomingAI",
-  publisher: "BrainBoomingAI",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  openGraph: {
-    title:
-      "Free AI Spell Checker - Fix Spelling Mistakes Instantly | BrainBoomingAI",
-    description:
-      "Free online AI spell checker tool. Detect and correct spelling mistakes, typos, and errors instantly. Advanced context-aware spell checking for perfect writing.",
-    url: "https://brainboomingai.vercel.app/free-spell-checker",
-    siteName: "BrainBoomingAI",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "/spell-checker-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "BrainBoomingAI Free Spell Checker Tool",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Free AI Spell Checker - Fix Spelling Mistakes Instantly",
-    description:
-      "Free online AI spell checker tool. Detect and correct spelling mistakes, typos, and errors instantly. Advanced context-aware spell checking.",
-    images: ["/spell-checker-twitter.jpg"],
-    creator: "@brainboomingai",
-    site: "@brainboomingai",
-  },
-  alternates: {
-    canonical: "https://brainboomingai.vercel.app/free-spell-checker",
-  },
-  category: "AI Tools",
-  classification: "Writing Tools",
-  other: {
-    "application-name": "BrainBoomingAI",
-    "mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "Spell Checker",
-    "msapplication-TileColor": "#6366f1",
-    "theme-color": "#6366f1",
-  },
-};
+export const metadata = buildMetadata({
+  title: "Free AI Spell Checker - Fix Spelling Mistakes Instantly",
+  description: "Free online AI spell checker tool. Detect and correct spelling mistakes, typos, and errors instantly. Advanced context-aware spell checking for perfect writing. No signup required.",
+  path: "/free-spell-checker",
+  keywords: toolKeywords("/free-spell-checker"),
+});
 
 export default function FreeSpellCheckerPage() {
   return (
     <>
+      <ToolSeo path="/free-spell-checker" />
       <SpellCheckerTool />
 
       {/* Bottom Content */}

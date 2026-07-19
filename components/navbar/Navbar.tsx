@@ -50,9 +50,11 @@ export default function Navbar() {
               </div>
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
+              {/* Brand wordmark, not a heading: as an <h1> it appeared on every
+                  page and competed with the real page heading. */}
+              <span className="block text-xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
                 BRAIN BOOMING
-              </h1>
+              </span>
               <p className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wider uppercase">
                 AI Tools
               </p>

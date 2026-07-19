@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { CheckCircle, Sparkles, Zap, Shield } from "lucide-react";
 import { free_ai_human_prompt } from "./prompt";
 
@@ -73,32 +74,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-blue-500 to-indigo-500",
-    question: "What is an AI to Human Text Converter?",
-    answer:
-      "An AI to Human Text Converter is a tool that transforms AI-generated content into more natural, human-like text while preserving the original meaning and context.",
-  },
-  {
-    gradient: "from-indigo-500 to-purple-500",
-    question: "Is this tool completely free?",
-    answer:
-      "Yes! Our AI to Human Text Converter is 100% free to use with no registration required. You can convert unlimited text without any restrictions.",
-  },
-  {
-    gradient: "from-purple-500 to-pink-500",
-    question: "How accurate is the conversion?",
-    answer:
-      "Our advanced AI algorithms provide highly accurate conversions, maintaining the original meaning while making the text sound more natural and human-like.",
-  },
-  {
-    gradient: "from-pink-500 to-red-500",
-    question: "What types of content can I convert?",
-    answer:
-      "You can convert any AI-generated text including articles, blog posts, emails, social media content, academic papers, and more.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-ai-to-human"];
 
 export default function AiToHumanConverter() {
   return (
@@ -110,7 +86,7 @@ export default function AiToHumanConverter() {
       <div className="max-w-6xl mx-auto space-y-16">
         <ToolFeatures title="Why Choose Our AI to Human Converter?" features={features} />
         <ToolHowItWorks title="How Our AI to Human Text Converter Works" steps={steps} />
-        <ToolFAQ title="Frequently Asked Questions" faqs={faqs} />
+        <ToolFAQ title={faqTitle} faqs={faqs} />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Activity Feed - Admin - BrainBoomingAI",
+  title: "Activity Feed — Admin",
 };
 
 export default async function AdminActivityPage() {

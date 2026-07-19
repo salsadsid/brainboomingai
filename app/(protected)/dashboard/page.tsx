@@ -8,7 +8,7 @@ import DashboardClient from "./DashboardClient";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Dashboard - BrainBoomingAI",
+  title: "Dashboard",
   description: "View your activity and usage history",
 };
 

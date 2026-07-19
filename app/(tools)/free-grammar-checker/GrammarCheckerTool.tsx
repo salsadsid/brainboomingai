@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { BookOpen, CheckCircle, Shield } from "lucide-react";
@@ -79,32 +80,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-green-500 to-emerald-500",
-    question: "What types of errors does the grammar checker detect?",
-    answer:
-      "Our AI-powered grammar checker detects and corrects spelling mistakes, grammatical errors, punctuation issues, sentence structure problems, word choice improvements, and style suggestions to enhance your writing quality.",
-  },
-  {
-    gradient: "from-emerald-500 to-teal-500",
-    question: "Is there a word limit for the grammar checker?",
-    answer:
-      "You can check up to 5,000 characters at once. For longer documents, simply break them into smaller sections and check each part separately for comprehensive grammar analysis.",
-  },
-  {
-    gradient: "from-teal-500 to-cyan-500",
-    question: "Does the tool work for different writing styles?",
-    answer:
-      "Yes! Our grammar checker adapts to various writing styles including academic papers, business documents, creative writing, emails, and casual text. It provides context-appropriate suggestions for each style.",
-  },
-  {
-    gradient: "from-cyan-500 to-blue-500",
-    question: "Can I trust the AI suggestions?",
-    answer:
-      "Our AI is trained on extensive language data and provides highly accurate suggestions. However, we recommend reviewing all suggestions as context and personal writing style preferences may influence the final decision.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-grammar-checker"];
 
 export default function GrammarCheckerTool() {
   return (
@@ -112,7 +88,7 @@ export default function GrammarCheckerTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="Advanced Grammar Checking Features" features={features} />
       <ToolHowItWorks title="How Our Grammar Checker Works" steps={steps} />
-      <ToolFAQ title="Grammar Checker FAQ" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

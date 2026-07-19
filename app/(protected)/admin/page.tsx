@@ -8,7 +8,7 @@ import type { Metadata } from "next";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Admin - BrainBoomingAI",
+  title: "Admin",
 };
 
 export default async function AdminOverviewPage() {

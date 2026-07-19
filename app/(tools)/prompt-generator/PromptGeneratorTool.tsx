@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { Shield, Sparkles, Target, Zap } from "lucide-react";
 
 const config: TextToolConfig = {
@@ -73,32 +74,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-purple-500 to-blue-500",
-    question: "What types of prompts can I generate?",
-    answer:
-      "You can generate prompts for any purpose: creative writing, academic essays, business content, social media posts, art descriptions, conversation starters, and much more. Our AI adapts to your specific needs.",
-  },
-  {
-    gradient: "from-blue-500 to-cyan-500",
-    question: "How detailed should my description be?",
-    answer:
-      "The more specific you are, the better the generated prompt will be. Include details about the topic, tone, length, audience, and purpose to get the most relevant results.",
-  },
-  {
-    gradient: "from-cyan-500 to-teal-500",
-    question: "Can I generate multiple prompts from the same description?",
-    answer:
-      'Yes! You can use the "Regenerate" button to create different variations of prompts based on the same description. Each generation will provide a unique perspective.',
-  },
-  {
-    gradient: "from-teal-500 to-green-500",
-    question: "Is there a limit to how many prompts I can generate?",
-    answer:
-      "No, there's no limit! You can generate as many prompts as you need. Our service is completely free and designed to support your creative process without restrictions.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/prompt-generator"];
 
 export default function PromptGeneratorTool() {
   return (
@@ -106,7 +82,7 @@ export default function PromptGeneratorTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="Why Choose Our AI Prompt Generator?" features={features} />
       <ToolHowItWorks title="How Our Prompt Generator Works" steps={steps} />
-      <ToolFAQ title="Frequently Asked Questions" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

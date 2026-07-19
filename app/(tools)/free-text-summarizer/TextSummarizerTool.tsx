@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { BookOpen, FileText, Zap } from "lucide-react";
@@ -77,32 +78,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-indigo-500 to-purple-500",
-    question: "What types of content can I summarize?",
-    answer:
-      "You can summarize articles, research papers, blog posts, reports, essays, news articles, and any other text content. Our AI works best with well-structured, informative text.",
-  },
-  {
-    gradient: "from-purple-500 to-pink-500",
-    question: "How long should my input text be?",
-    answer:
-      "For best results, input text should be at least 200 words long. Our tool can handle up to 5000 characters, making it perfect for most articles and documents.",
-  },
-  {
-    gradient: "from-pink-500 to-red-500",
-    question: "Can I control the summary length?",
-    answer:
-      "Our AI automatically determines the optimal summary length based on the input content. It aims to reduce the original text by 70-80% while preserving all key information.",
-  },
-  {
-    gradient: "from-red-500 to-orange-500",
-    question: "Is my content stored or shared?",
-    answer:
-      "Your prompts and generated summaries are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-text-summarizer"];
 
 export default function TextSummarizerTool() {
   return (
@@ -110,7 +86,7 @@ export default function TextSummarizerTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="Advanced Text Summarization Features" features={features} />
       <ToolHowItWorks title="How Our Text Summarizer Works" steps={steps} />
-      <ToolFAQ title="Text Summarizer FAQ" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

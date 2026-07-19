@@ -47,10 +47,10 @@ export default function HeroSection() {
             className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-8 leading-tight"
           >
             <span className="block text-slate-900 dark:text-white mb-4">
-              Elevate Your Productivity
+              Free AI Tools for Smarter Writing
             </span>
             <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent dark:from-blue-400 dark:via-purple-400 dark:to-indigo-400">
-              With Intelligent AI Tools
+              Grammar, Paraphrasing &amp; Summarizing
             </span>
           </motion.h1>
 
@@ -61,9 +61,9 @@ export default function HeroSection() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 mb-12 max-w-4xl mx-auto leading-relaxed"
           >
-            Streamline your workflow with cutting-edge AI solutions that enhance
-            creativity, automate tasks, and unlock new possibilities for content
-            creation.
+            Check grammar, paraphrase sentences, summarize articles, humanize AI
+            text and extract text from images — every tool is free, instant, and
+            works in your browser with no signup required.
           </motion.p>
 
           {/* CTA Buttons */}

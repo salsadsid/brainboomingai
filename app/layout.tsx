@@ -2,7 +2,10 @@ import SessionProvider from "@/components/auth/SessionProvider";
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import type { Metadata } from "next";
+import JsonLd from "@/components/seo/JsonLd";
+import { siteConfig, siteUrl } from "@/config/site";
+import { jsonLdGraph, organizationSchema, websiteSchema } from "@/lib/seo";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
@@ -19,24 +22,36 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+const HOME_TITLE =
+  "Free AI Writing Tools — Grammar Checker, Paraphraser & Summarizer";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://brainboomingai.vercel.app"),
-  title: "🧠 BrainBoomingAI - Free AI Tools for Content Creation",
-  description:
-    "Discover powerful free AI tools for writing, content creation, and productivity. Transform your workflow with our AI-powered grammar checker, text converter, and more.",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: HOME_TITLE,
+    // Child pages set only their own title; branding is appended here so the
+    // suffix can never drift between pages.
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
   keywords: [
-    "AI tools",
     "free AI tools",
-    "content creation",
-    "writing tools",
-    "productivity tools",
+    "AI writing tools",
     "grammar checker",
-    "text converter",
-    "AI writing assistant",
+    "paraphrasing tool",
+    "text summarizer",
+    "AI to human text converter",
+    "image to text",
+    "spell checker",
+    "AI content detector",
+    "online productivity tools",
   ],
-  authors: [{ name: "BrainBoomingAI" }],
-  creator: "BrainBoomingAI",
-  publisher: "BrainBoomingAI",
+  applicationName: siteConfig.name,
+  authors: [{ name: siteConfig.name, url: siteUrl }],
+  creator: siteConfig.name,
+  publisher: siteConfig.name,
+  category: "technology",
+  formatDetection: { telephone: false, address: false, email: false },
   robots: {
     index: true,
     follow: true,
@@ -48,32 +63,37 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  // No `images` here on purpose — app/opengraph-image.tsx generates the card.
   openGraph: {
-    title: "🧠 BrainBoomingAI - Free AI Tools for Content Creation",
-    description:
-      "Discover powerful free AI tools for writing, content creation, and productivity. Transform your workflow with our AI-powered tools.",
-    url: "https://brainboomingai.vercel.app",
-    siteName: "BrainBoomingAI",
+    title: HOME_TITLE,
+    description: siteConfig.description,
+    url: siteUrl,
+    siteName: siteConfig.name,
+    locale: siteConfig.locale,
     type: "website",
-    images: [
-      {
-        url: "/aitools.png",
-        width: 1200,
-        height: 630,
-        alt: "BrainBoomingAI - Free AI Tools",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "🧠 BrainBoomingAI - Free AI Tools",
-    description:
-      "Discover powerful free AI tools for writing, content creation, and productivity.",
-    images: ["/aitools.png"],
+    title: HOME_TITLE,
+    description: siteConfig.description,
+    site: siteConfig.twitterHandle,
+    creator: siteConfig.twitterHandle,
   },
-  alternates: {
-    canonical: "https://brainboomingai.vercel.app",
-  },
+  alternates: { canonical: siteUrl },
+  // Paste the token from Search Console here (or set the env var) to verify
+  // ownership — required before Google will report indexing status.
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined,
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+  ],
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
@@ -86,6 +106,8 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {/* Site-wide entity graph; tool pages add their own page-level nodes. */}
+        <JsonLd data={jsonLdGraph(organizationSchema(), websiteSchema())} />
         <SessionProvider>
           <ThemeProvider
               attribute="class"
