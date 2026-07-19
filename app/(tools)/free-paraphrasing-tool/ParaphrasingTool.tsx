@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { RefreshCw, Shield, Shuffle, Zap } from "lucide-react";
 import { free_grammar_checker_prompt } from "./prompt";
 
@@ -73,32 +74,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-orange-500 to-red-500",
-    question: "What is paraphrasing and why is it useful?",
-    answer:
-      "Paraphrasing is rewriting text using different words while maintaining the same meaning. It's useful for avoiding plagiarism, improving readability, creating unique content, and adapting text for different audiences or purposes.",
-  },
-  {
-    gradient: "from-red-500 to-pink-500",
-    question: "Does the paraphrasing tool maintain the original meaning?",
-    answer:
-      "Yes, our AI-powered paraphrasing tool is designed to preserve the original meaning and context while changing the wording and sentence structure. However, we recommend reviewing the output to ensure it meets your specific requirements.",
-  },
-  {
-    gradient: "from-pink-500 to-purple-500",
-    question: "Can I paraphrase content for academic or professional use?",
-    answer:
-      "Yes, our paraphrasing tool is suitable for academic papers, professional documents, and business content. However, always ensure proper citation when using sources and follow your institution's or organization's guidelines.",
-  },
-  {
-    gradient: "from-purple-500 to-indigo-500",
-    question: "How many times can I use the paraphrasing tool?",
-    answer:
-      "There's no limit to how many times you can use our free paraphrasing tool. You can paraphrase as much content as you need and generate multiple variations of the same text to find the perfect version for your needs.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-paraphrasing-tool"];
 
 export default function ParaphrasingTool() {
   return (
@@ -106,7 +82,7 @@ export default function ParaphrasingTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="Advanced Paraphrasing Features" features={features} />
       <ToolHowItWorks title="How Our Paraphrasing Tool Works" steps={steps} />
-      <ToolFAQ title="Paraphrasing Tool FAQ" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

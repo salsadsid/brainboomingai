@@ -1,83 +1,19 @@
-import type { Metadata } from "next";
+import ToolSeo from "@/components/seo/ToolSeo";
+import { toolKeywords } from "@/config/constants";
+import { buildMetadata } from "@/lib/seo";
 import ImageToTextTool from "./ImageToTextTool";
 
-export const metadata: Metadata = {
-  title:
-    "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
-  description:
-    "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly. Convert images to editable text for free.",
-  keywords: [
-    "image to text",
-    "OCR online",
-    "text extraction",
-    "image text converter",
-    "photo to text",
-    "document scanner",
-    "text recognition",
-    "AI OCR",
-    "free image to text",
-    "extract text from image",
-  ],
-  authors: [{ name: "BrainBoomingAI" }],
-  creator: "BrainBoomingAI",
-  publisher: "BrainBoomingAI",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  openGraph: {
-    title:
-      "Free AI Image to Text Converter - OCR Extract Text from Images | BrainBoomingAI",
-    description:
-      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
-    url: "https://brainboomingai.vercel.app/free-image-to-text",
-    siteName: "BrainBoomingAI",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "/image-to-text-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "BrainBoomingAI Free Image to Text Converter Tool",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Free AI Image to Text Converter - OCR Extract Text from Images",
-    description:
-      "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly.",
-    images: ["/image-to-text-twitter.jpg"],
-    creator: "@brainboomingai",
-    site: "@brainboomingai",
-  },
-  alternates: {
-    canonical: "https://brainboomingai.vercel.app/free-image-to-text",
-  },
-  category: "AI Tools",
-  classification: "OCR Tools",
-  other: {
-    "application-name": "BrainBoomingAI",
-    "mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "Image to Text",
-    "msapplication-TileColor": "#6366f1",
-    "theme-color": "#6366f1",
-  },
-};
+export const metadata = buildMetadata({
+  title: "Free AI Image to Text Converter - OCR Extract Text from Images",
+  description: "Free online AI image to text converter with OCR technology. Extract text from images, photos, documents, and screenshots instantly. Convert images to editable text for free.",
+  path: "/free-image-to-text",
+  keywords: toolKeywords("/free-image-to-text"),
+});
 
 export default function FreeImageToTextPage() {
   return (
     <>
+      <ToolSeo path="/free-image-to-text" />
       <ImageToTextTool />
 
       {/* Bottom Content */}

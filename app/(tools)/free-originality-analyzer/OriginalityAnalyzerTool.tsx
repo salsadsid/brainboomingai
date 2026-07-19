@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { Brain, Fingerprint, Search, Sparkles } from "lucide-react";
@@ -77,32 +78,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-indigo-500 to-purple-500",
-    question: "Does this tool compare my text against external sources?",
-    answer:
-      "No. This tool performs pattern-based analysis of your writing style and structure. It does NOT search the web, academic databases, or any external sources. It evaluates how original and human-like your writing appears based on language patterns, not source matching.",
-  },
-  {
-    gradient: "from-purple-500 to-pink-500",
-    question: "What does the originality score mean?",
-    answer:
-      "The score reflects how original and distinctly human your writing appears based on AI analysis of your language patterns. A high score means strong personal voice and fresh expression. A low score suggests generic, formulaic, or AI-like writing patterns. It is not a plagiarism percentage.",
-  },
-  {
-    gradient: "from-pink-500 to-red-500",
-    question: "Can this detect if text was written by AI?",
-    answer:
-      "It can identify common patterns associated with AI-generated text, such as uniform sentence length, hedging language, lack of personal anecdotes, and overly balanced arguments. However, no AI detection tool is 100% accurate, and well-edited AI text may score higher on originality.",
-  },
-  {
-    gradient: "from-red-500 to-orange-500",
-    question: "Is this a replacement for a real plagiarism checker?",
-    answer:
-      "No. If you need to verify that your text isn't copied from specific sources, use a dedicated plagiarism detection service like Turnitin or Copyscape that actually compares against indexed content. This tool analyzes writing quality and patterns, not source overlap.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-originality-analyzer"];
 
 export default function OriginalityAnalyzerTool() {
   return (
@@ -110,7 +86,7 @@ export default function OriginalityAnalyzerTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="What This Tool Analyzes" features={features} />
       <ToolHowItWorks title="How the Originality Analyzer Works" steps={steps} />
-      <ToolFAQ title="Originality Analyzer FAQ" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

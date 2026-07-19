@@ -8,7 +8,7 @@ import ToggleActiveButton from "./ToggleActiveButton";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Manage Users - Admin - BrainBoomingAI",
+  title: "Manage Users — Admin",
 };
 
 export default async function AdminUsersPage() {

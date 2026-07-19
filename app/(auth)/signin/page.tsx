@@ -2,7 +2,7 @@ import SignInForm from "@/components/auth/SignInForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sign In - Brain Booming",
+  title: "Sign In",
   description: "Sign in to your Brain Booming account",
 };
 

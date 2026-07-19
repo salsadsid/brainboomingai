@@ -4,7 +4,8 @@ import TextToolForm from "@/components/tools/TextToolForm";
 import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
-import type { FAQItem, FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { BookCheck, CheckCircle2, Zap } from "lucide-react";
@@ -79,32 +80,7 @@ const steps: StepItem[] = [
   },
 ];
 
-const faqs: FAQItem[] = [
-  {
-    gradient: "from-indigo-500 to-purple-500",
-    question: "What types of spelling errors does the tool detect?",
-    answer:
-      "Our spell checker detects common typos, misspellings, doubled words, contextual errors, and phonetic mistakes. It also identifies proper nouns and technical terms that may need attention.",
-  },
-  {
-    gradient: "from-purple-500 to-pink-500",
-    question: "Does the spell checker support different languages?",
-    answer:
-      "Currently, our spell checker is optimized for English text. It includes American and British spelling variations and can handle technical, academic, and creative writing styles.",
-  },
-  {
-    gradient: "from-pink-500 to-red-500",
-    question: "How accurate are the spelling corrections?",
-    answer:
-      "Our AI-powered spell checker has high accuracy rates and considers context when making suggestions. However, we recommend reviewing all suggestions, especially for technical terms or proper nouns.",
-  },
-  {
-    gradient: "from-red-500 to-orange-500",
-    question: "Is my text stored or shared when using the spell checker?",
-    answer:
-      "Your text and corrections are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
-  },
-];
+const { title: faqTitle, faqs } = toolFaqs["/free-spell-checker"];
 
 export default function SpellCheckerTool() {
   return (
@@ -112,7 +88,7 @@ export default function SpellCheckerTool() {
       <TextToolForm config={config} />
       <ToolFeatures title="Advanced Spell Checking Features" features={features} />
       <ToolHowItWorks title="How Our Spell Checker Works" steps={steps} />
-      <ToolFAQ title="Spell Checker FAQ" faqs={faqs} />
+      <ToolFAQ title={faqTitle} faqs={faqs} />
     </div>
   );
 }

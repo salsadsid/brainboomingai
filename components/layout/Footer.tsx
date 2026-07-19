@@ -1,24 +1,23 @@
+import { aiTools, otherTools } from "@/config/constants";
+import { siteConfig } from "@/config/site";
 import { Facebook, Github, Heart, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-  const toolsLinks = [
-    { name: "AI to Human Converter", href: "/free-ai-to-human" },
-    { name: "Grammar Checker", href: "/free-grammar-checker" },
-    { name: "Prompt Generator", href: "/prompt-generator" },
-    { name: "Paraphrasing Tool", href: "/free-paraphrasing-tool" },
-    { name: "Text Summarizer", href: "/free-text-summarizer" },
-    { name: "Originality Analyzer", href: "/free-originality-analyzer" },
-  ];
+  // Derived from the tool registry so a new tool is linked site-wide the moment
+  // it is registered — the previous hand-maintained lists had drifted, omitting
+  // the spell checker and image-to-text and linking a /todo-app that never shipped.
+  const toolsLinks = aiTools.map((tool) => ({
+    name: tool.shortTitle,
+    href: tool.href,
+  }));
 
-  const utilityLinks = [
-    { name: "Image Compressor", href: "/image-compressor" },
-    { name: "Image Resizer", href: "/image-resizer" },
-    { name: "MD5 Generator", href: "/md5-generator" },
-    { name: "Todo App", href: "/todo-app" },
-  ];
+  const utilityLinks = otherTools.map((tool) => ({
+    name: tool.shortTitle,
+    href: tool.href,
+  }));
 
   const companyLinks = [
     { name: "About Us", href: "/about" },
@@ -48,7 +47,7 @@ export default function Footer() {
             {/* Social Links */}
             <div className="flex space-x-4">
               <a
-                href="https://twitter.com/brainbooming"
+                href={siteConfig.socials.twitter}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on Twitter"
@@ -57,7 +56,7 @@ export default function Footer() {
                 <Twitter className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
-                href="https://facebook.com/brainbooming"
+                href={siteConfig.socials.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on Facebook"
@@ -66,7 +65,7 @@ export default function Footer() {
                 <Facebook className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
-                href="https://linkedin.com/company/brainbooming"
+                href={siteConfig.socials.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Follow us on LinkedIn"
@@ -75,7 +74,7 @@ export default function Footer() {
                 <Linkedin className="w-5 h-5" aria-hidden="true" />
               </a>
               <a
-                href="https://github.com/brainbooming"
+                href={siteConfig.socials.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View our GitHub"
@@ -143,11 +142,11 @@ export default function Footer() {
             {/* Contact Email */}
             <div className="mt-6">
               <a
-                href="mailto:hello@brainbooming.com"
+                href={`mailto:${siteConfig.email}`}
                 className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
               >
                 <Mail className="w-4 h-4" aria-hidden="true" />
-                hello@brainbooming.com
+                {siteConfig.email}
               </a>
             </div>
           </nav>
@@ -204,12 +203,14 @@ export default function Footer() {
             >
               Terms of Service
             </Link>
-            <Link
+            {/* Plain anchor: sitemap.xml is a generated route, not an app page,
+                so the client router must not try to prefetch it. */}
+            <a
               href="/sitemap.xml"
               className="text-slate-400 hover:text-white transition-colors text-sm"
             >
               Sitemap
-            </Link>
+            </a>
           </div>
         </div>
       </div>

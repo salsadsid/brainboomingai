@@ -1,83 +1,19 @@
-import type { Metadata } from "next";
+import ToolSeo from "@/components/seo/ToolSeo";
+import { toolKeywords } from "@/config/constants";
+import { buildMetadata } from "@/lib/seo";
 import ImageCompressorTool from "./ImageCompressorTool";
 
-export const metadata: Metadata = {
-  title:
-    "Free Online Image Compressor - Reduce Image File Size | BrainBoomingAI",
-  description:
-    "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly. Perfect for web optimization and storage.",
-  keywords: [
-    "image compressor",
-    "reduce image size",
-    "compress photos",
-    "optimize images",
-    "image optimization",
-    "file size reducer",
-    "web image compression",
-    "photo compressor",
-    "free image compressor",
-    "online image optimizer",
-  ],
-  authors: [{ name: "BrainBoomingAI" }],
-  creator: "BrainBoomingAI",
-  publisher: "BrainBoomingAI",
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  openGraph: {
-    title:
-      "Free Online Image Compressor - Reduce Image File Size | BrainBoomingAI",
-    description:
-      "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly.",
-    url: "https://brainboomingai.vercel.app/image-compressor",
-    siteName: "BrainBoomingAI",
-    locale: "en_US",
-    type: "website",
-    images: [
-      {
-        url: "/image-compressor-og.jpg",
-        width: 1200,
-        height: 630,
-        alt: "BrainBoomingAI Free Image Compressor Tool",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Free Online Image Compressor - Reduce Image File Size",
-    description:
-      "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly.",
-    images: ["/image-compressor-twitter.jpg"],
-    creator: "@brainboomingai",
-    site: "@brainboomingai",
-  },
-  alternates: {
-    canonical: "https://brainboomingai.vercel.app/image-compressor",
-  },
-  category: "Utility Tools",
-  classification: "Image Tools",
-  other: {
-    "application-name": "BrainBoomingAI",
-    "mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-capable": "yes",
-    "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "Image Compressor",
-    "msapplication-TileColor": "#6366f1",
-    "theme-color": "#6366f1",
-  },
-};
+export const metadata = buildMetadata({
+  title: "Free Online Image Compressor - Reduce Image File Size",
+  description: "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly. Perfect for web optimization and storage.",
+  path: "/image-compressor",
+  keywords: toolKeywords("/image-compressor"),
+});
 
 export default function ImageCompressorPage() {
   return (
     <>
+      <ToolSeo path="/image-compressor" />
       <ImageCompressorTool />
 
       {/* Bottom Content */}

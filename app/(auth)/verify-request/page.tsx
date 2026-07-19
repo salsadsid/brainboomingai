@@ -2,7 +2,7 @@ import { Mail } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Check Your Email - Brain Booming",
+  title: "Check Your Email",
 };
 
 export default function VerifyRequestPage() {

@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+/**
+ * Auth screens are transactional and thin — indexing them wastes crawl budget
+ * and competes with the pages that should rank. Cascades to all children.
+ */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false, nocache: true },
+};
+
 export default function AuthLayout({
   children,
 }: {
