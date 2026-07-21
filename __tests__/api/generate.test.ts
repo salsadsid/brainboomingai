@@ -15,13 +15,21 @@ vi.mock("@/lib/rateLimit", () => ({
 
 vi.mock("@/lib/googleAIService", () => ({
   generateResponse: vi.fn(),
-  // The route branches on this class, so the mock has to provide the real
-  // shape — a bare vi.fn() would make `instanceof` throw.
+  // The route branches on these classes, so the mock has to provide the real
+  // shapes — a bare vi.fn() would make `instanceof` throw.
   UpstreamBusyError: class UpstreamBusyError extends Error {
     readonly retryable = true;
     constructor(message = "The AI provider is busy.") {
       super(message);
       this.name = "UpstreamBusyError";
+    }
+  },
+  QuotaExceededError: class QuotaExceededError extends Error {
+    readonly retryAfterSeconds: number | null;
+    constructor(retryAfterSeconds: number | null = null) {
+      super("The AI provider quota has been exhausted.");
+      this.name = "QuotaExceededError";
+      this.retryAfterSeconds = retryAfterSeconds;
     }
   },
 }));
@@ -47,7 +55,11 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 import { POST } from "@/app/api/generate/route";
-import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
+import {
+  generateResponse,
+  QuotaExceededError,
+  UpstreamBusyError,
+} from "@/lib/googleAIService";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 
@@ -261,6 +273,25 @@ describe("POST /api/generate", () => {
       .calls[0][0] as unknown as { text: string; prompt: string };
     expect(saved.text).toBe("my input");
     expect(saved.prompt).toContain("expert in spell checking");
+  });
+
+  it("reports quota exhaustion as non-retryable, distinctly from busy", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockRejectedValue(new QuotaExceededError(46));
+
+    const res = await POST(
+      jsonRequest({ text: "say hello", tool: "free-grammar-checker" }),
+    );
+
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Retry-After")).toBe("46");
+
+    const data = await res.json();
+    expect(data.retryable).toBe(false);
+    expect(data.error).toMatch(/daily/i);
+    // Telling a user to "try again in a moment" when the allowance resets
+    // tomorrow sends them into a loop that cannot succeed.
+    expect(data.error).not.toMatch(/busy/i);
   });
 
   it("returns 500 when AI service throws", async () => {
