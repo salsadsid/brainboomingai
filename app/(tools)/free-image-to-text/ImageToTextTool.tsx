@@ -22,7 +22,6 @@ import {
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ImageUploader } from "./components/ImageUploader";
-import { free_image_to_text_prompt } from "./prompt";
 
 const features: FeatureItem[] = [
   {
@@ -133,10 +132,10 @@ export default function ImageToTextTool() {
       const handleGenerateResponse = async () => {
         setLoading(true);
         setResponse(null);
-        const modifiedPrompt = free_image_to_text_prompt(imageToText);
         try {
+          // The OCR output is the user's text; the server wraps it.
           const result = await generateResponse({
-            prompt: modifiedPrompt,
+            text: imageToText,
             tool: "free-image-to-text",
           });
           setResponse(result ?? "No text could be extracted from the image.");

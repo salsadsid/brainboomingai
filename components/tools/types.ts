@@ -16,7 +16,6 @@ export interface TextToolConfig {
   emptyStateHint?: string;
   placeholder: string;
   minInputLength: number;
-  buildPrompt: (input: string) => string;
   submitLabel: string;
   loadingLabel: string;
   regenerateLabel: string;

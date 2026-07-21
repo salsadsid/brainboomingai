@@ -2,23 +2,18 @@ import { auth } from "@/auth";
 import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
 import { logger } from "@/lib/logger";
 import dbConnect from "@/lib/mongoose";
+import { buildPrompt, isValidTool } from "@/lib/prompts";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 import UserActivity from "@/models/UserActivity";
 import { NextResponse } from "next/server";
 
-const MAX_PROMPT_LENGTH = 50_000;
-
-const VALID_TOOLS = new Set([
-  "free-ai-to-human",
-  "free-grammar-checker",
-  "free-image-to-text",
-  "free-originality-analyzer",
-  "free-paraphrasing-tool",
-  "free-spell-checker",
-  "free-text-summarizer",
-  "prompt-generator",
-]);
+/**
+ * Matches MAX_INPUT_LENGTH in components/tools/TextToolForm.tsx. The old limit
+ * was 50,000 — ten times anything the UI can produce, which only ever widened
+ * the window for someone calling this endpoint directly.
+ */
+const MAX_TEXT_LENGTH = 5_000;
 
 export async function POST(req: Request) {
   try {
@@ -45,28 +40,35 @@ export async function POST(req: Request) {
       );
     }
 
-    const { prompt, tool } = body as { prompt?: unknown; tool?: unknown };
+    // Only the user's text is accepted. Any `prompt` field a caller supplies is
+    // ignored: the instruction is chosen here, by tool, so this endpoint cannot
+    // be used as a general-purpose LLM proxy on the project's API key.
+    const { text, tool } = body as { text?: unknown; tool?: unknown };
 
-    if (!prompt || typeof prompt !== "string") {
+    if (!text || typeof text !== "string" || !text.trim()) {
       return NextResponse.json(
-        { error: "Prompt is required and must be a string." },
+        { error: "Text is required and must be a non-empty string." },
         { status: 400 }
       );
     }
 
-    if (prompt.length > MAX_PROMPT_LENGTH) {
+    if (text.length > MAX_TEXT_LENGTH) {
       return NextResponse.json(
-        { error: `Prompt must be ${MAX_PROMPT_LENGTH.toLocaleString()} characters or fewer.` },
+        {
+          error: `Text must be ${MAX_TEXT_LENGTH.toLocaleString()} characters or fewer.`,
+        },
         { status: 400 }
       );
     }
 
-    if (!tool || typeof tool !== "string" || !VALID_TOOLS.has(tool)) {
+    if (!isValidTool(tool)) {
       return NextResponse.json(
         { error: "Invalid or missing tool identifier." },
         { status: 400 }
       );
     }
+
+    const prompt = buildPrompt(tool, text);
 
     // Generate the response
     const generatedResponse = await generateResponse(prompt);
@@ -76,6 +78,7 @@ export async function POST(req: Request) {
     // Save to MongoDB
     const savedResponse = await GeneratedResponseModel.create({
       prompt,
+      text,
       tool,
       response: aiResponse,
       responseRaw,

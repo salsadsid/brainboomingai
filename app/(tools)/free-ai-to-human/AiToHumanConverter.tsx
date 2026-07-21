@@ -7,7 +7,6 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
 import { CheckCircle, Sparkles, Zap, Shield } from "lucide-react";
-import { free_ai_human_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-ai-to-human",
@@ -16,7 +15,6 @@ const config: TextToolConfig = {
   outputLabel: "Humanized text",
   emptyStateHint: "Your humanized text will appear here.",
   minInputLength: 10,
-  buildPrompt: free_ai_human_prompt,
   submitLabel: "Convert to Human Text",
   loadingLabel: "Converting...",
   regenerateLabel: "Regenerate",

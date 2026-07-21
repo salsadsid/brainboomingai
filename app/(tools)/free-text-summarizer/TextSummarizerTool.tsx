@@ -9,7 +9,6 @@ import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { BookOpen, FileText, Zap } from "lucide-react";
-import { free_grammar_checker_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-text-summarizer",
@@ -18,7 +17,6 @@ const config: TextToolConfig = {
   outputLabel: "Summary",
   emptyStateHint: "Your summary will appear here.",
   minInputLength: 1,
-  buildPrompt: free_grammar_checker_prompt,
   submitLabel: "Summarize Text",
   loadingLabel: "Summarizing...",
   regenerateLabel: "Generate Another",

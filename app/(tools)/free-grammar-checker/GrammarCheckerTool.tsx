@@ -9,7 +9,6 @@ import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { BookOpen, CheckCircle, Shield } from "lucide-react";
-import { free_grammar_checker_prompt } from "./prompt";
 import { parseCorrectedParagraph, parseMistakeCount } from "./utils";
 
 const config: TextToolConfig = {
@@ -19,7 +18,6 @@ const config: TextToolConfig = {
   outputLabel: "Corrected text",
   emptyStateHint: "Your grammar-checked text will appear here.",
   minInputLength: 1,
-  buildPrompt: free_grammar_checker_prompt,
   submitLabel: "Check Grammar",
   loadingLabel: "Analyzing...",
   regenerateLabel: "Recheck",

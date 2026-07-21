@@ -7,7 +7,6 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
 import { RefreshCw, Shield, Shuffle, Zap } from "lucide-react";
-import { free_grammar_checker_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-paraphrasing-tool",
@@ -16,7 +15,6 @@ const config: TextToolConfig = {
   outputLabel: "Paraphrased text",
   emptyStateHint: "Your rewritten text will appear here.",
   minInputLength: 10,
-  buildPrompt: free_grammar_checker_prompt,
   submitLabel: "Paraphrase Text",
   loadingLabel: "Paraphrasing...",
   regenerateLabel: "Regenerate",

@@ -48,7 +48,10 @@ export default async function DashboardPage() {
       recentResponses={recentResponses.map((r) => ({
         id: String(r._id),
         tool: r.tool,
-        prompt: r.prompt.slice(0, 150),
+        // Prefer what the user typed. Falling back to `prompt` keeps rows
+        // written before prompts moved server-side readable, even though those
+        // start with template boilerplate.
+        prompt: (r.text ?? r.prompt).slice(0, 150),
         createdAt: r.createdAt.toISOString(),
       }))}
       recentActivity={recentActivity.map((a) => ({

@@ -9,7 +9,6 @@ import { toolFaqs } from "@/config/toolFaqs";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { Brain, Fingerprint, Search, Sparkles } from "lucide-react";
-import { originality_analysis_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-originality-analyzer",
@@ -18,7 +17,6 @@ const config: TextToolConfig = {
   outputLabel: "Analysis",
   emptyStateHint: "Your originality report will appear here.",
   minInputLength: 10,
-  buildPrompt: originality_analysis_prompt,
   submitLabel: "Analyze Originality",
   loadingLabel: "Analyzing...",
   regenerateLabel: "Re-analyze",

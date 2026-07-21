@@ -17,20 +17,27 @@ export class GenerateError extends Error {
   }
 }
 
+/**
+ * Sends the user's raw text — never a prompt.
+ *
+ * The instruction lives server-side in lib/prompts.ts and is selected by
+ * `tool`. Building it here previously meant /api/generate accepted any prompt
+ * at all, i.e. it was an open proxy to the project's Gemini key.
+ */
 export function useGenerate(): [
-  (args: { prompt: string; tool: string }) => Promise<string>,
+  (args: { text: string; tool: string }) => Promise<string>,
   { isLoading: boolean },
 ] {
   const [isLoading, setIsLoading] = useState(false);
 
   const trigger = useCallback(
-    async ({ prompt, tool }: { prompt: string; tool: string }) => {
+    async ({ text, tool }: { text: string; tool: string }) => {
       setIsLoading(true);
       try {
         const res = await fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt, tool }),
+          body: JSON.stringify({ text, tool }),
         });
 
         // A gateway or proxy can fail before our route runs, in which case the

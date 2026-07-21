@@ -98,9 +98,9 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
           return;
         }
 
-        const modifiedPrompt = config.buildPrompt(inputText);
+        // Raw text only — the server picks the instruction from `tool`.
         const result = await generateResponse({
-          prompt: modifiedPrompt,
+          text: inputText,
           tool: config.toolSlug,
         });
 
