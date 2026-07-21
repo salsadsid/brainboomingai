@@ -15,8 +15,6 @@ const config: TextToolConfig = {
   outputLabel: "Generated prompt",
   emptyStateHint: "Your generated prompt will appear here.",
   minInputLength: 10,
-  buildPrompt: (input) =>
-    `Generate a detailed and creative prompt based on this description: ${input}. Make it engaging and specific. The prompt should be well-structured and clear.`,
   submitLabel: "Generate Prompt",
   loadingLabel: "Generating...",
   regenerateLabel: "Regenerate",

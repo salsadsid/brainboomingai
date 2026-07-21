@@ -45,17 +45,43 @@ function statusOf(error: unknown): number | null {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+interface GenerateOptions {
+  /**
+   * A Gemini `responseSchema`. When present the model is asked for JSON
+   * matching it. Typed loosely so this module stays free of a compile-time
+   * dependency on the per-tool schema definitions.
+   */
+  schema?: object;
+}
+
+/**
+ * JSON is markedly more verbose than the prose these prompts used to return,
+ * and a response cut off at the token limit is invalid JSON rather than merely
+ * a short answer — the single likeliest cause of a parse failure downstream.
+ */
+const MAX_OUTPUT_TOKENS = 2048;
+const MAX_OUTPUT_TOKENS_JSON = 4096;
+
 export async function generateResponse(
   prompt: string,
+  options: GenerateOptions = {},
 ): Promise<{ response: string; responseRaw: Record<string, unknown> }> {
   let lastError: unknown;
+
+  const config = options.schema
+    ? {
+        maxOutputTokens: MAX_OUTPUT_TOKENS_JSON,
+        responseMimeType: "application/json",
+        responseSchema: options.schema,
+      }
+    : { maxOutputTokens: MAX_OUTPUT_TOKENS };
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
     try {
       const result = await getClient().models.generateContent({
         model: MODEL,
         contents: prompt,
-        config: { maxOutputTokens: 2048 },
+        config,
       });
 
       const text = result.text;

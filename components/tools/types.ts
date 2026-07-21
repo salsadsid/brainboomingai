@@ -16,7 +16,6 @@ export interface TextToolConfig {
   emptyStateHint?: string;
   placeholder: string;
   minInputLength: number;
-  buildPrompt: (input: string) => string;
   submitLabel: string;
   loadingLabel: string;
   regenerateLabel: string;
@@ -24,8 +23,6 @@ export interface TextToolConfig {
   errorMessage: string;
   fallbackMessage: string;
   submitIcon: LucideIcon;
-  formatOutputStats?: (output: string) => string;
-  parseCopyText?: (output: string) => string;
 }
 
 export interface FeatureItem {

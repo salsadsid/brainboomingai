@@ -115,7 +115,7 @@ export default async function AdminUserDetailPage({
                 </span>
               </div>
               <p className="text-xs text-muted-foreground truncate mt-1">
-                {r.prompt.slice(0, 120)}
+                {(r.text ?? r.prompt).slice(0, 120)}
               </p>
             </div>
           ))}

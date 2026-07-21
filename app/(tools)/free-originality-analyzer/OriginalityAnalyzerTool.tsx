@@ -6,10 +6,7 @@ import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
 import { Brain, Fingerprint, Search, Sparkles } from "lucide-react";
-import { originality_analysis_prompt } from "./prompt";
 
 const config: TextToolConfig = {
   toolSlug: "free-originality-analyzer",
@@ -18,7 +15,6 @@ const config: TextToolConfig = {
   outputLabel: "Analysis",
   emptyStateHint: "Your originality report will appear here.",
   minInputLength: 10,
-  buildPrompt: originality_analysis_prompt,
   submitLabel: "Analyze Originality",
   loadingLabel: "Analyzing...",
   regenerateLabel: "Re-analyze",
@@ -26,8 +22,6 @@ const config: TextToolConfig = {
   errorMessage: "Failed to analyze text. Please try again.",
   fallbackMessage: "Could not complete the analysis. Please try again.",
   submitIcon: Search,
-  formatOutputStats: (output) =>
-    `Analysis Complete · ${wordCount(output)} words · ${characterCount(output)} chars`,
 };
 
 const features: FeatureItem[] = [

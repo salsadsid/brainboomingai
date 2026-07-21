@@ -6,10 +6,10 @@ import {
   AutosizeTextAreaRef,
 } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
+import ToolResultView from "@/components/tools/results/ToolResultView";
 import { GenerateError, useGenerate } from "@/hooks/useGenerate";
+import { type GeneratePayload, primaryTextOf } from "@/lib/toolResults";
 import { logger } from "@/lib/logger";
-import { characterCount } from "@/utils/characterCount";
-import { renderMarkdown } from "@/utils/sanitizeHtml";
 import { wordCount } from "@/utils/wordCount";
 import {
   Clipboard,
@@ -27,7 +27,16 @@ const MAX_INPUT_LENGTH = 5000;
 
 interface Output {
   id: string;
-  content: string;
+  payload: GeneratePayload;
+}
+
+/** Preview line for the collapsed "previous results" rows. */
+function summarize(payload: GeneratePayload): string {
+  const text =
+    payload.format === "structured"
+      ? primaryTextOf(payload)
+      : payload.content.replace(/<[^>]+>/g, " ");
+  return text.replace(/\s+/g, " ").trim().slice(0, 90);
 }
 
 function PaneShell({
@@ -98,14 +107,20 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
           return;
         }
 
-        const modifiedPrompt = config.buildPrompt(inputText);
+        // Raw text only — the server picks the instruction from `tool`.
         const result = await generateResponse({
-          prompt: modifiedPrompt,
+          text: inputText,
           tool: config.toolSlug,
         });
 
         setOutputs((prev) => [
-          { id: crypto.randomUUID(), content: result || config.fallbackMessage },
+          {
+            id: crypto.randomUUID(),
+            payload: result ?? {
+              format: "text" as const,
+              content: config.fallbackMessage,
+            },
+          },
           ...prev,
         ]);
         toast.success(config.successMessage);
@@ -130,9 +145,15 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
     [input, processResult]
   );
 
-  const copyToClipboard = async (text: string, id: string) => {
+  const copyToClipboard = async (payload: GeneratePayload, id: string) => {
     try {
-      const copyText = config.parseCopyText ? config.parseCopyText(text) : text;
+      // The tool's actual output, taken from a typed field. This replaced a
+      // per-tool regex over model HTML that returned "" — copying nothing —
+      // whenever the markup varied.
+      const copyText =
+        payload.format === "structured"
+          ? primaryTextOf(payload)
+          : payload.content;
       await navigator.clipboard.writeText(copyText);
       setCopiedId(id);
       toast.success("Copied to clipboard!");
@@ -141,10 +162,6 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
       toast.error("Failed to copy text");
     }
   };
-
-  const defaultOutputStats = (output: string) =>
-    `${wordCount(output)} words · ${characterCount(output)} chars`;
-  const formatStats = config.formatOutputStats ?? defaultOutputStats;
 
   const isInputValid =
     input.trim().length > 0 && input.length <= MAX_INPUT_LENGTH;
@@ -268,7 +285,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => copyToClipboard(latest.content, latest.id)}
+                  onClick={() => copyToClipboard(latest.payload, latest.id)}
                   aria-label={
                     copiedId === latest.id
                       ? "Copied to clipboard"
@@ -306,17 +323,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
                 ))}
               </div>
             ) : latest ? (
-              <div className="flex flex-1 flex-col overflow-hidden">
-                <div
-                  className="prose-output flex-1 overflow-y-auto p-4"
-                  dangerouslySetInnerHTML={{
-                    __html: renderMarkdown(latest.content),
-                  }}
-                />
-                <p className="shrink-0 border-t border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
-                  {formatStats(latest.content)}
-                </p>
-              </div>
+              <ToolResultView payload={latest.payload} />
             ) : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
                 <SubmitIcon
@@ -345,25 +352,15 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
                 className="group rounded-xl border border-border bg-card"
               >
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                  <span className="truncate">
-                    {output.content.replace(/[#*`_>]/g, "").slice(0, 90)}…
-                  </span>
-                  <span className="shrink-0 font-mono text-xs">
-                    {formatStats(output.content)}
-                  </span>
+                  <span className="truncate">{summarize(output.payload)}…</span>
                 </summary>
                 <div className="border-t border-border p-4">
-                  <div
-                    className="prose-output"
-                    dangerouslySetInnerHTML={{
-                      __html: renderMarkdown(output.content),
-                    }}
-                  />
+                  <ToolResultView payload={output.payload} />
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
-                    onClick={() => copyToClipboard(output.content, output.id)}
+                    onClick={() => copyToClipboard(output.payload, output.id)}
                     className="mt-4"
                   >
                     {copiedId === output.id ? (

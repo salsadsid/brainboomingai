@@ -3,7 +3,16 @@ import mongoose, { Document, Schema } from "mongoose";
 
 // Define the Mongoose schema interface
 interface GeneratedResponse extends Document {
+  /** The full composed prompt sent upstream — kept for debugging/audit. */
   prompt: string;
+  /**
+   * What the user actually typed, before the tool's template wrapped it.
+   *
+   * Optional because rows written before prompts moved server-side have no
+   * such value. Worth storing: history views were slicing the first 150 chars
+   * of `prompt`, which is template boilerplate identical on every row.
+   */
+  text?: string;
   response: string;
   tool: string;
   responseRaw: Record<string, unknown>;
@@ -14,6 +23,7 @@ interface GeneratedResponse extends Document {
 const GeneratedResponseSchema = new Schema<GeneratedResponse>(
   {
     prompt: { type: String, required: true },
+    text: { type: String },
     response: { type: String, required: true },
     tool: { type: String, required: true },
     responseRaw: { type: Object, required: true },

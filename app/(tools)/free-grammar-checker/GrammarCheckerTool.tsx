@@ -6,11 +6,7 @@ import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
 import { BookOpen, CheckCircle, Shield } from "lucide-react";
-import { free_grammar_checker_prompt } from "./prompt";
-import { parseCorrectedParagraph, parseMistakeCount } from "./utils";
 
 const config: TextToolConfig = {
   toolSlug: "free-grammar-checker",
@@ -19,7 +15,6 @@ const config: TextToolConfig = {
   outputLabel: "Corrected text",
   emptyStateHint: "Your grammar-checked text will appear here.",
   minInputLength: 1,
-  buildPrompt: free_grammar_checker_prompt,
   submitLabel: "Check Grammar",
   loadingLabel: "Analyzing...",
   regenerateLabel: "Recheck",
@@ -27,9 +22,6 @@ const config: TextToolConfig = {
   errorMessage: "Failed to analyze text. Please try again.",
   fallbackMessage: "Could not analyze text. Please try again.",
   submitIcon: CheckCircle,
-  parseCopyText: parseCorrectedParagraph,
-  formatOutputStats: (output) =>
-    `${parseMistakeCount(output)} issues · ${wordCount(output)} words · ${characterCount(output)} chars`,
 };
 
 const features: FeatureItem[] = [
