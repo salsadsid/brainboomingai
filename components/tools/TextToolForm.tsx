@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerate } from "@/hooks/useGenerate";
-import { sanitizeHtml } from "@/utils/sanitizeHtml";
+import { renderMarkdown } from "@/utils/sanitizeHtml";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
 import { motion } from "framer-motion";
@@ -264,7 +264,7 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
               </div>
               <div
                 className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: sanitizeHtml(output.content) }}
+                dangerouslySetInnerHTML={{ __html: renderMarkdown(output.content) }}
               />
             </motion.div>
           ))}
