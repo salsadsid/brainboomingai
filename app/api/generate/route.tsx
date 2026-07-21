@@ -2,7 +2,9 @@ import { auth } from "@/auth";
 import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
 import { logger } from "@/lib/logger";
 import dbConnect from "@/lib/mongoose";
+import { parseToolResult } from "@/lib/parseToolResult";
 import { buildPrompt, isValidTool } from "@/lib/prompts";
+import { TOOL_RESPONSE_SCHEMAS } from "@/lib/toolSchemas";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 import UserActivity from "@/models/UserActivity";
@@ -70,13 +72,21 @@ export async function POST(req: Request) {
 
     const prompt = buildPrompt(tool, text);
 
-    // Generate the response
-    const generatedResponse = await generateResponse(prompt);
+    // Generate the response, asking for JSON shaped to this tool.
+    const generatedResponse = await generateResponse(prompt, {
+      schema: TOOL_RESPONSE_SCHEMAS[tool],
+    });
 
     const { response: aiResponse, responseRaw } = generatedResponse;
 
-    // Save to MongoDB
-    const savedResponse = await GeneratedResponseModel.create({
+    // Validated here rather than in the browser: the client should never have
+    // to reason about malformed model output. Anything unparseable degrades to
+    // plain text instead of failing the request.
+    const payload = parseToolResult(tool, aiResponse);
+
+    // Save to MongoDB — the raw string, as before, so history stays readable
+    // whichever format the response took.
+    await GeneratedResponseModel.create({
       prompt,
       text,
       tool,
@@ -96,7 +106,7 @@ export async function POST(req: Request) {
       }).catch((err: unknown) => logger.error("Activity tracking error", err, { userId, tool }));
     }
 
-    return NextResponse.json(savedResponse.response, { status: 201 });
+    return NextResponse.json(payload, { status: 201 });
   } catch (error: unknown) {
     logger.error("Error generating response", error);
 

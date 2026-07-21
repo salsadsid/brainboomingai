@@ -6,8 +6,6 @@ import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
 import { BookOpen, FileText, Zap } from "lucide-react";
 
 const config: TextToolConfig = {
@@ -24,8 +22,6 @@ const config: TextToolConfig = {
   errorMessage: "Failed to generate summary. Please try again.",
   fallbackMessage: "Could not generate summary. Please try again.",
   submitIcon: FileText,
-  formatOutputStats: (output) =>
-    `Summary Generated · ${wordCount(output)} words · ${characterCount(output)} chars`,
 };
 
 const features: FeatureItem[] = [

@@ -6,10 +6,7 @@ import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
 import { toolFaqs } from "@/config/toolFaqs";
-import { characterCount } from "@/utils/characterCount";
-import { wordCount } from "@/utils/wordCount";
 import { BookCheck, CheckCircle2, Zap } from "lucide-react";
-import { parseCorrectedParagraph, parseMistakeCount } from "./utils";
 
 const config: TextToolConfig = {
   toolSlug: "free-spell-checker",
@@ -25,9 +22,6 @@ const config: TextToolConfig = {
   errorMessage: "Failed to check spelling. Please try again.",
   fallbackMessage: "Could not check spelling. Please try again.",
   submitIcon: CheckCircle2,
-  parseCopyText: parseCorrectedParagraph,
-  formatOutputStats: (output) =>
-    `${parseMistakeCount(output)} spelling errors · ${wordCount(output)} words · ${characterCount(output)} chars`,
 };
 
 const features: FeatureItem[] = [

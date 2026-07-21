@@ -6,11 +6,10 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FAQItem, FeatureItem, StepItem } from "@/components/tools/types";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import ToolResultView from "@/components/tools/results/ToolResultView";
 import { GenerateError, useGenerate } from "@/hooks/useGenerate";
+import { type GeneratePayload, primaryTextOf } from "@/lib/toolResults";
 import { logger } from "@/lib/logger";
-import { characterCount } from "@/utils/characterCount";
-import { renderMarkdown } from "@/utils/sanitizeHtml";
-import { wordCount } from "@/utils/wordCount";
 import {
   Clipboard,
   ClipboardCheck,
@@ -122,7 +121,7 @@ function PaneShell({
 
 export default function ImageToTextTool() {
   const [imageToText, setImageToText] = useState<string>("");
-  const [response, setResponse] = useState<string | null>(null);
+  const [response, setResponse] = useState<GeneratePayload | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [copiedText, setCopiedText] = useState<boolean>(false);
   const [generateResponse, { isLoading }] = useGenerate();
@@ -138,7 +137,12 @@ export default function ImageToTextTool() {
             text: imageToText,
             tool: "free-image-to-text",
           });
-          setResponse(result ?? "No text could be extracted from the image.");
+          setResponse(
+            result ?? {
+              format: "text",
+              content: "No text could be extracted from the image.",
+            }
+          );
           toast.success("Text extraction complete!");
         } catch (err) {
           logger.error("Image to text error", err);
@@ -155,9 +159,11 @@ export default function ImageToTextTool() {
     }
   }, [imageToText, generateResponse]);
 
-  const copyToClipboard = async (text: string) => {
+  const copyToClipboard = async (payload: GeneratePayload) => {
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(
+        payload.format === "structured" ? primaryTextOf(payload) : payload.content
+      );
       setCopiedText(true);
       toast.success("Text copied to clipboard!");
       setTimeout(() => setCopiedText(false), 2000);
@@ -221,15 +227,7 @@ export default function ImageToTextTool() {
                 ))}
               </div>
             ) : response ? (
-              <div className="flex flex-1 flex-col overflow-hidden">
-                <div
-                  className="prose-output flex-1 overflow-y-auto p-4"
-                  dangerouslySetInnerHTML={{ __html: renderMarkdown(response) }}
-                />
-                <p className="shrink-0 border-t border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
-                  {wordCount(response)} words · {characterCount(response)} chars
-                </p>
-              </div>
+              <ToolResultView payload={response} />
             ) : (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
                 <FileText

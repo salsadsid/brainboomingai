@@ -23,8 +23,6 @@ export interface TextToolConfig {
   errorMessage: string;
   fallbackMessage: string;
   submitIcon: LucideIcon;
-  formatOutputStats?: (output: string) => string;
-  parseCopyText?: (output: string) => string;
 }
 
 export interface FeatureItem {

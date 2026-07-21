@@ -1,5 +1,6 @@
 "use client";
 
+import type { GeneratePayload } from "@/lib/toolResults";
 import { useCallback, useState } from "react";
 
 /**
@@ -25,7 +26,7 @@ export class GenerateError extends Error {
  * at all, i.e. it was an open proxy to the project's Gemini key.
  */
 export function useGenerate(): [
-  (args: { text: string; tool: string }) => Promise<string>,
+  (args: { text: string; tool: string }) => Promise<GeneratePayload>,
   { isLoading: boolean },
 ] {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,7 +61,7 @@ export function useGenerate(): [
           );
         }
 
-        return data as string;
+        return data as GeneratePayload;
       } finally {
         setIsLoading(false);
       }

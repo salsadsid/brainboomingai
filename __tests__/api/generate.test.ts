@@ -113,7 +113,54 @@ describe("POST /api/generate", () => {
     expect(res.status).toBe(201);
 
     const data = await res.json();
-    expect(data).toBe("AI says hello");
+    // The mocked model returns prose, not JSON, so this exercises the fallback
+    // path end to end: the request still succeeds and the text is preserved.
+    expect(data).toEqual({ format: "text", content: "AI says hello" });
+  });
+
+  it("returns structured data when the model returns valid JSON", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    const structured = {
+      correctedText: "She doesn't like rain.",
+      issueCount: 1,
+      corrections: [{ original: "dont", corrected: "doesn't", type: "grammar" }],
+    };
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: JSON.stringify(structured),
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
+
+    const res = await POST(
+      jsonRequest({ text: "she dont like rain", tool: "free-grammar-checker" }),
+    );
+    expect(res.status).toBe(201);
+
+    const data = await res.json();
+    expect(data).toEqual({
+      format: "structured",
+      tool: "free-grammar-checker",
+      data: structured,
+    });
+  });
+
+  it("asks the model for JSON shaped to the requested tool", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "{}",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
+
+    await POST(jsonRequest({ text: "hi", tool: "free-text-summarizer" }));
+
+    const opts = vi.mocked(generateResponse).mock.calls[0][1];
+    expect(opts?.schema).toBeDefined();
+    // The summarizer's shape, not some other tool's.
+    expect((opts?.schema as { required?: string[] }).required).toEqual([
+      "summary",
+      "keyPoints",
+    ]);
   });
 
   // ---------------------------------------------------------------------
@@ -162,7 +209,7 @@ describe("POST /api/generate", () => {
     await POST(jsonRequest({ text: "hello", tool: "free-text-summarizer" }));
 
     const sent = vi.mocked(generateResponse).mock.calls[0][0];
-    expect(sent).toContain("expert in summarizing written content");
+    expect(sent).toContain("expert at summarizing written content");
     expect(sent).not.toContain("expert in grammar and language refinement");
   });
 
