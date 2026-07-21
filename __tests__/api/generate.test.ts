@@ -15,6 +15,15 @@ vi.mock("@/lib/rateLimit", () => ({
 
 vi.mock("@/lib/googleAIService", () => ({
   generateResponse: vi.fn(),
+  // The route branches on this class, so the mock has to provide the real
+  // shape — a bare vi.fn() would make `instanceof` throw.
+  UpstreamBusyError: class UpstreamBusyError extends Error {
+    readonly retryable = true;
+    constructor(message = "The AI provider is busy.") {
+      super(message);
+      this.name = "UpstreamBusyError";
+    }
+  },
 }));
 
 vi.mock("@/models/GeneratedResponse", () => ({
@@ -38,7 +47,7 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 import { POST } from "@/app/api/generate/route";
-import { generateResponse } from "@/lib/googleAIService";
+import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 
@@ -114,6 +123,24 @@ describe("POST /api/generate", () => {
     expect(res.status).toBe(500);
 
     const data = await res.json();
-    expect(data.error).toBe("API down");
+    // Deliberately NOT "API down". The upstream error text used to be echoed
+    // straight to the client, which put raw Google JSON in front of users.
+    expect(data.error).toBe("Failed to generate a response. Please try again.");
+    expect(JSON.stringify(data)).not.toContain("API down");
+  });
+
+  it("returns 503 and a retryable flag when the provider is busy", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockRejectedValue(new UpstreamBusyError());
+
+    const res = await POST(
+      jsonRequest({ prompt: "say hello", tool: "free-grammar-checker" }),
+    );
+    expect(res.status).toBe(503);
+    expect(res.headers.get("Retry-After")).toBe("5");
+
+    const data = await res.json();
+    expect(data.retryable).toBe(true);
+    expect(data.error).toMatch(/busy/i);
   });
 });

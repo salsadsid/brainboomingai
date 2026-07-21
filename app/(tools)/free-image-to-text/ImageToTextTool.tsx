@@ -6,7 +6,7 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FAQItem, FeatureItem, StepItem } from "@/components/tools/types";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGenerate } from "@/hooks/useGenerate";
+import { GenerateError, useGenerate } from "@/hooks/useGenerate";
 import { logger } from "@/lib/logger";
 import { characterCount } from "@/utils/characterCount";
 import { renderMarkdown } from "@/utils/sanitizeHtml";
@@ -143,7 +143,11 @@ export default function ImageToTextTool() {
           toast.success("Text extraction complete!");
         } catch (err) {
           logger.error("Image to text error", err);
-          toast.error("Failed to extract text. Please try again.");
+          toast.error(
+            err instanceof GenerateError
+              ? err.message
+              : "Failed to extract text. Please try again."
+          );
         } finally {
           setLoading(false);
         }
