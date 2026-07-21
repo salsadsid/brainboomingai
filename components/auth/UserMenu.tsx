@@ -1,16 +1,13 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  LayoutDashboard,
-  LogIn,
-  LogOut,
-  Settings,
-  User,
-} from "lucide-react";
+import { LayoutDashboard, LogIn, LogOut, Settings } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+
+const ITEM_CLASS =
+  "flex w-full items-center gap-3 px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground";
 
 export default function UserMenu() {
   const { data: session, status } = useSession();
@@ -23,27 +20,29 @@ export default function UserMenu() {
         setOpen(false);
       }
     };
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   if (status === "loading") {
-    return (
-      <div className="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-700 animate-pulse" />
-    );
+    return <div className="size-9 animate-pulse rounded-full bg-secondary" />;
   }
 
   if (!session?.user) {
     return (
-      <Link href="/signin">
-        <Button
-          size="sm"
-          className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl px-4 py-2 text-sm font-medium shadow-lg shadow-indigo-500/25"
-        >
-          <LogIn className="w-4 h-4 mr-1.5" />
+      <Button asChild size="sm" variant="gradient">
+        <Link href="/signin">
+          <LogIn className="size-4" />
           Sign In
-        </Button>
-      </Link>
+        </Link>
+      </Button>
     );
   }
 
@@ -60,66 +59,73 @@ export default function UserMenu() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label="Account menu"
+        className="flex rounded-full ring-offset-background transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         {session.user.image ? (
+          // eslint-disable-next-line @next/next/no-img-element -- remote avatar host is not known ahead of time
           <img
             src={session.user.image}
             alt=""
-            className="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500/30"
+            className="size-9 rounded-full object-cover ring-2 ring-primary/30"
           />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold ring-2 ring-indigo-500/30">
+          <span className="flex size-9 items-center justify-center rounded-full bg-brand-gradient text-xs font-bold text-white ring-2 ring-primary/30">
             {initials}
-          </div>
+          </span>
         )}
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 z-50">
-          {/* User info */}
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-            <p className="text-sm font-medium text-slate-900 dark:text-white truncate">
+        <div
+          role="menu"
+          className="absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-xl border border-border bg-popover py-1.5 shadow-lg"
+        >
+          <div className="border-b border-border px-4 py-3">
+            <p className="truncate text-sm font-medium text-foreground">
               {session.user.name}
             </p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+            <p className="truncate text-xs text-muted-foreground">
               {session.user.email}
             </p>
           </div>
 
-          {/* Links */}
           <div className="py-1">
             <Link
               href="/dashboard"
+              role="menuitem"
               onClick={() => setOpen(false)}
-              className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              className={ITEM_CLASS}
             >
-              <LayoutDashboard className="w-4 h-4" />
+              <LayoutDashboard className="size-4" />
               Dashboard
             </Link>
 
             {session.user.role === "admin" && (
               <Link
                 href="/admin"
+                role="menuitem"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                className={ITEM_CLASS}
               >
-                <Settings className="w-4 h-4" />
+                <Settings className="size-4" />
                 Admin Panel
               </Link>
             )}
           </div>
 
-          {/* Sign out */}
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-1">
+          <div className="border-t border-border pt-1">
             <button
+              role="menuitem"
               onClick={() => {
                 setOpen(false);
                 signOut({ callbackUrl: "/" });
               }}
-              className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+              className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-destructive transition-colors hover:bg-destructive/10"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="size-4" />
               Sign Out
             </button>
           </div>

@@ -1,4 +1,5 @@
 import ToolSeo from "@/components/seo/ToolSeo";
+import ToolHeader from "@/components/tools/ToolHeader";
 import { toolKeywords } from "@/config/constants";
 import { buildMetadata } from "@/lib/seo";
 import MD5GeneratorTool from "./MD5GeneratorTool";
@@ -14,6 +15,7 @@ export default function MD5GeneratorPage() {
   return (
     <>
       <ToolSeo path="/md5-generator" />
+      <ToolHeader href="/md5-generator" />
       <MD5GeneratorTool />
     </>
   );

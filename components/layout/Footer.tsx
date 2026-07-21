@@ -1,7 +1,52 @@
+import BrandMark from "@/components/brand/BrandMark";
 import { aiTools, otherTools } from "@/config/constants";
 import { siteConfig } from "@/config/site";
-import { Facebook, Github, Heart, Linkedin, Mail, Twitter } from "lucide-react";
+import { Facebook, Github, Linkedin, Mail, Twitter } from "lucide-react";
 import Link from "next/link";
+
+const SOCIALS = [
+  { href: siteConfig.socials.twitter, label: "Twitter", Icon: Twitter },
+  { href: siteConfig.socials.facebook, label: "Facebook", Icon: Facebook },
+  { href: siteConfig.socials.linkedin, label: "LinkedIn", Icon: Linkedin },
+  { href: siteConfig.socials.github, label: "GitHub", Icon: Github },
+];
+
+const COMPANY_LINKS = [
+  { name: "About Us", href: "/about" },
+  { name: "Contact", href: "/contact" },
+  { name: "Privacy Policy", href: "/privacy" },
+  { name: "Terms of Service", href: "/terms" },
+];
+
+function LinkColumn({
+  heading,
+  links,
+  label,
+}: {
+  heading: string;
+  links: { name: string; href: string }[];
+  label: string;
+}) {
+  return (
+    <nav aria-label={label}>
+      <h2 className="text-[0.7rem] font-semibold uppercase tracking-[0.16em] text-foreground">
+        {heading}
+      </h2>
+      <ul className="mt-4 space-y-2.5">
+        {links.map((link) => (
+          <li key={link.href}>
+            <Link
+              href={link.href}
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.name}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,205 +54,92 @@ export default function Footer() {
   // Derived from the tool registry so a new tool is linked site-wide the moment
   // it is registered — the previous hand-maintained lists had drifted, omitting
   // the spell checker and image-to-text and linking a /todo-app that never shipped.
-  const toolsLinks = aiTools.map((tool) => ({
-    name: tool.shortTitle,
-    href: tool.href,
+  const toolsLinks = aiTools.map((t) => ({ name: t.shortTitle, href: t.href }));
+  const utilityLinks = otherTools.map((t) => ({
+    name: t.shortTitle,
+    href: t.href,
   }));
-
-  const utilityLinks = otherTools.map((tool) => ({
-    name: tool.shortTitle,
-    href: tool.href,
-  }));
-
-  const companyLinks = [
-    { name: "About Us", href: "/about" },
-    { name: "Contact", href: "/contact" },
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
-  ];
 
   return (
-    <footer className="bg-slate-900 text-slate-300 mt-20">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        {/* Main Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
-          {/* Brand Section */}
-          <div className="lg:col-span-1">
-            <div className="mb-6">
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Brain Booming
-              </h3>
-              <p className="text-slate-400 leading-relaxed">
-                Powerful AI tools to boost your productivity. From writing
-                assistance to content creation, we provide free, easy-to-use
-                tools for everyone.
-              </p>
+    <footer className="mt-24 border-t border-border bg-card">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-2 gap-10 md:grid-cols-4 lg:gap-12">
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2.5">
+              <BrandMark className="size-9" />
+              <span className="text-[0.95rem] font-bold tracking-tight">
+                BRAIN BOOMING
+              </span>
             </div>
-
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              <a
-                href={siteConfig.socials.twitter}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow us on Twitter"
-                className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors"
-              >
-                <Twitter className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a
-                href={siteConfig.socials.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow us on Facebook"
-                className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-              >
-                <Facebook className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a
-                href={siteConfig.socials.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Follow us on LinkedIn"
-                className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-blue-800 transition-colors"
-              >
-                <Linkedin className="w-5 h-5" aria-hidden="true" />
-              </a>
-              <a
-                href={siteConfig.socials.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="View our GitHub"
-                className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center hover:bg-slate-700 transition-colors"
-              >
-                <Github className="w-5 h-5" aria-hidden="true" />
-              </a>
-            </div>
-          </div>
-
-          {/* AI Writing Tools */}
-          <nav aria-label="AI Writing Tools">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              AI Writing Tools
-            </h4>
-            <ul className="space-y-3">
-              {toolsLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-400 hover:text-white transition-colors hover:underline"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Utility Tools */}
-          <nav aria-label="Utility Tools">
-            <h4 className="text-lg font-semibold text-white mb-4">
-              Utility Tools
-            </h4>
-            <ul className="space-y-3">
-              {utilityLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-400 hover:text-white transition-colors hover:underline"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          {/* Company */}
-          <nav aria-label="Company">
-            <h4 className="text-lg font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-3">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-slate-400 hover:text-white transition-colors hover:underline"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            {/* Contact Email */}
-            <div className="mt-6">
-              <a
-                href={`mailto:${siteConfig.email}`}
-                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors"
-              >
-                <Mail className="w-4 h-4" aria-hidden="true" />
-                {siteConfig.email}
-              </a>
-            </div>
-          </nav>
-        </div>
-
-        {/* Newsletter Signup */}
-        <div className="border-t border-slate-800 pt-8 mb-8">
-          <div className="max-w-md">
-            <h4 className="text-lg font-semibold text-white mb-2">
-              Stay Updated
-            </h4>
-            <p className="text-slate-400 mb-4">
-              Get notified about new tools and features. No spam, ever.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Free AI tools for writing and productivity. No signup, no paywall —
+              open a tool and get your result.
             </p>
-            <form className="flex gap-2">
-              <label htmlFor="newsletter-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="newsletter-email"
-                type="email"
-                placeholder="Enter your email"
-                autoComplete="email"
-                className="flex-1 px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="submit"
-                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Subscribe
-              </button>
-            </form>
+            <div className="mt-5 flex gap-2">
+              {SOCIALS.map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${siteConfig.name} on ${label}`}
+                  className="flex size-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:bg-primary/10 hover:text-primary"
+                >
+                  <Icon className="size-4" aria-hidden="true" />
+                </a>
+              ))}
+            </div>
+          </div>
+
+          <LinkColumn
+            heading="AI Writing Tools"
+            links={toolsLinks}
+            label="AI Writing Tools"
+          />
+          <LinkColumn
+            heading="Utility Tools"
+            links={utilityLinks}
+            label="Utility Tools"
+          />
+
+          <div>
+            <LinkColumn
+              heading="Company"
+              links={COMPANY_LINKS}
+              label="Company"
+            />
+            <a
+              href={`mailto:${siteConfig.email}`}
+              className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Mail className="size-4" aria-hidden="true" />
+              {siteConfig.email}
+            </a>
           </div>
         </div>
 
-        {/* Bottom Bar */}
-        <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <div className="flex items-center gap-2 text-slate-400 mb-4 md:mb-0">
-            <span>© {currentYear} Brain Booming. Made with</span>
-            <Heart className="w-4 h-4 text-red-500 fill-current" aria-hidden="true" />
-            <span>for creators worldwide.</span>
-          </div>
-
-          <div className="flex items-center gap-6">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
+          <p className="text-sm text-muted-foreground">
+            © {currentYear} {siteConfig.legalName}. All rights reserved.
+          </p>
+          <div className="flex items-center gap-5">
             <Link
               href="/privacy"
-              className="text-slate-400 hover:text-white transition-colors text-sm"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Privacy Policy
+              Privacy
             </Link>
             <Link
               href="/terms"
-              className="text-slate-400 hover:text-white transition-colors text-sm"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Terms of Service
+              Terms
             </Link>
             {/* Plain anchor: sitemap.xml is a generated route, not an app page,
                 so the client router must not try to prefetch it. */}
             <a
               href="/sitemap.xml"
-              className="text-slate-400 hover:text-white transition-colors text-sm"
+              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               Sitemap
             </a>

@@ -1,9 +1,14 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { HelpCircle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import type { FAQItem } from "./types";
 
+/**
+ * Native <details>/<summary> accordion.
+ *
+ * Answers stay in the DOM when collapsed, which is required: the same copy is
+ * emitted as FAQPage JSON-LD by components/seo/ToolSeo.tsx, and Google treats
+ * structured data whose answer text is absent from the page as a mismatch.
+ * A JS accordion that unmounted the answer would break that guarantee.
+ */
 export default function ToolFAQ({
   title,
   faqs,
@@ -12,37 +17,29 @@ export default function ToolFAQ({
   faqs: FAQItem[];
 }) {
   return (
-    <div className="mt-16 mb-12">
-      <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
+    <section className="mt-20">
+      <h2 className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
         {title}
       </h2>
-      <div className="space-y-6">
-        {faqs.map((faq, i) => (
-          <motion.div
+      <div className="mx-auto mt-8 max-w-3xl space-y-3">
+        {faqs.map((faq) => (
+          <details
             key={faq.question}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: (i + 1) * 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
+            className="group overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/30"
           >
-            <div className="flex items-start gap-4">
-              <div
-                className={`w-8 h-8 bg-gradient-to-r ${faq.gradient} rounded-lg flex items-center justify-center flex-shrink-0 mt-1`}
-              >
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  {faq.question}
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  {faq.answer}
-                </p>
-              </div>
-            </div>
-          </motion.div>
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left font-medium text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset">
+              <h3 className="text-[0.95rem]">{faq.question}</h3>
+              <ChevronDown
+                aria-hidden="true"
+                className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+              />
+            </summary>
+            <p className="border-t border-border px-5 py-4 text-sm leading-relaxed text-muted-foreground">
+              {faq.answer}
+            </p>
+          </details>
         ))}
       </div>
-    </div>
+    </section>
   );
 }

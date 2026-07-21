@@ -1,23 +1,22 @@
 "use client";
 
 import AuthCTA from "@/components/auth/AuthCTA";
-import { logger } from "@/lib/logger";
 import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
 } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerate } from "@/hooks/useGenerate";
-import { renderMarkdown } from "@/utils/sanitizeHtml";
+import { logger } from "@/lib/logger";
 import { characterCount } from "@/utils/characterCount";
+import { renderMarkdown } from "@/utils/sanitizeHtml";
 import { wordCount } from "@/utils/wordCount";
-import { motion } from "framer-motion";
 import {
   Clipboard,
   ClipboardCheck,
   FileWarning,
   RotateCw,
+  Trash2,
 } from "lucide-react";
 import { FormEvent, useCallback, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -26,9 +25,40 @@ import type { TextToolConfig } from "./types";
 
 const MAX_INPUT_LENGTH = 5000;
 
+interface Output {
+  id: string;
+  content: string;
+}
+
+function PaneShell({
+  label,
+  action,
+  children,
+  className = "",
+}: {
+  label: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`flex min-h-[22rem] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-glow-inset ${className}`}
+    >
+      <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+        <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </h2>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
+
 export default function TextToolForm({ config }: { config: TextToolConfig }) {
   const [input, setInput] = useState("");
-  const [outputs, setOutputs] = useState<{ id: string; content: string }[]>([]);
+  const [outputs, setOutputs] = useState<Output[]>([]);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [generateResponse, { isLoading }] = useGenerate();
   const [error, setError] = useState<string | null>(null);
@@ -109,169 +139,243 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
 
   const defaultOutputStats = (output: string) =>
     `${wordCount(output)} words · ${characterCount(output)} chars`;
-
   const formatStats = config.formatOutputStats ?? defaultOutputStats;
 
-  const inputStats = `${wordCount(input)} words · ${characterCount(input)} chars`;
   const isInputValid =
     input.trim().length > 0 && input.length <= MAX_INPUT_LENGTH;
+  const overLimit = input.length > MAX_INPUT_LENGTH;
 
   const SubmitIcon = config.submitIcon;
+  const [latest, ...previous] = outputs;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="space-y-4">
-          <div className="relative">
-            <label htmlFor="tool-input" className="sr-only">
-              {config.placeholder}
-            </label>
-            <AutosizeTextarea
-              id="tool-input"
-              ref={textareaRef}
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                setError(null);
-              }}
-              placeholder={config.placeholder}
-              minHeight={180}
-              maxHeight={400}
-              maxLength={MAX_INPUT_LENGTH}
-              aria-describedby={error ? "tool-input-error" : undefined}
-              aria-invalid={error ? true : undefined}
-              className={`w-full ring-2 ring-slate-200 dark:ring-slate-600 ${config.focusRingColor}
-                 rounded-xl p-4 text-base text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-900
-                 shadow-sm border-0 resize-none transition-all duration-200
-                 placeholder:text-slate-500 dark:placeholder:text-slate-400`}
-            />
-            <div
-              className="absolute bottom-3 right-3 text-xs text-slate-500 dark:text-slate-400
-                bg-white dark:bg-slate-800 px-3 py-1 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700"
-            >
-              {input.length}/{MAX_INPUT_LENGTH}
-            </div>
-          </div>
+    <form onSubmit={handleSubmit}>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* ---------------- Input pane ---------------- */}
+        <PaneShell
+          label={config.inputLabel ?? "Your text"}
+          action={
+            input.length > 0 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setInput("");
+                  setError(null);
+                  textareaRef.current?.textArea.focus();
+                }}
+                className="h-7 text-muted-foreground hover:text-foreground"
+              >
+                <Trash2 className="size-3.5" />
+                Clear
+              </Button>
+            )
+          }
+        >
+          <label htmlFor="tool-input" className="sr-only">
+            {config.placeholder}
+          </label>
+          <AutosizeTextarea
+            id="tool-input"
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => {
+              setInput(e.target.value);
+              setError(null);
+            }}
+            placeholder={config.placeholder}
+            minHeight={240}
+            maxHeight={520}
+            maxLength={MAX_INPUT_LENGTH}
+            aria-describedby={error ? "tool-input-error" : undefined}
+            aria-invalid={error ? true : undefined}
+            className="w-full flex-1 resize-none border-0 bg-transparent p-4 text-[0.95rem] leading-relaxed text-foreground shadow-none outline-none ring-0 placeholder:text-muted-foreground/70 focus-visible:ring-0"
+          />
 
-          {input.length > 0 && (
-            <div className="flex justify-between items-center text-sm text-slate-500 dark:text-slate-400">
-              <span className="flex items-center gap-2">
-                <div className={`w-2 h-2 ${config.dotColor} rounded-full`}></div>
-                {inputStats}
+          <footer className="flex shrink-0 flex-col gap-3 border-t border-border p-3">
+            <div className="flex items-center justify-between px-1">
+              <span
+                className={`font-mono text-xs ${
+                  overLimit ? "text-destructive" : "text-muted-foreground"
+                }`}
+              >
+                {input.length.toLocaleString()} / {MAX_INPUT_LENGTH.toLocaleString()}
               </span>
-              {input.length > MAX_INPUT_LENGTH && (
-                <span className="text-red-500 flex items-center dark:text-red-400">
-                  <FileWarning className="w-4 h-4 mr-1" />
-                  Exceeds character limit
+              {input.length > 0 && (
+                <span className="text-xs text-muted-foreground">
+                  {wordCount(input)} words
                 </span>
               )}
             </div>
-          )}
 
-          {error && (
-            <div
-              id="tool-input-error"
-              role="alert"
-              className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800"
-            >
-              <FileWarning className="w-4 h-4" aria-hidden="true" />
-              {error}
-            </div>
-          )}
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-4">
-          <Button
-            type="submit"
-            disabled={isLoading || !isInputValid}
-            className={`flex-1 bg-gradient-to-r ${config.accentGradient} hover:${config.accentHoverGradient}
-              text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200
-              transform hover:scale-[1.02] disabled:transform-none disabled:opacity-50`}
-          >
-            {isLoading ? (
-              <div className="flex items-center justify-center gap-3">
-                <RotateCw className="w-5 h-5 animate-spin" />
-                {config.loadingLabel}
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-3">
-                <SubmitIcon className="w-5 h-5" />
-                {config.submitLabel}
-              </div>
+            {error && (
+              <p
+                id="tool-input-error"
+                role="alert"
+                className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+              >
+                <FileWarning className="size-3.5 shrink-0" aria-hidden="true" />
+                {error}
+              </p>
             )}
-          </Button>
 
-          {outputs.length > 0 && (
             <Button
-              type="button"
-              onClick={() => processResult(input)}
-              variant="outline"
-              disabled={isLoading}
-              className={`sm:w-auto bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700
-                ${config.hoverBorderColor} text-slate-700 dark:text-slate-300
-                font-semibold py-4 px-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200`}
+              type="submit"
+              variant="gradient"
+              size="lg"
+              disabled={isLoading || !isInputValid}
+              className="w-full"
             >
-              <RotateCw className="w-4 h-4 mr-2" />
-              {config.regenerateLabel}
+              {isLoading ? (
+                <>
+                  <RotateCw className="size-4 animate-spin" />
+                  {config.loadingLabel}
+                </>
+              ) : (
+                <>
+                  <SubmitIcon className="size-4" />
+                  {config.submitLabel}
+                </>
+              )}
             </Button>
-          )}
-        </div>
+          </footer>
+        </PaneShell>
 
-        {isLoading && (
-          <div role="status" aria-label="Processing your text" className="space-y-4 animate-pulse">
-            <Skeleton className="h-4 w-40 bg-slate-200 dark:bg-slate-700 rounded-lg" />
-            <Skeleton className="h-40 w-full bg-slate-200 dark:bg-slate-700 rounded-xl" />
-            <span className="sr-only">{config.loadingLabel}</span>
-          </div>
-        )}
-
-        <div aria-live="polite" className="space-y-6">
-          {outputs.map((output) => (
-            <motion.div
-              key={output.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900
-                rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`w-8 h-8 bg-gradient-to-r ${config.outputBadgeGradient} rounded-lg flex items-center justify-center`}
-                  >
-                    <span className="text-white text-sm font-bold">
-                      ✓
-                    </span>
-                  </div>
-                  <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                    {formatStats(output.content)}
-                  </span>
-                </div>
+        {/* ---------------- Output pane ---------------- */}
+        <PaneShell
+          label={config.outputLabel ?? "Result"}
+          action={
+            latest && (
+              <div className="flex items-center gap-1">
                 <Button
-                  onClick={() => copyToClipboard(output.content, output.id)}
-                  size="sm"
+                  type="button"
                   variant="ghost"
-                  aria-label={copiedId === output.id ? "Copied to clipboard" : "Copy result to clipboard"}
-                  className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200
-                    hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  size="sm"
+                  onClick={() => processResult(input)}
+                  disabled={isLoading || !isInputValid}
+                  className="h-7 text-muted-foreground hover:text-foreground"
                 >
-                  {copiedId === output.id ? (
-                    <ClipboardCheck className="w-4 h-4 text-green-600" aria-hidden="true" />
+                  <RotateCw className="size-3.5" />
+                  {config.regenerateLabel}
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copyToClipboard(latest.content, latest.id)}
+                  aria-label={
+                    copiedId === latest.id
+                      ? "Copied to clipboard"
+                      : "Copy result to clipboard"
+                  }
+                  className="h-7 text-muted-foreground hover:text-foreground"
+                >
+                  {copiedId === latest.id ? (
+                    <ClipboardCheck className="size-3.5 text-success" />
                   ) : (
-                    <Clipboard className="w-4 h-4" aria-hidden="true" />
+                    <Clipboard className="size-3.5" />
                   )}
                 </Button>
               </div>
-              <div
-                className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(output.content) }}
-              />
-            </motion.div>
-          ))}
-        </div>
+            )
+          }
+        >
+          <div aria-live="polite" className="flex flex-1 flex-col overflow-hidden">
+            {isLoading ? (
+              <div className="flex-1 space-y-3 p-4" role="status">
+                <span className="sr-only">{config.loadingLabel}</span>
+                {[
+                  "w-full",
+                  "w-[92%]",
+                  "w-[97%]",
+                  "w-[70%]",
+                  "w-[85%]",
+                  "w-[45%]",
+                ].map((w, i) => (
+                  <div
+                    key={i}
+                    className={`h-3.5 animate-pulse rounded bg-muted ${w}`}
+                    style={{ animationDelay: `${i * 80}ms` }}
+                  />
+                ))}
+              </div>
+            ) : latest ? (
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <div
+                  className="prose-output flex-1 overflow-y-auto p-4"
+                  dangerouslySetInnerHTML={{
+                    __html: renderMarkdown(latest.content),
+                  }}
+                />
+                <p className="shrink-0 border-t border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                  {formatStats(latest.content)}
+                </p>
+              </div>
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+                <SubmitIcon
+                  className="size-7 text-muted-foreground/40"
+                  aria-hidden="true"
+                />
+                <p className="text-sm text-muted-foreground">
+                  {config.emptyStateHint ??
+                    "Your result will appear here."}
+                </p>
+              </div>
+            )}
+          </div>
+        </PaneShell>
+      </div>
 
-        {outputs.length > 0 && <AuthCTA />}
-      </form>
-    </div>
+      {previous.length > 0 && (
+        <section className="mt-8">
+          <h2 className="mb-3 text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            Previous results
+          </h2>
+          <div className="space-y-3">
+            {previous.map((output) => (
+              <details
+                key={output.id}
+                className="group rounded-xl border border-border bg-card"
+              >
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <span className="truncate">
+                    {output.content.replace(/[#*`_>]/g, "").slice(0, 90)}…
+                  </span>
+                  <span className="shrink-0 font-mono text-xs">
+                    {formatStats(output.content)}
+                  </span>
+                </summary>
+                <div className="border-t border-border p-4">
+                  <div
+                    className="prose-output"
+                    dangerouslySetInnerHTML={{
+                      __html: renderMarkdown(output.content),
+                    }}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(output.content, output.id)}
+                    className="mt-4"
+                  >
+                    {copiedId === output.id ? (
+                      <ClipboardCheck className="size-3.5 text-success" />
+                    ) : (
+                      <Clipboard className="size-3.5" />
+                    )}
+                    Copy
+                  </Button>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {outputs.length > 0 && <AuthCTA />}
+    </form>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { BookmarkPlus, Sparkles } from "lucide-react";
+import { BookmarkPlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -11,35 +11,28 @@ export default function AuthCTA() {
   if (session?.user) return null;
 
   return (
-    <div className="mt-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-5 border border-indigo-200 dark:border-indigo-800">
-      <div className="flex items-start gap-4">
-        <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0">
-          <BookmarkPlus className="w-5 h-5 text-white" />
-        </div>
-        <div className="flex-1">
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-1">
+    <div className="mt-6 flex flex-col gap-4 rounded-xl border border-border bg-card p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-start gap-3">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <BookmarkPlus className="size-4" aria-hidden="true" />
+        </span>
+        <div>
+          <h3 className="text-sm font-semibold text-foreground">
             Want to save this result?
           </h3>
-          <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-            Sign up to keep your history and access all your results anytime.
+          <p className="mt-0.5 text-xs text-muted-foreground">
+            Create a free account to keep your history and revisit results
+            anytime.
           </p>
-          <div className="flex gap-2">
-            <Link href="/signup">
-              <Button
-                size="sm"
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs"
-              >
-                <Sparkles className="w-3 h-3 mr-1" />
-                Sign Up Free
-              </Button>
-            </Link>
-            <Link href="/signin">
-              <Button size="sm" variant="outline" className="text-xs">
-                Sign In
-              </Button>
-            </Link>
-          </div>
         </div>
+      </div>
+      <div className="flex shrink-0 gap-2">
+        <Button asChild size="sm" variant="gradient">
+          <Link href="/signup">Sign up free</Link>
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <Link href="/signin">Sign in</Link>
+        </Button>
       </div>
     </div>
   );

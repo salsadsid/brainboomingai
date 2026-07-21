@@ -18,19 +18,17 @@ export default function AuthErrorPage() {
   const message = errorMessages[error] ?? errorMessages.Default;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 text-center">
-      <div className="w-14 h-14 bg-gradient-to-br from-red-500 to-orange-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-        <AlertTriangle className="w-7 h-7 text-white" />
+    <div className="rounded-xl border border-border bg-card p-8 text-center">
+      <div className="mx-auto mb-5 flex size-12 items-center justify-center rounded-xl bg-destructive/10 text-destructive">
+        <AlertTriangle className="size-6" aria-hidden="true" />
       </div>
-      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
+      <h1 className="text-2xl font-bold text-foreground mb-2">
         Authentication Error
       </h1>
-      <p className="text-slate-600 dark:text-slate-400 mb-6">{message}</p>
-      <Link href="/signin">
-        <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
-          Back to Sign In
-        </Button>
-      </Link>
+      <p className="text-muted-foreground mb-6">{message}</p>
+      <Button asChild variant="gradient">
+        <Link href="/signin">Back to Sign In</Link>
+      </Button>
     </div>
   );
 }

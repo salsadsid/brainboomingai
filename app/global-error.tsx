@@ -16,7 +16,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className="bg-slate-50 text-slate-900">
+      <body style={{ background: "#08070f", color: "#f1f0f7", fontFamily: "system-ui, sans-serif", margin: 0 }}>
         <div className="flex min-h-screen flex-col items-center justify-center px-4">
           <div className="max-w-md w-full text-center">
             <div
@@ -24,7 +24,7 @@ export default function GlobalError({
                 width: 64,
                 height: 64,
                 borderRadius: 16,
-                background: "linear-gradient(135deg, #ef4444, #f97316)",
+                background: "rgba(239, 68, 68, 0.12)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -37,7 +37,7 @@ export default function GlobalError({
                 height="32"
                 viewBox="0 0 24 24"
                 fill="none"
-                stroke="white"
+                stroke="#f87171"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -50,7 +50,7 @@ export default function GlobalError({
             <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>
               Something went wrong
             </h2>
-            <p style={{ color: "#64748b", marginBottom: 32 }}>
+            <p style={{ color: "#a1a0b5", marginBottom: 32 }}>
               A critical error occurred. Please try again.
             </p>
             <button
@@ -58,7 +58,7 @@ export default function GlobalError({
               style={{
                 padding: "10px 24px",
                 borderRadius: 12,
-                background: "linear-gradient(to right, #4f46e5, #9333ea)",
+                background: "linear-gradient(100deg, #6366f1, #a855f7 55%, #ec4899)",
                 color: "white",
                 fontSize: 14,
                 fontWeight: 500,

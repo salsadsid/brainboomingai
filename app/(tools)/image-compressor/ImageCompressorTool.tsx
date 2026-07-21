@@ -1,20 +1,96 @@
 "use client";
 
+import ToolFAQ from "@/components/tools/ToolFAQ";
+import ToolFeatures from "@/components/tools/ToolFeatures";
+import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
+import type { FAQItem, FeatureItem, StepItem } from "@/components/tools/types";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import imageCompression from "browser-image-compression";
-import { motion } from "framer-motion";
-import { Archive, Download, FileImage, HelpCircle, Zap } from "lucide-react";
+import { Archive, Download, FileImage, Upload, Zap } from "lucide-react";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+
+const features: FeatureItem[] = [
+  {
+    icon: Archive,
+    title: "Smart Compression",
+    description:
+      "Advanced algorithms reduce file size while maintaining image quality. Perfect balance between compression ratio and visual fidelity.",
+  },
+  {
+    icon: FileImage,
+    title: "Multiple Formats",
+    description:
+      "Support for JPEG, PNG, WebP, and other popular image formats. Optimize images for web, email, or storage without quality loss.",
+  },
+  {
+    icon: Zap,
+    title: "Fast Processing",
+    description:
+      "Lightning-fast compression with real-time progress tracking. Process images quickly without compromising on quality or security.",
+  },
+];
+
+const steps: StepItem[] = [
+  {
+    title: "Upload Your Image",
+    description:
+      "Select and upload your image file. We support all major formats including JPEG, PNG, GIF, and WebP for maximum compatibility.",
+  },
+  {
+    title: "Smart Compression",
+    description:
+      "Our advanced algorithms analyze your image and apply optimal compression settings to reduce file size while preserving quality.",
+  },
+  {
+    title: "Download Result",
+    description:
+      "Download your compressed image with significantly reduced file size and minimal quality loss. Perfect for web use and storage.",
+  },
+];
+
+const faqs: FAQItem[] = [
+  {
+    question: "Will compressing affect image quality?",
+    answer:
+      "Our smart compression algorithms are designed to maintain visual quality while reducing file size. The compression is optimized to provide the best balance between size reduction and quality.",
+  },
+  {
+    question: "What file formats are supported?",
+    answer:
+      "We support all major image formats including JPEG, PNG, GIF, WebP, BMP, and TIFF. The tool automatically handles format optimization for best compression results.",
+  },
+  {
+    question: "Is there a file size limit?",
+    answer:
+      "Our tool can handle images up to several megabytes in size. For very large files, the compression process may take a bit longer but will still maintain optimal quality and compression.",
+  },
+];
+
+function PaneShell({
+  label,
+  action,
+  children,
+}: {
+  label: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="flex min-h-[22rem] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-glow-inset">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+        <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </h2>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
 
 export default function ImageCompressorTool() {
   const [originalImage, setOriginalImage] = useState<File | null>(null);
@@ -90,26 +166,36 @@ export default function ImageCompressorTool() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Card className="bg-white dark:bg-slate-800 shadow-xl border border-slate-200 dark:border-slate-700 rounded-2xl p-6 md:p-8">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-slate-900 dark:text-white flex items-center justify-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <Archive className="w-5 h-5 text-white" />
-            </div>
-            Image Compressor Tool
-          </CardTitle>
-        </CardHeader>
-
-        <CardContent className="space-y-6">
-          <div className="grid w-full items-center gap-4">
-            <Label
-              htmlFor="image-upload"
-              className="text-base font-medium text-slate-700 dark:text-slate-300"
-            >
-              Upload Image to Compress
-            </Label>
-            <div className="relative">
+    <div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* ---------------- Upload pane ---------------- */}
+        <PaneShell
+          label="Upload & settings"
+          action={
+            (originalImage || compressedImage) && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={resetTool}
+                className="h-7 text-muted-foreground hover:text-foreground"
+              >
+                Reset
+              </Button>
+            )
+          }
+        >
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <div className="rounded-xl border-2 border-dashed border-border bg-muted/40 p-8 text-center transition-colors hover:border-primary/50">
+              <Upload
+                className="mx-auto size-7 text-muted-foreground/50"
+                aria-hidden="true"
+              />
+              <Label
+                htmlFor="image-upload"
+                className="mt-3 block text-sm font-medium text-foreground"
+              >
+                Upload Image to Compress
+              </Label>
               <Input
                 id="image-upload"
                 type="file"
@@ -117,351 +203,153 @@ export default function ImageCompressorTool() {
                 onChange={handleImageUpload}
                 ref={fileInputRef}
                 disabled={isLoading}
-                className="file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 
-                  file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 
-                  hover:file:bg-indigo-100 file:cursor-pointer cursor-pointer"
+                className="mx-auto mt-4 h-auto max-w-xs cursor-pointer border-border bg-card py-2 text-xs text-muted-foreground shadow-none file:mr-3 file:cursor-pointer file:rounded-md file:bg-secondary file:px-3 file:py-1 file:text-xs file:font-semibold file:text-secondary-foreground md:text-xs"
               />
             </div>
-          </div>
 
-          {originalImage && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
-            >
-              <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
-                Original Image Preview
-              </h4>
-              <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                <img
-                  src={URL.createObjectURL(originalImage)}
-                  alt="Original preview"
-                  className="max-h-64 w-full object-contain rounded-lg mx-auto"
-                />
-                <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 text-center">
-                  Original Size:{" "}
-                  <span className="font-semibold">
-                    {(originalImage.size / 1024).toFixed(2)} KB
-                  </span>
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {isLoading && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="space-y-3 text-center"
-            >
-              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
-                <div
-                  className="bg-gradient-to-r from-indigo-500 to-purple-500 h-3 rounded-full transition-all duration-300"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                Compressing... {progress.toFixed(0)}%
-              </p>
-            </motion.div>
-          )}
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="text-red-500 text-sm bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800"
-            >
-              {error}
-            </motion.div>
-          )}
-
-          {compressedImage && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
-            >
-              <h4 className="text-lg font-semibold text-slate-900 dark:text-white">
-                Compressed Image Preview
-              </h4>
-              <div className="bg-slate-50 dark:bg-slate-900 rounded-xl p-4 border border-slate-200 dark:border-slate-700">
-                <img
-                  src={URL.createObjectURL(compressedImage)}
-                  alt="Compressed preview"
-                  className="max-h-64 w-full object-contain rounded-lg mx-auto"
-                />
-                <div className="flex justify-between items-center mt-3">
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Compressed Size:{" "}
-                    <span className="font-semibold">
-                      {(compressedImage.size / 1024).toFixed(2)} KB
+            {originalImage && (
+              <div className="animate-fade-up space-y-3">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Original Image Preview
+                </h3>
+                <div className="rounded-xl border border-border bg-muted p-4">
+                  <img
+                    src={URL.createObjectURL(originalImage)}
+                    alt="Original preview"
+                    className="mx-auto max-h-64 w-auto rounded-lg object-contain"
+                  />
+                  <p className="mt-3 text-center text-xs text-muted-foreground">
+                    Original Size:{" "}
+                    <span className="font-mono font-semibold text-foreground">
+                      {(originalImage.size / 1024).toFixed(2)} KB
                     </span>
-                  </p>
-                  <p className="text-sm text-green-600 dark:text-green-400 font-semibold">
-                    Reduction:{" "}
-                    {originalImage &&
-                      (
-                        (1 - compressedImage.size / originalImage.size) *
-                        100
-                      ).toFixed(1)}
-                    %
                   </p>
                 </div>
               </div>
-            </motion.div>
-          )}
-        </CardContent>
+            )}
 
-        <CardFooter className="flex flex-col sm:flex-row gap-4 pt-6">
-          <Button
-            onClick={compressImage}
-            disabled={!originalImage || isLoading}
-            className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 
-              text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <Archive className="w-4 h-4 animate-pulse" />
-                Compressing...
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Archive className="w-4 h-4" />
-                Compress Image
+            {isLoading && (
+              <div className="space-y-2">
+                <div
+                  role="progressbar"
+                  aria-label="Compression progress"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.round(progress)}
+                  className="h-2 w-full overflow-hidden rounded-full bg-muted"
+                >
+                  <div
+                    className="h-full rounded-full bg-brand-gradient transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <p className="text-center font-mono text-xs text-muted-foreground">
+                  Compressing... {progress.toFixed(0)}%
+                </p>
               </div>
             )}
-          </Button>
+
+            {error && (
+              <p
+                role="alert"
+                className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+              >
+                {error}
+              </p>
+            )}
+          </div>
+
+          <footer className="shrink-0 border-t border-border p-3">
+            <Button
+              onClick={compressImage}
+              disabled={!originalImage || isLoading}
+              variant="gradient"
+              size="lg"
+              className="w-full"
+            >
+              {isLoading ? (
+                <>
+                  <Archive className="size-4 animate-pulse" />
+                  Compressing...
+                </>
+              ) : (
+                <>
+                  <Archive className="size-4" />
+                  Compress Image
+                </>
+              )}
+            </Button>
+          </footer>
+        </PaneShell>
+
+        {/* ---------------- Result pane ---------------- */}
+        <PaneShell label="Result">
+          <div
+            aria-live="polite"
+            className="flex flex-1 flex-col overflow-hidden"
+          >
+            {compressedImage ? (
+              <div className="animate-fade-up flex-1 space-y-3 overflow-y-auto p-4">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Compressed Image Preview
+                </h3>
+                <div className="rounded-xl border border-border bg-muted p-4">
+                  <img
+                    src={URL.createObjectURL(compressedImage)}
+                    alt="Compressed preview"
+                    className="mx-auto max-h-64 w-auto rounded-lg object-contain"
+                  />
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs text-muted-foreground">
+                      Compressed Size:{" "}
+                      <span className="font-mono font-semibold text-foreground">
+                        {(compressedImage.size / 1024).toFixed(2)} KB
+                      </span>
+                    </p>
+                    <Badge variant="success" size="sm">
+                      Reduction:{" "}
+                      {originalImage &&
+                        (
+                          (1 - compressedImage.size / originalImage.size) *
+                          100
+                        ).toFixed(1)}
+                      %
+                    </Badge>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+                <Archive
+                  className="size-7 text-muted-foreground/40"
+                  aria-hidden="true"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Your compressed image will appear here.
+                </p>
+              </div>
+            )}
+          </div>
 
           {compressedImage && (
-            <Button
-              variant="outline"
-              onClick={handleDownload}
-              className="flex-1 border-2 border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-600 
-                text-slate-700 dark:text-slate-300 font-semibold py-3 px-6 rounded-xl"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Download
-            </Button>
+            <footer className="shrink-0 border-t border-border p-3">
+              <Button
+                variant="outline"
+                size="lg"
+                onClick={handleDownload}
+                className="w-full"
+              >
+                <Download className="size-4" />
+                Download
+              </Button>
+            </footer>
           )}
-
-          {(originalImage || compressedImage) && (
-            <Button
-              variant="ghost"
-              onClick={resetTool}
-              className="sm:w-auto text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-            >
-              Reset
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-
-      {/* Features Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          Image Compression Features
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
-              <Archive className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Smart Compression
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Advanced algorithms reduce file size while maintaining image
-              quality. Perfect balance between compression ratio and visual
-              fidelity.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-              <FileImage className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Multiple Formats
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Support for JPEG, PNG, WebP, and other popular image formats.
-              Optimize images for web, email, or storage without quality loss.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center mb-4">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Fast Processing
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Lightning-fast compression with real-time progress tracking.
-              Process images quickly without compromising on quality or
-              security.
-            </p>
-          </motion.div>
-        </div>
+        </PaneShell>
       </div>
 
-      {/* How It Works Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          How Image Compression Works
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">1</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Upload Your Image
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Select and upload your image file. We support all major formats
-              including JPEG, PNG, GIF, and WebP for maximum compatibility.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">2</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Smart Compression
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Our advanced algorithms analyze your image and apply optimal
-              compression settings to reduce file size while preserving quality.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">3</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Download Result
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Download your compressed image with significantly reduced file
-              size and minimal quality loss. Perfect for web use and storage.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          Image Compressor FAQ
-        </h2>
-        <div className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Will compressing affect image quality?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Our smart compression algorithms are designed to maintain
-                  visual quality while reducing file size. The compression is
-                  optimized to provide the best balance between size reduction
-                  and quality.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  What file formats are supported?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  We support all major image formats including JPEG, PNG, GIF,
-                  WebP, BMP, and TIFF. The tool automatically handles format
-                  optimization for best compression results.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Is there a file size limit?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Our tool can handle images up to several megabytes in size.
-                  For very large files, the compression process may take a bit
-                  longer but will still maintain optimal quality and
-                  compression.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      <ToolFeatures title="Image Compression Features" features={features} />
+      <ToolHowItWorks title="How Image Compression Works" steps={steps} />
+      <ToolFAQ title="Image Compressor FAQ" faqs={faqs} />
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { BRAIN_L, BRAIN_R } from "@/components/brand/brainPaths";
 import { allTools } from "@/config/constants";
 import { siteConfig } from "@/config/site";
 import { ImageResponse } from "next/og";
@@ -5,11 +6,6 @@ import { ImageResponse } from "next/og";
 /** Facebook / LinkedIn / Slack / Twitter all key off 1.91:1 at this size. */
 export const OG_SIZE = { width: 1200, height: 630 };
 export const OG_CONTENT_TYPE = "image/png";
-
-const BRAIN_L =
-  "M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z";
-const BRAIN_R =
-  "M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z";
 
 /**
  * Renders a share card.

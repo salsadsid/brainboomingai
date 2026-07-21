@@ -1,4 +1,5 @@
 import ToolSeo from "@/components/seo/ToolSeo";
+import ToolHeader from "@/components/tools/ToolHeader";
 import { toolKeywords } from "@/config/constants";
 import { buildMetadata } from "@/lib/seo";
 import OriginalityAnalyzerTool from "./OriginalityAnalyzerTool";
@@ -14,6 +15,7 @@ export default function OriginalityAnalyzerPage() {
   return (
     <>
       <ToolSeo path="/free-originality-analyzer" />
+      <ToolHeader href="/free-originality-analyzer" />
       <OriginalityAnalyzerTool />
     </>
   );

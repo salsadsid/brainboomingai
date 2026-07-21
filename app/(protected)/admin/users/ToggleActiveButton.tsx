@@ -41,11 +41,12 @@ export default function ToggleActiveButton({
     <button
       onClick={toggle}
       disabled={loading}
-      className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+      aria-label={`${isActive ? "Deactivate" : "Activate"} this user`}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors disabled:opacity-50 ${
         isActive
-          ? "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-300 dark:hover:bg-green-900/50"
-          : "bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300 dark:hover:bg-red-900/50"
-      } disabled:opacity-50`}
+          ? "border-success/25 bg-success/10 text-success hover:bg-success/20"
+          : "border-destructive/25 bg-destructive/10 text-destructive hover:bg-destructive/20"
+      }`}
     >
       {loading ? "..." : isActive ? "Active" : "Inactive"}
     </button>

@@ -88,9 +88,11 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
+  // Must track the --background tokens in globals.css, or the browser chrome
+  // sits at a visibly different shade from the page it frames.
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: "#08070f" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -120,7 +122,7 @@ export default function RootLayout({
                 toastOptions={{
                   duration: 3000,
                   className:
-                    "dark:bg-slate-800 dark:text-white dark:border dark:border-slate-700",
+                    "!bg-popover !text-popover-foreground !border !border-border !shadow-lg !rounded-lg",
                 }}
               />
               <div className="flex flex-col min-h-screen">

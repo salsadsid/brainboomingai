@@ -1,4 +1,5 @@
 import ToolSeo from "@/components/seo/ToolSeo";
+import ToolHeader from "@/components/tools/ToolHeader";
 import { toolKeywords } from "@/config/constants";
 import { buildMetadata } from "@/lib/seo";
 import AiToHumanConverter from "./AiToHumanConverter";
@@ -14,6 +15,7 @@ export default function Page() {
   return (
     <>
       <ToolSeo path="/free-ai-to-human" />
+      <ToolHeader href="/free-ai-to-human" />
       <AiToHumanConverter />
     </>
   );
