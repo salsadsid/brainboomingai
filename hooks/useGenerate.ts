@@ -2,6 +2,21 @@
 
 import { useCallback, useState } from "react";
 
+/**
+ * An error the API reported, carrying a message that is already safe and
+ * useful to show a user. Distinguishes those from network/parse failures,
+ * where the raw message ("Failed to fetch") is worse than a tool's own copy.
+ */
+export class GenerateError extends Error {
+  constructor(
+    message: string,
+    readonly retryable = false,
+  ) {
+    super(message);
+    this.name = "GenerateError";
+  }
+}
+
 export function useGenerate(): [
   (args: { prompt: string; tool: string }) => Promise<string>,
   { isLoading: boolean },
@@ -18,10 +33,24 @@ export function useGenerate(): [
           body: JSON.stringify({ prompt, tool }),
         });
 
-        const data = await res.json();
+        // A gateway or proxy can fail before our route runs, in which case the
+        // body is HTML and res.json() throws something unhelpful.
+        let data: unknown;
+        try {
+          data = await res.json();
+        } catch {
+          throw new GenerateError(
+            "Something went wrong reaching the server. Please try again.",
+            res.status >= 500,
+          );
+        }
 
         if (!res.ok) {
-          throw new Error(data.error || "Failed to generate a response.");
+          const body = data as { error?: string; retryable?: boolean };
+          throw new GenerateError(
+            body?.error || "Failed to generate a response.",
+            body?.retryable === true || res.status === 503,
+          );
         }
 
         return data as string;

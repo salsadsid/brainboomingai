@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { generateResponse } from "@/lib/googleAIService";
+import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
 import { logger } from "@/lib/logger";
 import dbConnect from "@/lib/mongoose";
 import { rateLimit } from "@/lib/rateLimit";
@@ -96,8 +96,24 @@ export async function POST(req: Request) {
     return NextResponse.json(savedResponse.response, { status: 201 });
   } catch (error: unknown) {
     logger.error("Error generating response", error);
-    const message =
-      error instanceof Error ? error.message : "Failed to generate a response.";
-    return NextResponse.json({ error: message }, { status: 500 });
+
+    // Never return the provider's own error text. It was being echoed verbatim,
+    // which put raw Google JSON (model name, quota details, internal status) in
+    // front of users and told them nothing actionable.
+    if (error instanceof UpstreamBusyError) {
+      return NextResponse.json(
+        {
+          error:
+            "Our AI provider is busy right now. Please wait a moment and try again.",
+          retryable: true,
+        },
+        { status: 503, headers: { "Retry-After": "5" } }
+      );
+    }
+
+    return NextResponse.json(
+      { error: "Failed to generate a response. Please try again." },
+      { status: 500 }
+    );
   }
 }

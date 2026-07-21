@@ -6,7 +6,7 @@ import {
   AutosizeTextAreaRef,
 } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
-import { useGenerate } from "@/hooks/useGenerate";
+import { GenerateError, useGenerate } from "@/hooks/useGenerate";
 import { logger } from "@/lib/logger";
 import { characterCount } from "@/utils/characterCount";
 import { renderMarkdown } from "@/utils/sanitizeHtml";
@@ -111,7 +111,12 @@ export default function TextToolForm({ config }: { config: TextToolConfig }) {
         toast.success(config.successMessage);
       } catch (err) {
         logger.error(`${config.toolSlug} error`, err);
-        toast.error(config.errorMessage);
+        // The API's own message is already user-safe and says something the
+        // tool's generic copy cannot — e.g. that the provider is briefly busy
+        // and the run is worth retrying.
+        toast.error(
+          err instanceof GenerateError ? err.message : config.errorMessage
+        );
       }
     },
     [config, generateResponse, schema]
