@@ -29,12 +29,16 @@ const toolListSchema = {
  * Every figure here is a fact about the product, not a metric we cannot back
  * up. No user counts, no ratings, no testimonials — inventing social proof for
  * a site with no analytics would be a lie a visitor could catch.
+ *
+ * Each value must also read as a quantity. An earlier version showed "0" over
+ * the label "Accounts required", which scans as a broken or missing metric
+ * rather than as the selling point it was meant to be.
  */
 const STATS = [
   { value: String(allTools.length), label: "Free tools" },
-  { value: "0", label: "Accounts required" },
+  { value: String(aiTools.length), label: "AI-powered tools" },
   { value: "5,000", label: "Characters per run" },
-  { value: "100%", label: "In-browser image tools" },
+  { value: "$0", label: "No account needed" },
 ];
 
 const STEPS = [
@@ -58,8 +62,26 @@ const STEPS = [
   },
 ];
 
-/** The two tools worth leading with — highest search volume, broadest appeal. */
-const FEATURED_HREFS = ["/free-grammar-checker", "/free-ai-to-human"];
+/**
+ * The two tools worth leading with — highest search volume, broadest appeal.
+ *
+ * Each carries a worked example. The first version of these cards showed grey
+ * placeholder bars as a "hint" of the output pane, which read as a loading
+ * skeleton and made the page look permanently stuck mid-fetch. A real
+ * before/after says more and cannot be mistaken for a pending state.
+ */
+const FEATURED = [
+  {
+    href: "/free-grammar-checker",
+    before: "she dont like when it rains",
+    after: "She doesn't like it when it rains",
+  },
+  {
+    href: "/free-ai-to-human",
+    before: "It is important to note that this solution is highly effective.",
+    after: "This solution works — and here is why that matters.",
+  },
+];
 
 function SectionHeading({
   eyebrow,
@@ -87,8 +109,14 @@ function SectionHeading({
   );
 }
 
-/** Large card for a headline tool, with a decorative hint of its output. */
-function FeaturedToolCard({ tool }: { tool: ToolDef }) {
+/** Large card for a headline tool, showing a worked example of its output. */
+function FeaturedToolCard({
+  tool,
+  example,
+}: {
+  tool: ToolDef;
+  example: { before: string; after: string };
+}) {
   const Icon = toolIcons[tool.icon];
   return (
     <Link
@@ -111,16 +139,25 @@ function FeaturedToolCard({ tool }: { tool: ToolDef }) {
         {tool.description}
       </p>
 
-      {/* Decorative stand-in for the tool's output pane. */}
+      {/*
+        Hidden from assistive tech: the card is one big link, so this text
+        would be appended to its accessible name. The title and description
+        already describe the tool; this is illustration for sighted users.
+      */}
       <div
         aria-hidden="true"
-        className="mt-6 space-y-2 rounded-lg border border-border bg-muted/60 p-3"
+        className="mt-6 space-y-2 rounded-lg border border-border bg-muted/50 p-3 text-sm"
       >
-        <span className="block h-2 w-full rounded-full bg-muted-foreground/20" />
-        <span className="block h-2 w-4/5 rounded-full bg-muted-foreground/20" />
-        <span className="inline-flex rounded bg-success/15 px-2 py-0.5 text-[0.65rem] font-medium text-success">
-          Ready in seconds
-        </span>
+        <p className="text-muted-foreground line-through decoration-destructive/50">
+          {example.before}
+        </p>
+        <p className="flex gap-2 font-medium text-foreground">
+          <ArrowRight
+            className="mt-1 size-3.5 shrink-0 text-success"
+            aria-hidden="true"
+          />
+          <span>{example.after}</span>
+        </p>
       </div>
 
       <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-primary">
@@ -135,10 +172,14 @@ function FeaturedToolCard({ tool }: { tool: ToolDef }) {
 }
 
 export default function Home() {
-  const featured = FEATURED_HREFS.map((href) =>
-    aiTools.find((t) => t.href === href)
-  ).filter((t): t is ToolDef => Boolean(t));
-  const restOfAiTools = aiTools.filter((t) => !FEATURED_HREFS.includes(t.href));
+  const featured = FEATURED.map((entry) => ({
+    tool: aiTools.find((t) => t.href === entry.href),
+    example: entry,
+  })).filter((f): f is { tool: ToolDef; example: (typeof FEATURED)[number] } =>
+    Boolean(f.tool)
+  );
+  const featuredHrefs = FEATURED.map((f) => f.href);
+  const restOfAiTools = aiTools.filter((t) => !featuredHrefs.includes(t.href));
 
   return (
     <>
@@ -171,8 +212,8 @@ export default function Home() {
           />
 
           <div className="mb-4 grid gap-4 md:grid-cols-2">
-            {featured.map((tool) => (
-              <FeaturedToolCard key={tool.href} tool={tool} />
+            {featured.map(({ tool, example }) => (
+              <FeaturedToolCard key={tool.href} tool={tool} example={example} />
             ))}
           </div>
 

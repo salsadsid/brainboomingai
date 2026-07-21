@@ -14,9 +14,8 @@ vi.mock("@/lib/logger", () => ({
 
 process.env.GOOGLE_API_KEY = "test-key";
 
-const { generateResponse, UpstreamBusyError } = await import(
-  "@/lib/googleAIService"
-);
+const { generateResponse, UpstreamBusyError, QuotaExceededError } =
+  await import("@/lib/googleAIService");
 
 /** Shaped like the SDK's error: the HTTP status is embedded in the message. */
 const upstream = (status: number, name: string) =>
@@ -48,15 +47,28 @@ describe("generateResponse", () => {
     expect(generateContent).toHaveBeenCalledTimes(2);
   });
 
-  it("retries 429 rate limiting", async () => {
-    generateContent
-      .mockRejectedValueOnce(upstream(429, "Too Many Requests"))
-      .mockResolvedValueOnce(ok("ok"));
+  it("does NOT retry a 429 — quota cannot clear within a request", async () => {
+    // The free tier's binding limit is GenerateRequestsPerDayPerProjectPerModel,
+    // so a sub-second backoff can never clear it. Retrying only made the user
+    // wait ~2s longer for the same refusal.
+    generateContent.mockRejectedValue(upstream(429, "Too Many Requests"));
 
-    await expect(generateResponse("hi")).resolves.toMatchObject({
-      response: "ok",
+    await expect(generateResponse("hi")).rejects.toBeInstanceOf(
+      QuotaExceededError,
+    );
+    expect(generateContent).toHaveBeenCalledTimes(1);
+  });
+
+  it("carries Google's suggested wait through on a quota error", async () => {
+    generateContent.mockRejectedValue(
+      new Error(
+        'got status: 429 Too Many Requests. {"error":{"code":429}} Please retry in 45.8s.',
+      ),
+    );
+
+    await expect(generateResponse("hi")).rejects.toMatchObject({
+      retryAfterSeconds: 46,
     });
-    expect(generateContent).toHaveBeenCalledTimes(2);
   });
 
   it("gives up after 3 attempts and reports the provider as busy", async () => {

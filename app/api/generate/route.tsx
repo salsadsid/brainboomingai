@@ -1,5 +1,9 @@
 import { auth } from "@/auth";
-import { generateResponse, UpstreamBusyError } from "@/lib/googleAIService";
+import {
+  generateResponse,
+  QuotaExceededError,
+  UpstreamBusyError,
+} from "@/lib/googleAIService";
 import { logger } from "@/lib/logger";
 import dbConnect from "@/lib/mongoose";
 import { parseToolResult } from "@/lib/parseToolResult";
@@ -113,6 +117,24 @@ export async function POST(req: Request) {
     // Never return the provider's own error text. It was being echoed verbatim,
     // which put raw Google JSON (model name, quota details, internal status) in
     // front of users and told them nothing actionable.
+    if (error instanceof QuotaExceededError) {
+      // Deliberately not "busy, try again shortly". The free tier's binding
+      // limit is per-day, so that wording sends users into a retry loop that
+      // cannot succeed.
+      const seconds = error.retryAfterSeconds;
+      return NextResponse.json(
+        {
+          error:
+            "Our daily free-usage limit has been reached. The tools will work again once it resets — please try later.",
+          retryable: false,
+        },
+        {
+          status: 429,
+          ...(seconds ? { headers: { "Retry-After": String(seconds) } } : {}),
+        }
+      );
+    }
+
     if (error instanceof UpstreamBusyError) {
       return NextResponse.json(
         {

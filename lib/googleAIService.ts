@@ -20,18 +20,37 @@ const MAX_ATTEMPTS = 3;
  * Upstream statuses worth retrying.
  *
  * 503 UNAVAILABLE and 500 INTERNAL are transient capacity problems on Google's
- * side; 429 RESOURCE_EXHAUSTED is rate limiting, which a short wait clears on
- * the free tier. Everything else (400 bad request, 403 revoked key, 404 unknown
- * model) is deterministic — retrying just multiplies the latency of a failure.
+ * side, and a moment later the same request usually succeeds.
+ *
+ * 429 RESOURCE_EXHAUSTED is deliberately NOT here. On the free tier the binding
+ * limit is `GenerateRequestsPerDayPerProjectPerModel` — a per-day allowance. No
+ * sub-second backoff can clear that, so retrying only made the user wait longer
+ * for the same refusal. Everything else (400 bad request, 403 revoked key, 404
+ * unknown model) is deterministic and equally not worth repeating.
  */
-const RETRYABLE_STATUSES = new Set([429, 500, 503]);
+const RETRYABLE_STATUSES = new Set([500, 503]);
 
-/** Marker so callers can distinguish "busy, try again" from a real fault. */
+/** Transient capacity problem upstream — worth trying again shortly. */
 export class UpstreamBusyError extends Error {
   readonly retryable = true;
   constructor(message = "The AI provider is busy.") {
     super(message);
     this.name = "UpstreamBusyError";
+  }
+}
+
+/**
+ * The account's quota is spent. Distinct from `UpstreamBusyError` because the
+ * remedy is completely different: waiting a moment does nothing, and telling a
+ * user to "try again shortly" when the allowance resets tomorrow is a lie.
+ */
+export class QuotaExceededError extends Error {
+  /** Seconds Google suggests waiting, when it says. */
+  readonly retryAfterSeconds: number | null;
+  constructor(retryAfterSeconds: number | null = null) {
+    super("The AI provider quota has been exhausted.");
+    this.name = "QuotaExceededError";
+    this.retryAfterSeconds = retryAfterSeconds;
   }
 }
 
@@ -41,6 +60,13 @@ function statusOf(error: unknown): number | null {
   const match =
     message.match(/status:\s*(\d{3})/) ?? message.match(/"code":\s*(\d{3})/);
   return match ? Number(match[1]) : null;
+}
+
+/** Google appends e.g. "Please retry in 45.8s." to the quota message. */
+function retryAfterOf(error: unknown): number | null {
+  const message = error instanceof Error ? error.message : String(error);
+  const match = message.match(/retry in ([\d.]+)s/i);
+  return match ? Math.ceil(Number(match[1])) : null;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -97,6 +123,15 @@ export async function generateResponse(
     } catch (error) {
       lastError = error;
       const status = statusOf(error);
+
+      // Surfaced as its own type on the first attempt: the quota is spent, so
+      // there is nothing to wait for within this request.
+      if (status === 429) {
+        logger.error("Gemini quota exhausted", error, {
+          retryAfterSeconds: retryAfterOf(error),
+        });
+        throw new QuotaExceededError(retryAfterOf(error));
+      }
 
       if (status === null || !RETRYABLE_STATUSES.has(status)) throw error;
 
