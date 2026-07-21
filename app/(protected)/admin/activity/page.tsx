@@ -19,38 +19,38 @@ export default async function AdminActivityPage() {
     .lean();
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-        <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+    <div className="bg-card rounded-xl border border-border">
+      <div className="px-6 py-4 border-b border-border">
+        <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
           <Activity className="w-5 h-5" />
           All Activity ({activities.length})
         </h2>
       </div>
 
-      <div className="divide-y divide-slate-200 dark:divide-slate-700">
+      <div className="divide-y divide-border">
         {activities.map((item) => {
           const user = item.userId as { name?: string; email?: string } | null;
           return (
             <div
               key={String(item._id)}
-              className="px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+              className="px-6 py-4 hover:bg-secondary transition-colors"
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-sm font-medium text-slate-900 dark:text-white">
+                  <span className="text-sm font-medium text-foreground">
                     {user?.name || user?.email || "Unknown"}
                   </span>
-                  <span className="text-sm text-slate-500 dark:text-slate-400 ml-2">
+                  <span className="text-sm text-muted-foreground ml-2">
                     {item.action}
                     {item.tool && ` - ${item.tool}`}
                   </span>
                 </div>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
+                <span className="text-xs text-muted-foreground">
                   {new Date(item.createdAt).toLocaleString()}
                 </span>
               </div>
               {item.ip && (
-                <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   IP: {item.ip}
                 </p>
               )}
@@ -58,7 +58,7 @@ export default async function AdminActivityPage() {
           );
         })}
         {activities.length === 0 && (
-          <div className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+          <div className="px-6 py-12 text-center text-muted-foreground">
             No activity recorded yet.
           </div>
         )}

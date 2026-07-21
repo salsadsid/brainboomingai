@@ -1,261 +1,268 @@
 "use client";
 
 import UserMenu from "@/components/auth/UserMenu";
+import BrandMark, { BrandLockup } from "@/components/brand/BrandMark";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { aiTools } from "@/config/constants";
-import { Brain, ChevronDown, Menu, Sparkles, X } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import ThemeToggle from "@/components/ui/theme-toggle";
+import { aiTools, otherTools } from "@/config/constants";
+import { toolIcons } from "@/config/toolIcons";
+import { cn } from "@/lib/utils";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const NAV_LINKS = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+];
+
+function ToolMenuLink({
+  tool,
+  onNavigate,
+}: {
+  tool: (typeof aiTools)[number];
+  onNavigate?: () => void;
+}) {
+  const Icon = toolIcons[tool.icon];
+  return (
+    <NavigationMenuLink asChild>
+      <Link
+        href={tool.href}
+        onClick={onNavigate}
+        prefetch={false}
+        className="group flex items-start gap-3 rounded-lg p-2.5 transition-colors hover:bg-secondary focus-visible:bg-secondary focus-visible:outline-none"
+      >
+        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary transition-colors group-hover:bg-primary/20">
+          <Icon className="size-4" aria-hidden="true" />
+        </span>
+        <span className="min-w-0">
+          <span className="block text-sm font-medium text-foreground">
+            {tool.shortTitle}
+          </span>
+          <span className="mt-0.5 block line-clamp-1 text-xs text-muted-foreground">
+            {tool.description}
+          </span>
+        </span>
+      </Link>
+    </NavigationMenuLink>
+  );
+}
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 8);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const isActive = (href: string) => pathname === href;
+  const isToolActive = [...aiTools, ...otherTools].some((t) =>
+    isActive(t.href)
+  );
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={cn(
+        "sticky top-0 z-50 w-full border-b transition-colors duration-300",
         isScrolled
-          ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200/20 dark:border-slate-700/20 shadow-lg shadow-slate-900/5"
-          : "bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm"
-      }`}
+          ? "border-border bg-background/80 shadow-[0_1px_24px_-8px_hsl(var(--primary)/0.35)] backdrop-blur-xl"
+          : "border-transparent bg-background/40 backdrop-blur-sm"
+      )}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 md:h-20 items-center justify-between">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-3 group"
-            prefetch={false}
-          >
-            <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Sparkles className="w-2.5 h-2.5 text-white" />
-              </div>
-            </div>
-            <div className="hidden sm:block">
-              {/* Brand wordmark, not a heading: as an <h1> it appeared on every
-                  page and competed with the real page heading. */}
-              <span className="block text-xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
-                BRAIN BOOMING
-              </span>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium tracking-wider uppercase">
-                AI Tools
-              </p>
-            </div>
-          </Link>
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          prefetch={false}
+          className="rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          {/* Wordmark, deliberately not a heading: as an <h1> it appeared on
+              every page and competed with the real page heading. */}
+          <BrandLockup />
+          <span className="sr-only">BrainBoomingAI home</span>
+        </Link>
 
-          {/* Desktop Navigation */}
-          <nav aria-label="Main navigation" className="hidden lg:flex items-center gap-1">
-            <Link
-              href="/"
-              aria-current={isActive("/") ? "page" : undefined}
-              className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                isActive("/")
-                  ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/25"
-                  : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
-              }`}
-              prefetch={false}
-            >
-              Home
-              {isActive("/") && (
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-10"></div>
-              )}
-            </Link>
+        <NavigationMenu className="hidden lg:flex">
+          <NavigationMenuList className="gap-1">
+            <NavigationMenuItem>
+              <NavigationMenuLink asChild>
+                <Link
+                  href="/"
+                  prefetch={false}
+                  aria-current={isActive("/") ? "page" : undefined}
+                  className={cn(
+                    "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium transition-colors",
+                    isActive("/")
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  )}
+                >
+                  Home
+                </Link>
+              </NavigationMenuLink>
+            </NavigationMenuItem>
 
-            {aiTools.slice(0, 6).map((tool) => (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                aria-current={isActive(tool.href) ? "page" : undefined}
-                className={`relative px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
-                  isActive(tool.href)
-                    ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg shadow-indigo-500/25"
-                    : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                }`}
-                prefetch={false}
-              >
-                {tool.shortTitle}
-                {isActive(tool.href) && (
-                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 opacity-10"></div>
+            <NavigationMenuItem>
+              <NavigationMenuTrigger
+                className={cn(
+                  "h-9 rounded-lg bg-transparent px-3.5 text-sm font-medium transition-colors hover:bg-secondary hover:text-foreground data-[state=open]:bg-secondary",
+                  isToolActive ? "text-primary" : "text-muted-foreground"
                 )}
-              </Link>
-            ))}
-
-            {aiTools.length > 6 && (
-              <div
-                className="relative"
-                onMouseEnter={() => setIsMoreOpen(true)}
-                onMouseLeave={() => setIsMoreOpen(false)}
               >
-                <Button
-                  variant="ghost"
-                  aria-expanded={isMoreOpen}
-                  aria-haspopup="true"
-                  onClick={() => setIsMoreOpen((prev) => !prev)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") setIsMoreOpen(false);
-                  }}
-                  className="px-4 py-2.5 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl"
-                >
-                  More
-                  <ChevronDown className={`w-4 h-4 ml-1 transition-transform ${isMoreOpen ? "rotate-180" : ""}`} aria-hidden="true" />
-                </Button>
-
-                <div
-                  role="menu"
-                  className={`absolute right-0 top-full mt-2 w-56 bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 py-2 transition-all duration-200 ${
-                    isMoreOpen
-                      ? "opacity-100 visible translate-y-0"
-                      : "opacity-0 invisible translate-y-2"
-                  }`}
-                >
-                  {aiTools.slice(6).map((tool) => (
-                    <Link
-                      key={tool.href}
-                      href={tool.href}
-                      role="menuitem"
-                      aria-current={isActive(tool.href) ? "page" : undefined}
-                      onClick={() => setIsMoreOpen(false)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Escape") setIsMoreOpen(false);
-                      }}
-                      className={`block px-4 py-3 text-sm font-medium transition-colors ${
-                        isActive(tool.href)
-                          ? "text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-900/20"
-                          : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                      }`}
-                      prefetch={false}
-                    >
-                      {tool.shortTitle}
-                    </Link>
-                  ))}
+                Tools
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="grid w-[38rem] grid-cols-2 gap-6 p-5">
+                  <div>
+                    <p className="mb-2 px-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                      AI Writing Tools
+                    </p>
+                    <ul className="space-y-0.5">
+                      {aiTools.map((tool) => (
+                        <li key={tool.href}>
+                          <ToolMenuLink tool={tool} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="mb-2 px-2.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                      Utilities
+                    </p>
+                    <ul className="space-y-0.5">
+                      {otherTools.map((tool) => (
+                        <li key={tool.href}>
+                          <ToolMenuLink tool={tool} />
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            )}
-          </nav>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          {/* Auth + Mobile Menu */}
-          <div className="flex items-center gap-3">
-            <UserMenu />
+            {NAV_LINKS.filter((l) => l.href !== "/").map((link) => (
+              <NavigationMenuItem key={link.href}>
+                <NavigationMenuLink asChild>
+                  <Link
+                    href={link.href}
+                    prefetch={false}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                    className={cn(
+                      "inline-flex h-9 items-center rounded-lg px-3.5 text-sm font-medium transition-colors",
+                      isActive(link.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
+          </NavigationMenuList>
+        </NavigationMenu>
+
+        <div className="flex items-center gap-1.5">
+          <ThemeToggle />
+          <UserMenu />
 
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden relative w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                className="lg:hidden text-muted-foreground hover:text-foreground"
               >
-                <Menu className="h-5 w-5 text-slate-700 dark:text-slate-300" />
+                <Menu className="size-5" />
                 <span className="sr-only">Open navigation menu</span>
               </Button>
             </SheetTrigger>
 
             <SheetContent
               side="right"
-              className="w-80 bg-white dark:bg-slate-900 border-l border-slate-200 dark:border-slate-700"
+              className="w-[19rem] overflow-y-auto border-border bg-background p-0"
             >
-              <div className="flex items-center justify-between py-4 border-b border-slate-200 dark:border-slate-700">
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                      <Brain className="w-5 h-5 text-white" />
-                    </div>
-                    <div className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-1.5 h-1.5 text-white" />
-                    </div>
-                  </div>
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              <div className="border-b border-border px-5 py-4">
+                <SheetTitle asChild>
+                  <span className="flex items-center gap-2.5">
+                    <BrandMark className="size-8" />
+                    <span className="text-sm font-bold tracking-tight">
                       BRAIN BOOMING
-                    </h2>
-                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                      AI Tools
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  aria-label="Close navigation menu"
-                  className="w-8 h-8 rounded-lg"
-                >
-                  <X className="h-4 w-4" aria-hidden="true" />
-                </Button>
+                    </span>
+                  </span>
+                </SheetTitle>
               </div>
 
-              <nav aria-label="Mobile navigation" className="py-6 space-y-2">
-                <Link
-                  href="/"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  aria-current={isActive("/") ? "page" : undefined}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                    isActive("/")
-                      ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
-                      : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                  }`}
-                  prefetch={false}
-                >
-                  <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center" aria-hidden="true">
-                    <span className="text-xs">🏠</span>
-                  </div>
-                  Home
-                </Link>
-
-                {aiTools.map((tool) => (
+              <nav aria-label="Mobile navigation" className="px-3 py-4">
+                {NAV_LINKS.map((link) => (
                   <Link
-                    key={tool.href}
-                    href={tool.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    aria-current={isActive(tool.href) ? "page" : undefined}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 ${
-                      isActive(tool.href)
-                        ? "text-white bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg"
-                        : "text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/50"
-                    }`}
+                    key={link.href}
+                    href={link.href}
                     prefetch={false}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    aria-current={isActive(link.href) ? "page" : undefined}
+                    className={cn(
+                      "block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                      isActive(link.href)
+                        ? "bg-primary/10 text-primary"
+                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    )}
                   >
-                    <div className="w-6 h-6 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center" aria-hidden="true">
-                      <span className="text-xs">🤖</span>
-                    </div>
-                    {tool.shortTitle}
+                    {link.label}
                   </Link>
                 ))}
-              </nav>
 
-              <div className="absolute bottom-4 left-4 right-4">
-                <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-indigo-200 dark:border-indigo-800">
-                  <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">
-                    Boost Your Productivity
-                  </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Access all AI tools to enhance your workflow
-                  </p>
-                </div>
-              </div>
+                {[
+                  { heading: "AI Writing Tools", items: aiTools },
+                  { heading: "Utilities", items: otherTools },
+                ].map((group) => (
+                  <div key={group.heading} className="mt-5">
+                    <p className="px-3 pb-1.5 text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                      {group.heading}
+                    </p>
+                    {group.items.map((tool) => {
+                      const Icon = toolIcons[tool.icon];
+                      return (
+                        <Link
+                          key={tool.href}
+                          href={tool.href}
+                          prefetch={false}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          aria-current={isActive(tool.href) ? "page" : undefined}
+                          className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                            isActive(tool.href)
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                          )}
+                        >
+                          <Icon className="size-4 shrink-0" aria-hidden="true" />
+                          {tool.shortTitle}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ))}
+              </nav>
             </SheetContent>
           </Sheet>
-          </div>
         </div>
       </div>
     </header>
   );
 }
-

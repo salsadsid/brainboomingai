@@ -12,26 +12,26 @@ export const metadata = buildMetadata({
 export default function ContactPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
         Contact Us
       </h1>
 
-      <p className="text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-10">
+      <p className="text-lg text-muted-foreground leading-relaxed mb-10">
         Questions, bug reports and feature requests are all welcome. Email is
         the fastest way to reach us, and we read every message.
       </p>
 
       <a
         href={`mailto:${siteConfig.email}`}
-        className="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold transition-colors"
+        className="inline-flex items-center gap-3 rounded-lg bg-brand-gradient px-6 py-4 font-semibold text-white shadow-glow transition-all hover:brightness-110"
       >
         <Mail className="w-5 h-5" aria-hidden="true" />
         {siteConfig.email}
       </a>
 
-      <div className="mt-12 space-y-6 text-slate-600 dark:text-slate-300">
+      <div className="mt-12 space-y-6 text-muted-foreground">
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Reporting a problem with a tool
           </h2>
           <p>
@@ -42,7 +42,7 @@ export default function ContactPage() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Suggesting a new tool
           </h2>
           <p>
@@ -52,7 +52,7 @@ export default function ContactPage() {
         </div>
 
         <div>
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
+          <h2 className="text-xl font-semibold text-foreground mb-2">
             Privacy and your data
           </h2>
           <p>

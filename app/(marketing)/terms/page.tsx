@@ -17,16 +17,16 @@ const LAST_UPDATED = "19 July 2026";
 export default function TermsPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-3">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-3">
         Terms of Service
       </h1>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mb-10">
+      <p className="text-sm text-muted-foreground mb-10">
         Last updated: {LAST_UPDATED}
       </p>
 
-      <div className="space-y-8 text-slate-600 dark:text-slate-300 leading-relaxed">
+      <div className="space-y-8 text-muted-foreground leading-relaxed">
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Using the service
           </h2>
           <p>
@@ -38,7 +38,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Acceptable use
           </h2>
           <p>You agree not to use the tools to:</p>
@@ -59,7 +59,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             AI output is not guaranteed
           </h2>
           <p>
@@ -72,7 +72,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Availability
           </h2>
           <p>
@@ -83,7 +83,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Accounts
           </h2>
           <p>
@@ -93,14 +93,14 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-3">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
             Questions
           </h2>
           <p>
             Contact us at{" "}
             <a
               href={`mailto:${siteConfig.email}`}
-              className="text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-primary hover:underline"
             >
               {siteConfig.email}
             </a>

@@ -1,4 +1,5 @@
 import ToolSeo from "@/components/seo/ToolSeo";
+import ToolHeader from "@/components/tools/ToolHeader";
 import { toolKeywords } from "@/config/constants";
 import { buildMetadata } from "@/lib/seo";
 import ImageResizerTool from "./ImageResizerTool";
@@ -14,6 +15,7 @@ export default function ImageResizerPage() {
   return (
     <>
       <ToolSeo path="/image-resizer" />
+      <ToolHeader href="/image-resizer" />
       <ImageResizerTool />
     </>
   );

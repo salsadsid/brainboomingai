@@ -1,26 +1,125 @@
 "use client";
 
-import { logger } from "@/lib/logger";
+import ToolFAQ from "@/components/tools/ToolFAQ";
+import ToolFeatures from "@/components/tools/ToolFeatures";
+import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
+import type { FAQItem, FeatureItem, StepItem } from "@/components/tools/types";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGenerate } from "@/hooks/useGenerate";
+import { logger } from "@/lib/logger";
 import { characterCount } from "@/utils/characterCount";
+import { renderMarkdown } from "@/utils/sanitizeHtml";
 import { wordCount } from "@/utils/wordCount";
-import { motion } from "framer-motion";
 import {
   Clipboard,
   ClipboardCheck,
+  FileImage,
   FileText,
-  HelpCircle,
-  Image,
   Scan,
   Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { ImageUploader } from "./components/ImageUploader";
-import { sanitizeHtml } from "@/utils/sanitizeHtml";
 import { free_image_to_text_prompt } from "./prompt";
+
+const features: FeatureItem[] = [
+  {
+    icon: Scan,
+    title: "Smart Recognition",
+    description:
+      "Advanced AI-powered OCR technology that accurately recognizes text from images, including handwritten notes, documents, and screenshots.",
+  },
+  {
+    icon: FileImage,
+    title: "Multiple Formats",
+    description:
+      "Support for various image formats including JPEG, PNG, GIF, and more. Extract text from photos, PDFs, and digital documents with ease.",
+  },
+  {
+    icon: Zap,
+    title: "Instant Processing",
+    description:
+      "Get accurate text extraction results in seconds. Our optimized algorithms ensure fast processing without compromising accuracy.",
+  },
+];
+
+const steps: StepItem[] = [
+  {
+    title: "Upload Your Image",
+    description:
+      "Upload any image containing text - photos of documents, screenshots, handwritten notes, or scanned papers. We support all major formats.",
+  },
+  {
+    title: "AI Processing",
+    description:
+      "Our advanced OCR technology analyzes your image using machine learning to accurately identify and extract text with high precision.",
+  },
+  {
+    title: "Get Editable Text",
+    description:
+      "Receive clean, editable text that you can copy, edit, and use immediately. Perfect for digitizing documents and notes.",
+  },
+];
+
+const faqs: FAQItem[] = [
+  {
+    question: "What image formats are supported?",
+    answer:
+      "We support all major image formats including JPEG, PNG, GIF, BMP, TIFF, and WebP. You can also extract text from PDF pages and various document screenshots.",
+  },
+  {
+    question: "Can it recognize handwritten text?",
+    answer:
+      "Yes! Our AI can recognize clear handwritten text, though results may vary based on handwriting legibility. Printed text generally provides the most accurate results.",
+  },
+  {
+    question: "How accurate is the text extraction?",
+    answer:
+      "Our OCR technology achieves high accuracy rates, especially with clear, high-resolution images. Factors like image quality, text size, and contrast affect the accuracy of extraction.",
+  },
+  {
+    question: "Is my uploaded image stored or shared?",
+    answer:
+      "Your extracted text and prompts are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+  },
+];
+
+const SKELETON_WIDTHS = [
+  "w-full",
+  "w-[92%]",
+  "w-[97%]",
+  "w-[70%]",
+  "w-[85%]",
+  "w-[45%]",
+];
+
+function PaneShell({
+  label,
+  action,
+  children,
+  className = "",
+}: {
+  label: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`flex min-h-[22rem] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-glow-inset ${className}`}
+    >
+      <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+        <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </h2>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
 
 export default function ImageToTextTool() {
   const [imageToText, setImageToText] = useState<string>("");
@@ -59,294 +158,93 @@ export default function ImageToTextTool() {
       setCopiedText(true);
       toast.success("Text copied to clipboard!");
       setTimeout(() => setCopiedText(false), 2000);
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy text");
     }
   };
 
+  const isBusy = loading || isLoading;
+
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
-        <ImageUploader
-          imageToText={imageToText}
-          setImageToText={setImageToText}
-        />
+    <div>
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* ---------------- Upload pane ---------------- */}
+        <PaneShell label="Upload image">
+          <ImageUploader
+            imageToText={imageToText}
+            setImageToText={setImageToText}
+          />
+        </PaneShell>
 
-        {(loading || isLoading) && (
-          <div className="mt-8 space-y-4 animate-pulse">
-            <Skeleton className="h-4 w-40 bg-slate-200 dark:bg-slate-700 rounded-lg" />
-            <Skeleton className="h-40 w-full bg-slate-200 dark:bg-slate-700 rounded-xl" />
-          </div>
-        )}
-
-        {response && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mt-8 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 
-              rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50"
-          >
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <FileText className="w-4 h-4 text-white" />
-                </div>
-                <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                  Extracted Text · {wordCount(response)} words ·{" "}
-                  {characterCount(response)} chars
-                </span>
-              </div>
+        {/* ---------------- Output pane ---------------- */}
+        <PaneShell
+          label="Extracted text"
+          action={
+            response && (
               <Button
-                onClick={() => copyToClipboard(response)}
-                size="sm"
+                type="button"
                 variant="ghost"
-                className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 
-                  hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                size="sm"
+                onClick={() => copyToClipboard(response)}
+                aria-label={
+                  copiedText
+                    ? "Copied to clipboard"
+                    : "Copy extracted text to clipboard"
+                }
+                className="h-7 text-muted-foreground hover:text-foreground"
               >
                 {copiedText ? (
-                  <ClipboardCheck className="w-4 h-4 text-green-600" />
+                  <ClipboardCheck className="size-3.5 text-success" />
                 ) : (
-                  <Clipboard className="w-4 h-4" />
+                  <Clipboard className="size-3.5" />
                 )}
               </Button>
-            </div>
-            <div
-              className="prose prose-slate dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: sanitizeHtml(response) }}
-            />
-          </motion.div>
-        )}
-      </div>
-
-      {/* Features Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          Advanced OCR Features
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
+            )
+          }
+        >
+          <div
+            aria-live="polite"
+            className="flex flex-1 flex-col overflow-hidden"
           >
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
-              <Scan className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Smart Recognition
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Advanced AI-powered OCR technology that accurately recognizes text
-              from images, including handwritten notes, documents, and
-              screenshots.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-              <Image className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Multiple Formats
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Support for various image formats including JPEG, PNG, GIF, and
-              more. Extract text from photos, PDFs, and digital documents with
-              ease.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center mb-4">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Instant Processing
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Get accurate text extraction results in seconds. Our optimized
-              algorithms ensure fast processing without compromising accuracy.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* How It Works Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          How Image to Text Works
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">1</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Upload Your Image
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Upload any image containing text - photos of documents,
-              screenshots, handwritten notes, or scanned papers. We support all
-              major formats.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">2</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              AI Processing
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Our advanced OCR technology analyzes your image using machine
-              learning to accurately identify and extract text with high
-              precision.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">3</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Get Editable Text
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Receive clean, editable text that you can copy, edit, and use
-              immediately. Perfect for digitizing documents and notes.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          Image to Text FAQ
-        </h2>
-        <div className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
+            {isBusy ? (
+              <div className="flex-1 space-y-3 p-4" role="status">
+                <span className="sr-only">Extracting text</span>
+                {SKELETON_WIDTHS.map((w, i) => (
+                  <Skeleton
+                    key={w}
+                    className={`h-3.5 rounded bg-muted ${w}`}
+                    style={{ animationDelay: `${i * 80}ms` }}
+                  />
+                ))}
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  What image formats are supported?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  We support all major image formats including JPEG, PNG, GIF,
-                  BMP, TIFF, and WebP. You can also extract text from PDF pages
-                  and various document screenshots.
+            ) : response ? (
+              <div className="flex flex-1 flex-col overflow-hidden">
+                <div
+                  className="prose-output flex-1 overflow-y-auto p-4"
+                  dangerouslySetInnerHTML={{ __html: renderMarkdown(response) }}
+                />
+                <p className="shrink-0 border-t border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                  {wordCount(response)} words · {characterCount(response)} chars
                 </p>
               </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Can it recognize handwritten text?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Yes! Our AI can recognize clear handwritten text, though
-                  results may vary based on handwriting legibility. Printed text
-                  generally provides the most accurate results.
+            ) : (
+              <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+                <FileText
+                  className="size-7 text-muted-foreground/40"
+                  aria-hidden="true"
+                />
+                <p className="text-sm text-muted-foreground">
+                  Your extracted text will appear here.
                 </p>
               </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  How accurate is the text extraction?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Our OCR technology achieves high accuracy rates, especially
-                  with clear, high-resolution images. Factors like image
-                  quality, text size, and contrast affect the accuracy of
-                  extraction.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Is my uploaded image stored or shared?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Your extracted text and prompts are stored on our servers to
-                  improve our service. We do not share your data with third
-                  parties. All processing happens over encrypted connections.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+            )}
+          </div>
+        </PaneShell>
       </div>
+
+      <ToolFeatures title="Advanced OCR Features" features={features} />
+      <ToolHowItWorks title="How Image to Text Works" steps={steps} />
+      <ToolFAQ title="Image to Text FAQ" faqs={faqs} />
     </div>
   );
 }

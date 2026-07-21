@@ -1,21 +1,26 @@
 "use client";
 
-import { logger } from "@/lib/logger";
 import {
   AutosizeTextarea,
   AutosizeTextAreaRef,
 } from "@/components/ui/autotextarea";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import ToolFAQ from "@/components/tools/ToolFAQ";
+import ToolFeatures from "@/components/tools/ToolFeatures";
+import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
+import type {
+  FAQItem,
+  FeatureItem,
+  StepItem,
+} from "@/components/tools/types";
+import { logger } from "@/lib/logger";
 import { characterCount } from "@/utils/characterCount";
 import { wordCount } from "@/utils/wordCount";
-import { motion } from "framer-motion";
 import {
   Clipboard,
   ClipboardCheck,
   FileWarning,
   Hash,
-  HelpCircle,
   RotateCw,
   Shield,
   Zap,
@@ -31,6 +36,94 @@ const schema = z.object({
     .min(1, "Input cannot be empty")
     .max(MAX_INPUT_LENGTH, `Input exceeds ${MAX_INPUT_LENGTH} character limit`),
 });
+
+const features: FeatureItem[] = [
+  {
+    icon: Hash,
+    title: "Secure Hashing",
+    description:
+      "Generate secure MD5 hash values for text data. Perfect for data integrity verification, password hashing, and digital signatures.",
+  },
+  {
+    icon: Shield,
+    title: "Data Integrity",
+    description:
+      "Verify data integrity and detect changes in files or text. MD5 hashes provide a unique fingerprint for any input data.",
+  },
+  {
+    icon: Zap,
+    title: "Instant Generation",
+    description:
+      "Generate MD5 hashes instantly with our fast processing algorithm. Support for text of any length with immediate results.",
+  },
+];
+
+const steps: StepItem[] = [
+  {
+    title: "Input Your Text",
+    description:
+      "Enter any text, password, or data that you want to generate an MD5 hash for. Our tool supports text of any length.",
+  },
+  {
+    title: "Hash Processing",
+    description:
+      "Our secure algorithm processes your input and generates a unique 32-character MD5 hash that represents your data.",
+  },
+  {
+    title: "Get Your Hash",
+    description:
+      "Receive your MD5 hash instantly and copy it to your clipboard. Use it for data verification, security, or storage purposes.",
+  },
+];
+
+const faqs: FAQItem[] = [
+  {
+    question: "What is an MD5 hash?",
+    answer:
+      "MD5 (Message Digest 5) is a cryptographic hash function that produces a 32-character hexadecimal hash value. It's commonly used for data integrity verification and digital signatures.",
+  },
+  {
+    question: "Is MD5 secure for passwords?",
+    answer:
+      "While MD5 was widely used for password hashing, it's now considered cryptographically broken for security purposes. For password storage, use stronger algorithms like bcrypt, scrypt, or Argon2.",
+  },
+  {
+    question: "What can I use MD5 hashes for?",
+    answer:
+      "MD5 hashes are useful for file integrity checks, creating unique identifiers, data deduplication, and non-security checksums. They're still valuable for non-cryptographic applications.",
+  },
+  {
+    question: "Is my input data stored or logged?",
+    answer:
+      "No, we prioritize your privacy. Your input text is processed temporarily to generate the MD5 hash and is not stored on our servers or logged anywhere. All processing is done securely.",
+  },
+];
+
+function PaneShell({
+  label,
+  action,
+  children,
+  className = "",
+}: {
+  label: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <section
+      className={`flex min-h-[22rem] flex-col overflow-hidden rounded-xl border border-border bg-card shadow-glow-inset ${className}`}
+    >
+      <header className="flex h-12 shrink-0 items-center justify-between gap-2 border-b border-border px-4">
+        <h2 className="text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          {label}
+        </h2>
+        {action}
+      </header>
+      {children}
+    </section>
+  );
+}
 
 export default function MD5GeneratorTool() {
   const [input, setInput] = useState("");
@@ -90,7 +183,7 @@ export default function MD5GeneratorTool() {
       setCopiedId(id);
       toast.success("MD5 hash copied to clipboard!");
       setTimeout(() => setCopiedId(null), 2000);
-    } catch (err) {
+    } catch {
       toast.error("Failed to copy hash");
     }
   };
@@ -100,373 +193,223 @@ export default function MD5GeneratorTool() {
   )} chars`;
   const isInputValid =
     input.trim().length > 0 && input.length <= MAX_INPUT_LENGTH;
+  const overLimit = input.length > MAX_INPUT_LENGTH;
+
+  const [latest, ...previous] = hashes;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-200 dark:border-slate-700 p-8 md:p-10">
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="space-y-4">
-            <div className="relative">
-              <AutosizeTextarea
-                ref={textareaRef}
-                value={input}
-                onChange={(e) => {
-                  setInput(e.target.value);
-                  setError(null);
-                }}
-                placeholder="Enter text to generate MD5 hash..."
-                minHeight={180}
-                maxHeight={400}
-                maxLength={MAX_INPUT_LENGTH}
-                className="w-full ring-2 ring-slate-200 dark:ring-slate-600 focus:ring-indigo-500 dark:focus:ring-indigo-400 
-                 rounded-xl p-4 text-base text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-900 
-                 shadow-sm border-0 resize-none transition-all duration-200
-                 placeholder:text-slate-500 dark:placeholder:text-slate-400"
-              />
-              <div
-                className="absolute bottom-3 right-3 text-xs text-slate-500 dark:text-slate-400 
-                bg-white dark:bg-slate-800 px-3 py-1 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700"
-              >
-                {input.length}/{MAX_INPUT_LENGTH}
-              </div>
-            </div>
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* ---------------- Input pane ---------------- */}
+          <PaneShell label="Your text">
+            <label htmlFor="md5-input" className="sr-only">
+              Enter text to generate MD5 hash...
+            </label>
+            <AutosizeTextarea
+              id="md5-input"
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => {
+                setInput(e.target.value);
+                setError(null);
+              }}
+              placeholder="Enter text to generate MD5 hash..."
+              minHeight={240}
+              maxHeight={520}
+              maxLength={MAX_INPUT_LENGTH}
+              aria-describedby={error ? "md5-input-error" : undefined}
+              aria-invalid={error ? true : undefined}
+              className="w-full flex-1 resize-none border-0 bg-transparent p-4 text-[0.95rem] leading-relaxed text-foreground shadow-none outline-none ring-0 placeholder:text-muted-foreground/70 focus-visible:ring-0"
+            />
 
-            {input.length > 0 && (
-              <div className="flex justify-between items-center text-sm text-slate-500 dark:text-slate-400">
-                <span className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-indigo-500 rounded-full"></div>
-                  {inputStats}
+            <footer className="flex shrink-0 flex-col gap-3 border-t border-border p-3">
+              <div className="flex items-center justify-between px-1">
+                <span
+                  className={`font-mono text-xs ${
+                    overLimit ? "text-destructive" : "text-muted-foreground"
+                  }`}
+                >
+                  {input.length.toLocaleString()} /{" "}
+                  {MAX_INPUT_LENGTH.toLocaleString()}
                 </span>
-                {input.length > MAX_INPUT_LENGTH && (
-                  <span className="text-red-500 flex items-center dark:text-red-400">
-                    <FileWarning className="w-4 h-4 mr-1" />
-                    Exceeds character limit
+                {input.length > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    {inputStats}
                   </span>
                 )}
               </div>
-            )}
 
-            {error && (
-              <div className="text-red-500 text-sm flex items-center gap-2 bg-red-50 dark:bg-red-900/20 p-3 rounded-lg border border-red-200 dark:border-red-800">
-                <FileWarning className="w-4 h-4" />
-                {error}
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4">
-            <Button
-              type="submit"
-              disabled={loading || !isInputValid}
-              className="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 
-                text-white font-semibold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 
-                transform hover:scale-[1.02] disabled:transform-none disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="flex items-center justify-center gap-3">
-                  <RotateCw className="w-5 h-5 animate-spin" />
-                  Generating...
-                </div>
-              ) : (
-                <div className="flex items-center justify-center gap-3">
-                  <Hash className="w-5 h-5" />
-                  Generate MD5 Hash
-                </div>
+              {overLimit && (
+                <p className="flex items-center gap-2 text-xs text-destructive">
+                  <FileWarning className="size-3.5 shrink-0" aria-hidden="true" />
+                  Exceeds character limit
+                </p>
               )}
-            </Button>
 
-            {hashes.length > 0 && (
+              {error && (
+                <p
+                  id="md5-input-error"
+                  role="alert"
+                  className="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive"
+                >
+                  <FileWarning className="size-3.5 shrink-0" aria-hidden="true" />
+                  {error}
+                </p>
+              )}
+
               <Button
-                type="button"
-                onClick={generateHash}
-                variant="outline"
-                disabled={loading}
-                className="sm:w-auto bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 
-                  hover:border-indigo-300 dark:hover:border-indigo-600 text-slate-700 dark:text-slate-300 
-                  font-semibold py-4 px-6 rounded-xl shadow-sm hover:shadow-md transition-all duration-200"
+                type="submit"
+                variant="gradient"
+                size="lg"
+                disabled={loading || !isInputValid}
+                className="w-full"
               >
-                <RotateCw className="w-4 h-4 mr-2" />
-                Generate Another
+                {loading ? (
+                  <>
+                    <RotateCw className="size-4 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Hash className="size-4" />
+                    Generate MD5 Hash
+                  </>
+                )}
               </Button>
-            )}
-          </div>
+            </footer>
+          </PaneShell>
 
-          {loading && (
-            <div className="space-y-4 animate-pulse">
-              <Skeleton className="h-4 w-40 bg-slate-200 dark:bg-slate-700 rounded-lg" />
-              <Skeleton className="h-20 w-full bg-slate-200 dark:bg-slate-700 rounded-xl" />
-            </div>
-          )}
-
-          <div className="space-y-6">
-            {hashes.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900
-                  rounded-xl p-6 shadow-lg border border-slate-200/50 dark:border-slate-700/50"
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-                      <Hash className="w-4 h-4 text-white" />
-                    </div>
-                    <span className="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                      MD5 Hash Generated · 32 characters
-                    </span>
-                  </div>
+          {/* ---------------- Output pane ---------------- */}
+          <PaneShell
+            label="MD5 hash"
+            action={
+              latest && (
+                <div className="flex items-center gap-1">
                   <Button
-                    onClick={() => copyToClipboard(item.hash, item.id)}
-                    size="sm"
+                    type="button"
                     variant="ghost"
-                    className="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200
-                      hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                    size="sm"
+                    onClick={generateHash}
+                    disabled={loading}
+                    className="h-7 text-muted-foreground hover:text-foreground"
                   >
-                    {copiedId === item.id ? (
-                      <ClipboardCheck className="w-4 h-4 text-green-600" />
+                    <RotateCw className="size-3.5" />
+                    Generate Another
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => copyToClipboard(latest.hash, latest.id)}
+                    aria-label={
+                      copiedId === latest.id
+                        ? "Copied to clipboard"
+                        : "Copy MD5 hash to clipboard"
+                    }
+                    className="h-7 text-muted-foreground hover:text-foreground"
+                  >
+                    {copiedId === latest.id ? (
+                      <ClipboardCheck className="size-3.5 text-success" />
                     ) : (
-                      <Clipboard className="w-4 h-4" />
+                      <Clipboard className="size-3.5" />
                     )}
                   </Button>
                 </div>
-                <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
-                  <code className="text-slate-800 dark:text-slate-200 font-mono text-sm break-all">
-                    {item.hash}
-                  </code>
+              )
+            }
+          >
+            <div
+              aria-live="polite"
+              className="flex flex-1 flex-col overflow-hidden"
+            >
+              {loading ? (
+                <div className="flex-1 space-y-3 p-4" role="status">
+                  <span className="sr-only">Generating...</span>
+                  <div className="h-16 animate-pulse rounded-lg bg-muted" />
+                  <div
+                    className="h-3.5 w-2/5 animate-pulse rounded bg-muted"
+                    style={{ animationDelay: "80ms" }}
+                  />
                 </div>
-              </motion.div>
-            ))}
-          </div>
-        </form>
-      </div>
-
-      {/* Features Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          MD5 Hash Generator Features
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
-              <Hash className="w-6 h-6 text-white" />
+              ) : latest ? (
+                <div className="flex flex-1 flex-col overflow-hidden">
+                  <div className="flex-1 overflow-y-auto p-4">
+                    <div className="animate-fade-up rounded-lg border border-border bg-muted p-4">
+                      <code className="font-mono text-sm break-all text-foreground">
+                        {latest.hash}
+                      </code>
+                    </div>
+                  </div>
+                  <p className="shrink-0 border-t border-border px-4 py-2.5 font-mono text-xs text-muted-foreground">
+                    MD5 Hash Generated · 32 characters
+                  </p>
+                </div>
+              ) : (
+                <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center">
+                  <Hash
+                    className="size-7 text-muted-foreground/40"
+                    aria-hidden="true"
+                  />
+                  <p className="text-sm text-muted-foreground">
+                    Your MD5 hash will appear here.
+                  </p>
+                </div>
+              )}
             </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Secure Hashing
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Generate secure MD5 hash values for text data. Perfect for data
-              integrity verification, password hashing, and digital signatures.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mb-4">
-              <Shield className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Data Integrity
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Verify data integrity and detect changes in files or text. MD5
-              hashes provide a unique fingerprint for any input data.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center mb-4">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
-              Instant Generation
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Generate MD5 hashes instantly with our fast processing algorithm.
-              Support for text of any length with immediate results.
-            </p>
-          </motion.div>
+          </PaneShell>
         </div>
-      </div>
 
-      {/* How It Works Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          How MD5 Hash Generation Works
-        </h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">1</span>
+        {previous.length > 0 && (
+          <section className="mt-8">
+            <h2 className="mb-3 text-[0.8rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              Previous hashes
+            </h2>
+            <div className="space-y-3">
+              {previous.map((item) => (
+                <details
+                  key={item.id}
+                  className="group rounded-xl border border-border bg-card"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    <span className="truncate font-mono text-xs">
+                      {item.hash}
+                    </span>
+                    <span className="shrink-0 font-mono text-xs">
+                      32 characters
+                    </span>
+                  </summary>
+                  <div className="border-t border-border p-4">
+                    <div className="rounded-lg border border-border bg-muted p-4">
+                      <code className="font-mono text-sm break-all text-foreground">
+                        {item.hash}
+                      </code>
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(item.hash, item.id)}
+                      className="mt-4"
+                    >
+                      {copiedId === item.id ? (
+                        <ClipboardCheck className="size-3.5 text-success" />
+                      ) : (
+                        <Clipboard className="size-3.5" />
+                      )}
+                      Copy
+                    </Button>
+                  </div>
+                </details>
+              ))}
             </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Input Your Text
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Enter any text, password, or data that you want to generate an MD5
-              hash for. Our tool supports text of any length.
-            </p>
-          </motion.div>
+          </section>
+        )}
+      </form>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">2</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Hash Processing
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Our secure algorithm processes your input and generates a unique
-              32-character MD5 hash that represents your data.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-center"
-          >
-            <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-2xl font-bold text-white">3</span>
-            </div>
-            <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-              Get Your Hash
-            </h3>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-              Receive your MD5 hash instantly and copy it to your clipboard. Use
-              it for data verification, security, or storage purposes.
-            </p>
-          </motion.div>
-        </div>
-      </div>
-
-      {/* FAQ Section */}
-      <div className="mt-16 mb-12">
-        <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
-          MD5 Generator FAQ
-        </h2>
-        <div className="space-y-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  What is an MD5 hash?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  MD5 (Message Digest 5) is a cryptographic hash function that
-                  produces a 32-character hexadecimal hash value. It&apos;s
-                  commonly used for data integrity verification and digital
-                  signatures.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Is MD5 secure for passwords?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  While MD5 was widely used for password hashing, it&apos;s now
-                  considered cryptographically broken for security purposes. For
-                  password storage, use stronger algorithms like bcrypt, scrypt,
-                  or Argon2.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  What can I use MD5 hashes for?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  MD5 hashes are useful for file integrity checks, creating
-                  unique identifiers, data deduplication, and non-security
-                  checksums. They&apos;re still valuable for non-cryptographic
-                  applications.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
-          >
-            <div className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <HelpCircle className="w-4 h-4 text-white" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-                  Is my input data stored or logged?
-                </h3>
-                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                  No, we prioritize your privacy. Your input text is processed
-                  temporarily to generate the MD5 hash and is not stored on our
-                  servers or logged anywhere. All processing is done securely.
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      <ToolFeatures title="MD5 Hash Generator Features" features={features} />
+      <ToolHowItWorks title="How MD5 Hash Generation Works" steps={steps} />
+      <ToolFAQ title="MD5 Generator FAQ" faqs={faqs} />
     </div>
   );
 }

@@ -13,18 +13,18 @@ export const metadata = buildMetadata({
 export default function AboutPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+      <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
         About {siteConfig.name}
       </h1>
 
-      <div className="prose prose-slate dark:prose-invert max-w-none space-y-6 text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+      <div className="max-w-none space-y-6 text-lg leading-relaxed text-muted-foreground">
         <p>
           {siteConfig.name} is a collection of free, AI-powered tools for
           writing and everyday productivity. Every tool runs in your browser,
           returns results in seconds, and works without an account.
         </p>
 
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white pt-6">
+        <h2 className="text-2xl font-semibold text-foreground pt-6">
           What we believe
         </h2>
         <p>
@@ -35,7 +35,7 @@ export default function AboutPage() {
           history of what you have generated.
         </p>
 
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white pt-6">
+        <h2 className="text-2xl font-semibold text-foreground pt-6">
           How the tools work
         </h2>
         <p>
@@ -45,15 +45,15 @@ export default function AboutPage() {
           entirely in your browser, so those images never leave your device.
         </p>
 
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white pt-6">
+        <h2 className="text-2xl font-semibold text-foreground pt-6">
           What you can use today
         </h2>
-        <ul className="grid sm:grid-cols-2 gap-3 not-prose">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {allTools.map((tool) => (
             <li key={tool.href}>
               <Link
                 href={tool.href}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-primary hover:underline"
               >
                 {tool.title}
               </Link>
@@ -61,14 +61,14 @@ export default function AboutPage() {
           ))}
         </ul>
 
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white pt-6">
+        <h2 className="text-2xl font-semibold text-foreground pt-6">
           Get in touch
         </h2>
         <p>
           Found a bug, or want a tool we do not have yet? Reach us on our{" "}
           <Link
             href="/contact"
-            className="text-blue-600 dark:text-blue-400 hover:underline"
+            className="text-primary hover:underline"
           >
             contact page
           </Link>

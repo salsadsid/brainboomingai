@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import type { FeatureItem } from "./types";
 
 export default function ToolFeatures({
@@ -11,36 +8,31 @@ export default function ToolFeatures({
   features: FeatureItem[];
 }) {
   return (
-    <div className="mt-16 mb-12">
-      <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
+    <section className="mt-20">
+      <h2 className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
         {title}
       </h2>
-      <div className="grid md:grid-cols-3 gap-8">
-        {features.map((feature, i) => {
+      <div className="mt-8 grid gap-4 md:grid-cols-3">
+        {features.map((feature) => {
           const Icon = feature.icon;
           return (
-            <motion.div
+            <div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: (i + 1) * 0.1 }}
-              className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
+              className="rounded-xl border border-border bg-card p-5"
             >
-              <div
-                className={`w-12 h-12 bg-gradient-to-r ${feature.gradient} rounded-lg flex items-center justify-center mb-4`}
-              >
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
+              <span className="flex size-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <Icon className="size-5" aria-hidden="true" />
+              </span>
+              <h3 className="mt-4 font-semibold text-foreground">
                 {feature.title}
               </h3>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                 {feature.description}
               </p>
-            </motion.div>
+            </div>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

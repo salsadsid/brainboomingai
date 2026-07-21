@@ -28,7 +28,7 @@ const formSchema = z.object({
 export const ImageUploader: React.FC<{
   imageToText: string;
   setImageToText: (imageToText: string) => void;
-}> = ({ imageToText, setImageToText }) => {
+}> = ({ setImageToText }) => {
   const [preview, setPreview] = React.useState<string | ArrayBuffer | null>("");
   const [loading, setLoading] = React.useState<boolean>(false);
 
@@ -48,7 +48,7 @@ export const ImageUploader: React.FC<{
         reader.readAsDataURL(acceptedFiles[0]);
         form.setValue("image", acceptedFiles[0]);
         form.clearErrors("image");
-      } catch (error) {
+      } catch {
         setPreview(null);
         form.resetField("image");
       }
@@ -70,75 +70,90 @@ export const ImageUploader: React.FC<{
     const worker = await createWorker();
     const ret = await worker.recognize(values.image);
     setImageToText(ret.data.text);
-    console.log(ret.data.text);
     await worker.terminate();
     setLoading(false);
   };
 
+  const selectedFile = form.getValues("image");
+  const fileName = preview && selectedFile?.size ? selectedFile.name : null;
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-1 flex-col overflow-hidden"
+      >
         <FormField
           control={form.control}
           name="image"
           render={() => (
-            <FormItem className="mx-auto md:w-1/2">
+            <FormItem className="flex flex-1 flex-col gap-3 space-y-0 p-4">
               <FormLabel
-                className={`${
+                className={`sr-only ${
                   fileRejections.length !== 0 && "text-destructive"
                 }`}
               >
-                <h2 className="text-xl font-semibold tracking-tight">
-                  Upload your image
-                  <span
-                    className={
-                      form.formState.errors.image || fileRejections.length !== 0
-                        ? "text-destructive"
-                        : "text-muted-foreground"
-                    }
-                  ></span>
-                </h2>
+                Upload your image
               </FormLabel>
               <FormControl>
                 <div
                   {...getRootProps()}
-                  className="mx-auto flex cursor-pointer flex-col items-center justify-center gap-y-2 rounded-lg border border-foreground w-full p-8 shadow-sm shadow-foreground"
+                  className={`flex flex-1 cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed p-8 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                    isDragActive
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-muted/40 hover:border-primary/50 hover:bg-muted/60"
+                  }`}
                 >
-                  {preview && (
+                  {preview ? (
                     <img
                       src={preview as string}
-                      alt="Uploaded image"
-                      className="max-h-[400px] rounded-lg"
+                      alt="Preview of the image you uploaded"
+                      className="mx-auto max-h-64 w-auto rounded-lg object-contain"
+                    />
+                  ) : (
+                    <ImagePlus
+                      className="size-10 text-muted-foreground"
+                      aria-hidden="true"
                     />
                   )}
-                  <ImagePlus
-                    className={`size-40 ${preview ? "hidden" : "block"}`}
-                  />
                   <Input {...getInputProps()} type="file" />
                   {isDragActive ? (
-                    <p>Drop the image!</p>
+                    <p className="text-sm text-muted-foreground">
+                      Drop the image!
+                    </p>
                   ) : (
-                    <p>Click here or drag an image to upload it</p>
+                    <p className="text-sm text-muted-foreground">
+                      Click here or drag an image to upload it
+                    </p>
+                  )}
+                  {fileName && (
+                    <p className="max-w-full truncate font-mono text-xs text-muted-foreground">
+                      {fileName}
+                    </p>
                   )}
                 </div>
               </FormControl>
-              <FormMessage>
+              <FormMessage className="shrink-0">
                 {fileRejections.length !== 0 && (
-                  <p>
+                  <span>
                     Image must be less than 1MB and of type png, jpg, or jpeg
-                  </p>
+                  </span>
                 )}
               </FormMessage>
             </FormItem>
           )}
         />
-        <Button
-          type="submit"
-          disabled={form.formState.isSubmitting}
-          className="mx-auto block h-auto rounded-lg px-8 py-3 text-xl"
-        >
-          {loading ? "Loading..." : "Submit"}
-        </Button>
+        <footer className="shrink-0 border-t border-border p-3">
+          <Button
+            type="submit"
+            variant="gradient"
+            size="lg"
+            disabled={form.formState.isSubmitting}
+            className="w-full"
+          >
+            {loading ? "Loading..." : "Submit"}
+          </Button>
+        </footer>
       </form>
     </Form>
   );

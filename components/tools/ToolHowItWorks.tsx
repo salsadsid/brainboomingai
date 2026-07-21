@@ -1,13 +1,4 @@
-"use client";
-
-import { motion } from "framer-motion";
 import type { StepItem } from "./types";
-
-const stepAnimations = [
-  { initial: { opacity: 0, x: -20 }, animate: { opacity: 1, x: 0 } },
-  { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 } },
-  { initial: { opacity: 0, x: 20 }, animate: { opacity: 1, x: 0 } },
-];
 
 export default function ToolHowItWorks({
   title,
@@ -17,36 +8,28 @@ export default function ToolHowItWorks({
   steps: StepItem[];
 }) {
   return (
-    <div className="mt-16 mb-12">
-      <h2 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-12">
+    <section className="mt-20">
+      <h2 className="text-center text-2xl font-bold tracking-tight text-foreground md:text-3xl">
         {title}
       </h2>
-      <div className="grid md:grid-cols-3 gap-8">
-        {steps.map((step, i) => {
-          const anim = stepAnimations[i] ?? stepAnimations[1];
-          return (
-            <motion.div
-              key={step.title}
-              initial={anim.initial}
-              whileInView={anim.animate}
-              transition={{ delay: (i + 1) * 0.1 }}
-              className="text-center"
-            >
-              <div
-                className={`w-16 h-16 bg-gradient-to-r ${step.gradient} rounded-full flex items-center justify-center mx-auto mb-6`}
-              >
-                <span className="text-2xl font-bold text-white">{i + 1}</span>
-              </div>
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
-                {step.title}
-              </h3>
-              <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
-                {step.description}
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
-    </div>
+      <ol className="relative mt-8 grid gap-6 md:grid-cols-3">
+        {/* Connector, desktop only — drawn behind the numbered markers. */}
+        <span
+          aria-hidden="true"
+          className="absolute left-[16.6%] right-[16.6%] top-5 hidden h-px bg-border md:block"
+        />
+        {steps.map((step, i) => (
+          <li key={step.title} className="relative text-center">
+            <span className="relative z-10 mx-auto flex size-10 items-center justify-center rounded-full border border-border bg-card font-mono text-sm font-semibold text-primary">
+              {i + 1}
+            </span>
+            <h3 className="mt-4 font-semibold text-foreground">{step.title}</h3>
+            <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              {step.description}
+            </p>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }

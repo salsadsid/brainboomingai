@@ -1,4 +1,5 @@
 import ToolSeo from "@/components/seo/ToolSeo";
+import ToolHeader from "@/components/tools/ToolHeader";
 import { toolKeywords } from "@/config/constants";
 import { buildMetadata } from "@/lib/seo";
 import TextSummarizerTool from "./TextSummarizerTool";
@@ -14,6 +15,7 @@ export default function Page() {
   return (
     <>
       <ToolSeo path="/free-text-summarizer" />
+      <ToolHeader href="/free-text-summarizer" />
       <TextSummarizerTool />
     </>
   );
