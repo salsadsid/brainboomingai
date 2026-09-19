@@ -27,9 +27,9 @@ const config: TextToolConfig = {
 const features: FeatureItem[] = [
   {
     icon: Shuffle,
-    title: "Multiple Variations",
+    title: "A Different Take Each Time",
     description:
-      "Generate multiple unique paraphrased versions of your text while maintaining the original meaning and context. Perfect for avoiding repetition.",
+      "Each run rewrites your text while keeping the original meaning and context. Not happy with the result? Regenerate for a different version.",
   },
   {
     icon: Zap,
@@ -39,9 +39,9 @@ const features: FeatureItem[] = [
   },
   {
     icon: Shield,
-    title: "Plagiarism-Free",
+    title: "Meaning Preserved",
     description:
-      "Create original content that passes plagiarism checks while preserving the core message and meaning of your original text.",
+      "Rewords and restructures your text while preserving its core message. Rewording someone else's ideas does not make them yours — always credit your sources.",
   },
 ];
 
@@ -49,7 +49,7 @@ const steps: StepItem[] = [
   {
     title: "Paste Your Text",
     description:
-      "Simply paste or type the text you want to paraphrase. Our tool accepts content of any length and from various sources.",
+      "Simply paste or type the text you want to paraphrase — up to 5,000 characters per run.",
   },
   {
     title: "AI Processing",
@@ -59,7 +59,7 @@ const steps: StepItem[] = [
   {
     title: "Get Paraphrased Text",
     description:
-      "Receive your paraphrased text instantly. Copy the result or generate additional variations for more options.",
+      "Receive your paraphrased text in a few seconds. Copy the result, or regenerate for a different version.",
   },
 ];
 

@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import JsonLd from "@/components/seo/JsonLd";
 import { siteConfig, siteUrl } from "@/config/site";
 import { jsonLdGraph, organizationSchema, websiteSchema } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { Toaster } from "react-hot-toast";
@@ -76,8 +77,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: siteConfig.description,
-    site: siteConfig.twitterHandle,
-    creator: siteConfig.twitterHandle,
   },
   alternates: { canonical: siteUrl },
   // Paste the token from Search Console here (or set the env var) to verify
@@ -135,6 +134,11 @@ export default function RootLayout({
               </div>
             </ThemeProvider>
         </SessionProvider>
+        {/* Page views only: cookie-less, no cross-site tracking, so no consent
+            banner. Tool usage is measured server-side instead (models/ToolRun)
+            because custom events are not available on Vercel's free plan. A
+            no-op until Web Analytics is enabled for the project in Vercel. */}
+        <Analytics />
       </body>
     </html>
   );

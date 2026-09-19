@@ -5,6 +5,7 @@ import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { TEXT_TOOL_DATA_HANDLING } from "@/config/dataHandling";
 import { toolFaqs } from "@/config/toolFaqs";
 import { BookOpen, CheckCircle, Shield } from "lucide-react";
 
@@ -27,9 +28,9 @@ const config: TextToolConfig = {
 const features: FeatureItem[] = [
   {
     icon: CheckCircle,
-    title: "Real-time Grammar Check",
+    title: "AI Grammar Check",
     description:
-      "Instantly detect and correct grammatical errors, spelling mistakes, and punctuation issues with our advanced AI-powered grammar checking technology.",
+      "Detect and correct grammatical errors, spelling mistakes, and punctuation issues in one pass with our AI-powered grammar checking technology.",
   },
   {
     icon: BookOpen,
@@ -39,9 +40,8 @@ const features: FeatureItem[] = [
   },
   {
     icon: Shield,
-    title: "Secure Processing",
-    description:
-      "Your text and results are stored to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+    title: "What happens to your text",
+    description: TEXT_TOOL_DATA_HANDLING,
   },
 ];
 
@@ -49,7 +49,7 @@ const steps: StepItem[] = [
   {
     title: "Paste Your Text",
     description:
-      "Simply paste or type your text into our grammar checker. Our tool supports various text formats and can handle documents of any length.",
+      "Simply paste or type your text into our grammar checker. It takes plain text, up to 5,000 characters per check — split longer documents into sections.",
   },
   {
     title: "AI Analysis",
@@ -59,7 +59,7 @@ const steps: StepItem[] = [
   {
     title: "Get Corrections",
     description:
-      "Receive detailed corrections and suggestions to improve your text. Copy the corrected version or apply changes individually.",
+      "Receive the corrected text along with a list of every change made and its type. Copy the corrected version with one click.",
   },
 ];
 

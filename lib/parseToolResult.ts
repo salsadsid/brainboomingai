@@ -57,8 +57,35 @@ export function parseToolResult(
   return {
     format: "structured",
     tool,
-    data: parsed.data,
+    data: reconcileIssueCount(parsed.data),
   } as GeneratePayload;
+}
+
+/**
+ * The model reports `issueCount` and `corrections` independently, and they
+ * drift: production returned a count of 6 alongside 8 listed corrections, which
+ * put a badge reading "6 issues fixed" above a list of eight. The list is what
+ * the user can see and check, so when it is non-empty it is the count.
+ *
+ * An empty list keeps the model's number. It may have edited the text without
+ * itemising the changes, and "No issues found" above altered text would be the
+ * worse lie.
+ *
+ * Structural rather than keyed on tool slug, so any future result shape that
+ * pairs the two fields is covered without being listed here.
+ */
+function reconcileIssueCount<T>(data: T): T {
+  if (
+    typeof data === "object" &&
+    data !== null &&
+    "issueCount" in data &&
+    "corrections" in data &&
+    Array.isArray(data.corrections) &&
+    data.corrections.length > 0
+  ) {
+    return { ...data, issueCount: data.corrections.length };
+  }
+  return data;
 }
 
 /**

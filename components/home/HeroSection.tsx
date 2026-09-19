@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const TRUST_POINTS = [
   "No signup required",
-  "Unlimited free use",
+  "Free to use",
   "Results in seconds",
 ];
 

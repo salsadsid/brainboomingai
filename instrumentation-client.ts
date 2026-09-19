@@ -5,7 +5,17 @@ Sentry.init({
   tracesSampleRate: 1.0,
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
-  integrations: [Sentry.replayIntegration()],
+  integrations: [
+    // These are Sentry's defaults, spelled out on purpose. The site promises
+    // not to keep what visitors write, and a session replay is a recording of
+    // the page they wrote it on — so the masking that keeps that promise true
+    // should not depend on an upstream default staying put.
+    Sentry.replayIntegration({
+      maskAllText: true,
+      maskAllInputs: true,
+      blockAllMedia: true,
+    }),
+  ],
   debug: false,
 });
 

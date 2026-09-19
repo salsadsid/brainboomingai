@@ -9,6 +9,7 @@ import dbConnect from "@/lib/mongoose";
 import { parseToolResult } from "@/lib/parseToolResult";
 import { buildPrompt, isValidTool } from "@/lib/prompts";
 import { TOOL_RESPONSE_SCHEMAS } from "@/lib/toolSchemas";
+import { recordToolRun } from "@/lib/toolRuns";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 import UserActivity from "@/models/UserActivity";
@@ -21,7 +22,56 @@ import { NextResponse } from "next/server";
  */
 const MAX_TEXT_LENGTH = 5_000;
 
+/**
+ * Best-effort. By the time this runs the user's result exists, and losing a
+ * history row is a smaller failure than withholding the answer they waited for
+ * — which is what awaiting this inside the request's try block used to do.
+ */
+async function saveToHistory(doc: {
+  prompt: string;
+  text: string;
+  tool: string;
+  response: string;
+  responseRaw: unknown;
+  userId: string;
+}): Promise<void> {
+  try {
+    await GeneratedResponseModel.create(doc);
+  } catch (err: unknown) {
+    logger.error("History write error", err, {
+      userId: doc.userId,
+      tool: doc.tool,
+    });
+  }
+}
+
+/** Best-effort, for the same reason as saveToHistory. */
+async function logActivity(entry: {
+  userId: string;
+  action: string;
+  tool: string;
+  metadata: Record<string, unknown>;
+  ip: string;
+}): Promise<void> {
+  try {
+    await UserActivity.create(entry);
+  } catch (err: unknown) {
+    logger.error("Activity tracking error", err, {
+      userId: entry.userId,
+      tool: entry.tool,
+    });
+  }
+}
+
 export async function POST(req: Request) {
+  const startedAt = Date.now();
+
+  // Set once the request is known to be a real run of a real tool. The catch
+  // block uses it to tell "a run failed" apart from "a bad request was
+  // rejected" — only the first is a usage metric.
+  let run: { tool: string; inputChars: number; authenticated: boolean } | null =
+    null;
+
   try {
     await dbConnect();
 
@@ -75,11 +125,15 @@ export async function POST(req: Request) {
     }
 
     const prompt = buildPrompt(tool, text);
+    run = { tool, inputChars: text.length, authenticated: Boolean(userId) };
 
-    // Generate the response, asking for JSON shaped to this tool.
+    // Generate the response, asking for JSON shaped to this tool. Timed on its
+    // own so the model's share of the latency can be told apart from ours.
+    const aiStartedAt = Date.now();
     const generatedResponse = await generateResponse(prompt, {
       schema: TOOL_RESPONSE_SCHEMAS[tool],
     });
+    const aiLatencyMs = Date.now() - aiStartedAt;
 
     const { response: aiResponse, responseRaw } = generatedResponse;
 
@@ -88,31 +142,69 @@ export async function POST(req: Request) {
     // plain text instead of failing the request.
     const payload = parseToolResult(tool, aiResponse);
 
-    // Save to MongoDB — the raw string, as before, so history stays readable
-    // whichever format the response took.
-    await GeneratedResponseModel.create({
-      prompt,
-      text,
-      tool,
-      response: aiResponse,
-      responseRaw,
-      userId,
-    });
+    // Everything written after a successful generation, awaited together: on
+    // serverless the function can be frozen the moment the response is sent, so
+    // a write left floating — as the activity log used to be — may never land.
+    await Promise.all([
+      // Track activity for logged-in users
+      userId
+        ? logActivity({
+            userId,
+            action: "tool_use",
+            tool,
+            metadata: { promptLength: prompt.length },
+            ip,
+          })
+        : null,
+      // History is a signed-in feature, and the only reason content is ever
+      // kept. An anonymous visitor's text and result go back to them and are
+      // stored nowhere — this used to save both for everyone. The raw string is
+      // saved so history stays readable whichever format the response took.
+      userId
+        ? saveToHistory({
+            prompt,
+            text,
+            tool,
+            response: aiResponse,
+            responseRaw,
+            userId,
+          })
+        : null,
+      // Usage metrics with nothing of the user's in them: sizes and timings
+      // only. `latencyMs` is the time until the result was ready to send.
+      recordToolRun({
+        ...run,
+        outputChars: aiResponse.length,
+        latencyMs: Date.now() - startedAt,
+        aiLatencyMs,
+        format: payload.format,
+        status: "ok",
+      }),
+    ]);
 
-    // Track activity for logged-in users
-    if (userId) {
-      UserActivity.create({
-        userId,
-        action: "tool_use",
-        tool,
-        metadata: { promptLength: prompt.length },
-        ip,
-      }).catch((err: unknown) => logger.error("Activity tracking error", err, { userId, tool }));
-    }
+    // On record as a success. Cleared so the catch block cannot count the same
+    // run a second time, as a failure, if anything below were to throw.
+    run = null;
 
     return NextResponse.json(payload, { status: 201 });
   } catch (error: unknown) {
     logger.error("Error generating response", error);
+
+    // Failed runs count too — an error rate needs a numerator. Skipped when the
+    // request never became a run (bad input is rejected above without throwing,
+    // and a database outage leaves `run` unset).
+    if (run) {
+      await recordToolRun({
+        ...run,
+        latencyMs: Date.now() - startedAt,
+        status:
+          error instanceof QuotaExceededError
+            ? "quota"
+            : error instanceof UpstreamBusyError
+              ? "busy"
+              : "error",
+      });
+    }
 
     // Never return the provider's own error text. It was being echoed verbatim,
     // which put raw Google JSON (model name, quota details, internal status) in

@@ -34,7 +34,7 @@ export default async function AdminUserDetailPage({
     GeneratedResponseModel.find({ userId: id })
       .sort({ createdAt: -1 })
       .limit(50)
-      .select("tool prompt createdAt")
+      .select("tool text prompt createdAt")
       .lean(),
     UserActivity.find({ userId: id })
       .sort({ createdAt: -1 })

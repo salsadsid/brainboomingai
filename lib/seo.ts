@@ -1,4 +1,4 @@
-import { absoluteUrl, siteConfig } from "@/config/site";
+import { absoluteUrl, contact, siteConfig } from "@/config/site";
 import type { Metadata } from "next";
 
 interface BuildMetadataArgs {
@@ -59,12 +59,12 @@ export function buildMetadata({
       locale: siteConfig.locale,
       type,
     },
+    // No `site` / `creator`: those name a Twitter account, and the project does
+    // not have one. The card itself needs neither.
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      site: siteConfig.twitterHandle,
-      creator: siteConfig.twitterHandle,
     },
   };
 }
@@ -93,7 +93,8 @@ export function organizationSchema() {
       height: 512,
     },
     description: siteConfig.description,
-    email: siteConfig.email,
+    // Only once a real mailbox exists — see `contact` in config/site.ts.
+    ...(contact.kind === "email" ? { email: contact.address } : {}),
     sameAs: Object.values(siteConfig.socials),
   };
 }

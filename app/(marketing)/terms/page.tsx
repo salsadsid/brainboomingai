@@ -1,3 +1,4 @@
+import ContactLink from "@/components/layout/ContactLink";
 import { siteConfig } from "@/config/site";
 import { buildMetadata } from "@/lib/seo";
 
@@ -12,7 +13,7 @@ export const metadata = buildMetadata({
   path: "/terms",
 });
 
-const LAST_UPDATED = "19 July 2026";
+const LAST_UPDATED = "19 September 2026";
 
 export default function TermsPage() {
   return (
@@ -97,14 +98,7 @@ export default function TermsPage() {
             Questions
           </h2>
           <p>
-            Contact us at{" "}
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="text-primary hover:underline"
-            >
-              {siteConfig.email}
-            </a>
-            .
+            Contact us through <ContactLink />.
           </p>
         </section>
       </div>

@@ -6,7 +6,7 @@ import ImageCompressorTool from "./ImageCompressorTool";
 
 export const metadata = buildMetadata({
   title: "Free Online Image Compressor - Reduce Image File Size",
-  description: "Free online image compressor tool. Reduce image file size without losing quality. Compress JPEG, PNG, GIF, and WebP images instantly. Perfect for web optimization and storage.",
+  description: "Free online image compressor tool. Reduce image file size with minimal visible quality loss. Compress JPEG, PNG, and WebP images instantly, right in your browser. Perfect for web optimization and storage.",
   path: "/image-compressor",
   keywords: toolKeywords("/image-compressor"),
 });

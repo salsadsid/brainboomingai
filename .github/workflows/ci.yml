@@ -3,8 +3,10 @@ name: CI
 on:
   push:
     branches: [main, dev]
+  # `dev` too: feature branches merge into it, and a pull request whose base is
+  # not listed here gets no run at all.
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   build:

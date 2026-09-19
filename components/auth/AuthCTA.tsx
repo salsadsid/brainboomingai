@@ -18,11 +18,10 @@ export default function AuthCTA() {
         </span>
         <div>
           <h3 className="text-sm font-semibold text-foreground">
-            Want to save this result?
+            Want a record of your work?
           </h3>
           <p className="mt-0.5 text-xs text-muted-foreground">
-            Create a free account to keep your history and revisit results
-            anytime.
+            Create a free account to keep a history of what you have run.
           </p>
         </div>
       </div>

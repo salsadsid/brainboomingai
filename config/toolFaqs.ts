@@ -1,4 +1,5 @@
 import type { FAQItem } from "@/components/tools/types";
+import { TEXT_TOOL_DATA_HANDLING } from "./dataHandling";
 
 /**
  * FAQ copy, keyed by tool route.
@@ -27,7 +28,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       {
         question: "Is this tool completely free?",
         answer:
-          "Yes! Our AI to Human Text Converter is 100% free to use with no registration required. You can convert unlimited text without any restrictions.",
+          "Yes! Our AI to Human Text Converter is free to use with no registration required. Each run handles up to 5,000 characters, and fair-use limits apply: a few requests per minute, plus a shared daily allowance that resets every day.",
       },
       {
         question: "How accurate is the conversion?",
@@ -63,7 +64,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       {
         question: "Is there a limit to how many prompts I can generate?",
         answer:
-          "No, there's no limit! You can generate as many prompts as you need. Our service is completely free and designed to support your creative process without restrictions.",
+          "It is completely free, with fair-use limits: a few requests per minute, plus a shared daily allowance that resets every day. In normal use you are unlikely to notice them.",
       },
     ],
   },
@@ -110,12 +111,11 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       {
         question: "Can I control the summary length?",
         answer:
-          "Our AI automatically determines the optimal summary length based on the input content. It aims to reduce the original text by 70-80% while preserving all key information.",
+          "Not yet. The AI chooses a length based on your text, aiming for a summary substantially shorter than the original, and lists the key points separately.",
       },
       {
         question: "Is my content stored or shared?",
-        answer:
-          "Your prompts and generated summaries are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+        answer: TEXT_TOOL_DATA_HANDLING,
       },
     ],
   },
@@ -140,8 +140,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       },
       {
         question: "Is my text stored or shared when using the spell checker?",
-        answer:
-          "Your text and corrections are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+        answer: TEXT_TOOL_DATA_HANDLING,
       },
     ],
   },
@@ -167,7 +166,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       {
         question: "How many times can I use the paraphrasing tool?",
         answer:
-          "There's no limit to how many times you can use our free paraphrasing tool. You can paraphrase as much content as you need and generate multiple variations of the same text to find the perfect version for your needs.",
+          "It is free, with fair-use limits: a few requests per minute, plus a shared daily allowance that resets every day. Each run handles up to 5,000 characters, and you can regenerate the same text to get a different version.",
       },
     ],
   },

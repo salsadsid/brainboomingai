@@ -46,6 +46,12 @@ vi.mock("@/models/UserActivity", () => ({
   },
 }));
 
+vi.mock("@/models/ToolRun", () => ({
+  default: {
+    create: vi.fn(),
+  },
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: {
     error: vi.fn(),
@@ -55,6 +61,7 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 import { POST } from "@/app/api/generate/route";
+import { auth } from "@/auth";
 import {
   generateResponse,
   QuotaExceededError,
@@ -62,6 +69,8 @@ import {
 } from "@/lib/googleAIService";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
+import ToolRun from "@/models/ToolRun";
+import UserActivity from "@/models/UserActivity";
 
 function jsonRequest(body: unknown, ip = "1.2.3.4"): Request {
   return new Request("http://localhost/api/generate", {
@@ -115,9 +124,6 @@ describe("POST /api/generate", () => {
       response: "AI says hello",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "AI says hello",
-    } as never);
 
     const res = await POST(
       jsonRequest({ text: "say hello", tool: "free-grammar-checker" }),
@@ -141,7 +147,6 @@ describe("POST /api/generate", () => {
       response: JSON.stringify(structured),
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
 
     const res = await POST(
       jsonRequest({ text: "she dont like rain", tool: "free-grammar-checker" }),
@@ -162,7 +167,6 @@ describe("POST /api/generate", () => {
       response: "{}",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
 
     await POST(jsonRequest({ text: "hi", tool: "free-text-summarizer" }));
 
@@ -187,9 +191,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "ok",
-    } as never);
 
     const res = await POST(
       jsonRequest({
@@ -214,9 +215,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "ok",
-    } as never);
 
     await POST(jsonRequest({ text: "hello", tool: "free-text-summarizer" }));
 
@@ -255,24 +253,90 @@ describe("POST /api/generate", () => {
     expect(generateResponse).not.toHaveBeenCalled();
   });
 
-  it("persists the user's text alongside the composed prompt", async () => {
+  // --- what gets kept -----------------------------------------------------
+  // `auth` resolves to null by default, so every test above runs as an
+  // anonymous visitor. These are the only ones that sign a user in.
+
+  it("keeps nothing an anonymous visitor wrote", async () => {
     vi.mocked(rateLimit).mockResolvedValue({ success: true });
     vi.mocked(generateResponse).mockResolvedValue({
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    expect(res.status).toBe(201);
+    // This used to save the text and the result for everyone.
+    expect(GeneratedResponseModel.create).not.toHaveBeenCalled();
+    expect(UserActivity.create).not.toHaveBeenCalled();
+  });
+
+  it("saves a signed-in user's run to their history", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
       response: "ok",
-    } as never);
+      responseRaw: {} as Record<string, unknown>,
+    });
 
     await POST(jsonRequest({ text: "my input", tool: "free-spell-checker" }));
 
-    // History views slice this for display; without `text` they would all show
+    // History views slice `text` for display; without it they would all show
     // the same template boilerplate.
     const saved = vi.mocked(GeneratedResponseModel.create).mock
-      .calls[0][0] as unknown as { text: string; prompt: string };
+      .calls[0][0] as unknown as { text: string; prompt: string; userId: string };
     expect(saved.text).toBe("my input");
     expect(saved.prompt).toContain("expert in spell checking");
+    expect(saved.userId).toBe("user-1");
+
+    expect(UserActivity.create).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: "user-1", action: "tool_use" }),
+    );
+  });
+
+  it("returns the result even when the activity log fails", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "ok",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(UserActivity.create).mockRejectedValueOnce(new Error("mongo down"));
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    expect(res.status).toBe(201);
+    // The write is awaited now rather than left floating, so its failure has to
+    // be contained — and must not take the history row down with it.
+    expect(GeneratedResponseModel.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns the result even when the history write fails", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "ok",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(GeneratedResponseModel.create).mockRejectedValueOnce(
+      new Error("mongo down"),
+    );
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    // The answer exists; a lost history row is not a reason to withhold it.
+    expect(res.status).toBe(201);
+    // And the run is counted once, as a success — not again as an error.
+    const runs = vi.mocked(ToolRun.create).mock.calls;
+    expect(runs).toHaveLength(1);
+    expect(runs[0][0]).toMatchObject({ status: "ok", authenticated: true });
   });
 
   it("reports quota exhaustion as non-retryable, distinctly from busy", async () => {
@@ -323,5 +387,107 @@ describe("POST /api/generate", () => {
     const data = await res.json();
     expect(data.retryable).toBe(true);
     expect(data.error).toMatch(/busy/i);
+  });
+
+  // --- usage records ------------------------------------------------------
+  // Every run leaves a ToolRun row so usage can be measured. The point of the
+  // collection is what it leaves out, so that is what these tests pin.
+
+  /** The ToolRun row written by the most recent request. */
+  function recordedRun(): Record<string, unknown> {
+    const calls = vi.mocked(ToolRun.create).mock.calls;
+    expect(calls).toHaveLength(1);
+    return calls[0][0] as unknown as Record<string, unknown>;
+  }
+
+  it("records a usage row that holds sizes and timings, never content", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "A corrected sentence.",
+      responseRaw: {} as Record<string, unknown>,
+    });
+
+    await POST(
+      jsonRequest({ text: "a sentense", tool: "free-spell-checker" }, "9.9.9.9"),
+    );
+
+    const run = recordedRun();
+    expect(run).toMatchObject({
+      tool: "free-spell-checker",
+      authenticated: false,
+      inputChars: "a sentense".length,
+      outputChars: "A corrected sentence.".length,
+      format: "text",
+      status: "ok",
+    });
+    expect(run.latencyMs).toEqual(expect.any(Number));
+    expect(run.aiLatencyMs).toEqual(expect.any(Number));
+
+    // An allowlist, not a denylist: a field added later has to be added here
+    // too, which is the moment to ask whether it belongs in this collection.
+    expect(Object.keys(run).sort()).toEqual([
+      "aiLatencyMs",
+      "authenticated",
+      "format",
+      "inputChars",
+      "latencyMs",
+      "outputChars",
+      "status",
+      "tool",
+    ]);
+    // And nothing the visitor typed, received, or could be identified by has
+    // leaked into a value either.
+    const serialized = JSON.stringify(run);
+    expect(serialized).not.toContain("a sentense");
+    expect(serialized).not.toContain("A corrected sentence.");
+    expect(serialized).not.toContain("9.9.9.9");
+  });
+
+  it("still returns the result when the usage row cannot be written", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "ok",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(ToolRun.create).mockRejectedValueOnce(new Error("mongo down"));
+
+    const res = await POST(
+      jsonRequest({ text: "hello", tool: "free-grammar-checker" }),
+    );
+
+    // Metrics are never worth a failed request.
+    expect(res.status).toBe(201);
+  });
+
+  it.each([
+    ["quota", () => new QuotaExceededError(46), 429],
+    ["busy", () => new UpstreamBusyError(), 503],
+    ["error", () => new Error("API down"), 500],
+  ] as const)(
+    "records a failed run with status %s and leaves the response alone",
+    async (status, makeError, httpStatus) => {
+      vi.mocked(rateLimit).mockResolvedValue({ success: true });
+      vi.mocked(generateResponse).mockRejectedValue(makeError());
+
+      const res = await POST(
+        jsonRequest({ text: "say hello", tool: "free-grammar-checker" }),
+      );
+
+      expect(res.status).toBe(httpStatus);
+      expect(recordedRun()).toMatchObject({
+        tool: "free-grammar-checker",
+        inputChars: "say hello".length,
+        status,
+      });
+    },
+  );
+
+  it("does not count a rejected request as a run", async () => {
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+
+    await POST(jsonRequest({ text: "hello", tool: "not-a-real-tool" }));
+    await POST(jsonRequest({ tool: "free-grammar-checker" }));
+
+    expect(ToolRun.create).not.toHaveBeenCalled();
   });
 });

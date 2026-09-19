@@ -1,15 +1,26 @@
 import BrandMark from "@/components/brand/BrandMark";
 import { aiTools, otherTools } from "@/config/constants";
-import { siteConfig } from "@/config/site";
-import { Facebook, Github, Linkedin, Mail, Twitter } from "lucide-react";
+import { contact, siteConfig } from "@/config/site";
+import type { LucideIcon } from "lucide-react";
+import { Github, Mail, MessageSquare } from "lucide-react";
 import Link from "next/link";
 
-const SOCIALS = [
-  { href: siteConfig.socials.twitter, label: "Twitter", Icon: Twitter },
-  { href: siteConfig.socials.facebook, label: "Facebook", Icon: Facebook },
-  { href: siteConfig.socials.linkedin, label: "LinkedIn", Icon: Linkedin },
-  { href: siteConfig.socials.github, label: "GitHub", Icon: Github },
-];
+type SocialKey = keyof typeof siteConfig.socials;
+
+/**
+ * Keyed by the social registry's own keys, so a profile added in config/site.ts
+ * without an entry here is a type error — not a link that silently never
+ * renders. The registry feeds the JSON-LD `sameAs` as well; listing the links
+ * by hand in both places is how they came to disagree before.
+ */
+const SOCIAL_META: Record<SocialKey, { label: string; Icon: LucideIcon }> = {
+  github: { label: "GitHub", Icon: Github },
+};
+
+const SOCIALS = (Object.keys(siteConfig.socials) as SocialKey[]).map((key) => ({
+  href: siteConfig.socials[key],
+  ...SOCIAL_META[key],
+}));
 
 const COMPANY_LINKS = [
   { name: "About Us", href: "/about" },
@@ -109,18 +120,34 @@ export default function Footer() {
               label="Company"
             />
             <a
-              href={`mailto:${siteConfig.email}`}
+              href={contact.href}
+              {...(contact.external
+                ? { target: "_blank", rel: "noopener noreferrer" }
+                : {})}
               className="mt-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              <Mail className="size-4" aria-hidden="true" />
-              {siteConfig.email}
+              {contact.kind === "email" ? (
+                <Mail className="size-4" aria-hidden="true" />
+              ) : (
+                <MessageSquare className="size-4" aria-hidden="true" />
+              )}
+              {contact.label}
             </a>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} {siteConfig.legalName}. All rights reserved.
+            © {currentYear} {siteConfig.legalName}. Code released under the{" "}
+            <a
+              href={`${siteConfig.repoUrl}/blob/main/LICENSE`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-foreground"
+            >
+              MIT License
+            </a>
+            .
           </p>
           <div className="flex items-center gap-5">
             <Link
