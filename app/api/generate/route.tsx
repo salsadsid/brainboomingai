@@ -9,6 +9,7 @@ import dbConnect from "@/lib/mongoose";
 import { parseToolResult } from "@/lib/parseToolResult";
 import { buildPrompt, isValidTool } from "@/lib/prompts";
 import { TOOL_RESPONSE_SCHEMAS } from "@/lib/toolSchemas";
+import { recordToolRun } from "@/lib/toolRuns";
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 import UserActivity from "@/models/UserActivity";
@@ -22,6 +23,14 @@ import { NextResponse } from "next/server";
 const MAX_TEXT_LENGTH = 5_000;
 
 export async function POST(req: Request) {
+  const startedAt = Date.now();
+
+  // Set once the request is known to be a real run of a real tool. The catch
+  // block uses it to tell "a run failed" apart from "a bad request was
+  // rejected" — only the first is a usage metric.
+  let run: { tool: string; inputChars: number; authenticated: boolean } | null =
+    null;
+
   try {
     await dbConnect();
 
@@ -75,11 +84,15 @@ export async function POST(req: Request) {
     }
 
     const prompt = buildPrompt(tool, text);
+    run = { tool, inputChars: text.length, authenticated: Boolean(userId) };
 
-    // Generate the response, asking for JSON shaped to this tool.
+    // Generate the response, asking for JSON shaped to this tool. Timed on its
+    // own so the model's share of the latency can be told apart from ours.
+    const aiStartedAt = Date.now();
     const generatedResponse = await generateResponse(prompt, {
       schema: TOOL_RESPONSE_SCHEMAS[tool],
     });
+    const aiLatencyMs = Date.now() - aiStartedAt;
 
     const { response: aiResponse, responseRaw } = generatedResponse;
 
@@ -110,9 +123,36 @@ export async function POST(req: Request) {
       }).catch((err: unknown) => logger.error("Activity tracking error", err, { userId, tool }));
     }
 
+    // Usage metrics with nothing of the user's in them: sizes and timings only.
+    // `latencyMs` is the time until the result was ready to send.
+    await recordToolRun({
+      ...run,
+      outputChars: aiResponse.length,
+      latencyMs: Date.now() - startedAt,
+      aiLatencyMs,
+      format: payload.format,
+      status: "ok",
+    });
+
     return NextResponse.json(payload, { status: 201 });
   } catch (error: unknown) {
     logger.error("Error generating response", error);
+
+    // Failed runs count too — an error rate needs a numerator. Skipped when the
+    // request never became a run (bad input is rejected above without throwing,
+    // and a database outage leaves `run` unset).
+    if (run) {
+      await recordToolRun({
+        ...run,
+        latencyMs: Date.now() - startedAt,
+        status:
+          error instanceof QuotaExceededError
+            ? "quota"
+            : error instanceof UpstreamBusyError
+              ? "busy"
+              : "error",
+      });
+    }
 
     // Never return the provider's own error text. It was being echoed verbatim,
     // which put raw Google JSON (model name, quota details, internal status) in
