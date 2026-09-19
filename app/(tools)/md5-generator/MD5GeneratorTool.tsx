@@ -40,9 +40,9 @@ const schema = z.object({
 const features: FeatureItem[] = [
   {
     icon: Hash,
-    title: "Secure Hashing",
+    title: "Checksums, Not Security",
     description:
-      "Generate secure MD5 hash values for text data. Perfect for data integrity verification, password hashing, and digital signatures.",
+      "Generate MD5 hash values for text data. Useful for checksums and data integrity verification — but MD5 is cryptographically broken, so never use it for passwords or signatures.",
   },
   {
     icon: Shield,
@@ -54,7 +54,7 @@ const features: FeatureItem[] = [
     icon: Zap,
     title: "Instant Generation",
     description:
-      "Generate MD5 hashes instantly with our fast processing algorithm. Support for text of any length with immediate results.",
+      "Generate MD5 hashes instantly. Supports text up to 10,000 characters with immediate results.",
   },
 ];
 
@@ -62,17 +62,17 @@ const steps: StepItem[] = [
   {
     title: "Input Your Text",
     description:
-      "Enter any text, password, or data that you want to generate an MD5 hash for. Our tool supports text of any length.",
+      "Enter the text you want to generate an MD5 hash for, up to 10,000 characters. It is hashed on our server, so do not enter real passwords.",
   },
   {
     title: "Hash Processing",
     description:
-      "Our secure algorithm processes your input and generates a unique 32-character MD5 hash that represents your data.",
+      "The standard MD5 algorithm processes your input and generates a 32-character hash that represents your data.",
   },
   {
     title: "Get Your Hash",
     description:
-      "Receive your MD5 hash instantly and copy it to your clipboard. Use it for data verification, security, or storage purposes.",
+      "Receive your MD5 hash instantly and copy it to your clipboard. Use it for checksums and data verification.",
   },
 ];
 

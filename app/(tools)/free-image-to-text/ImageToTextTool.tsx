@@ -28,13 +28,13 @@ const features: FeatureItem[] = [
     icon: Scan,
     title: "Smart Recognition",
     description:
-      "Advanced AI-powered OCR technology that accurately recognizes text from images, including handwritten notes, documents, and screenshots.",
+      "OCR technology that recognizes printed text in photos of documents, scans, and screenshots, then uses AI to tidy up the result.",
   },
   {
     icon: FileImage,
-    title: "Multiple Formats",
+    title: "PNG and JPEG",
     description:
-      "Support for various image formats including JPEG, PNG, GIF, and more. Extract text from photos, PDFs, and digital documents with ease.",
+      "Upload a PNG or JPEG image up to 1 MB. Extract text from photos, scans, and screenshots of documents with ease.",
   },
   {
     icon: Zap,
@@ -48,7 +48,7 @@ const steps: StepItem[] = [
   {
     title: "Upload Your Image",
     description:
-      "Upload any image containing text - photos of documents, screenshots, handwritten notes, or scanned papers. We support all major formats.",
+      "Upload an image containing text - a photo of a document, a screenshot, or a scanned page. PNG and JPEG are supported, up to 1 MB.",
   },
   {
     title: "AI Processing",
@@ -66,12 +66,12 @@ const faqs: FAQItem[] = [
   {
     question: "What image formats are supported?",
     answer:
-      "We support all major image formats including JPEG, PNG, GIF, BMP, TIFF, and WebP. You can also extract text from PDF pages and various document screenshots.",
+      "PNG and JPEG images, up to 1 MB each. PDFs and other image formats are not supported — take a screenshot of the page or convert it to PNG or JPEG first.",
   },
   {
     question: "Can it recognize handwritten text?",
     answer:
-      "Yes! Our AI can recognize clear handwritten text, though results may vary based on handwriting legibility. Printed text generally provides the most accurate results.",
+      "It is built for printed text. Very clear, neat handwriting sometimes works, but expect mistakes — printed text gives far more accurate results.",
   },
   {
     question: "How accurate is the text extraction?",

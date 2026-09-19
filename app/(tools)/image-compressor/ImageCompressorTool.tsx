@@ -24,13 +24,13 @@ const features: FeatureItem[] = [
     icon: FileImage,
     title: "Multiple Formats",
     description:
-      "Support for JPEG, PNG, WebP, and other popular image formats. Optimize images for web, email, or storage without quality loss.",
+      "Support for JPEG, PNG, and WebP images. Optimize images for web, email, or storage with minimal visible quality loss.",
   },
   {
     icon: Zap,
     title: "Fast Processing",
     description:
-      "Lightning-fast compression with real-time progress tracking. Process images quickly without compromising on quality or security.",
+      "Lightning-fast compression with real-time progress tracking. Everything happens in your browser, so your images are never uploaded.",
   },
 ];
 
@@ -38,7 +38,7 @@ const steps: StepItem[] = [
   {
     title: "Upload Your Image",
     description:
-      "Select and upload your image file. We support all major formats including JPEG, PNG, GIF, and WebP for maximum compatibility.",
+      "Select your image file. JPEG, PNG, and WebP are supported.",
   },
   {
     title: "Smart Compression",
@@ -61,7 +61,7 @@ const faqs: FAQItem[] = [
   {
     question: "What file formats are supported?",
     answer:
-      "We support all major image formats including JPEG, PNG, GIF, WebP, BMP, and TIFF. The tool automatically handles format optimization for best compression results.",
+      "JPEG, PNG, and WebP. Animated GIFs are not supported — only the first frame would survive — and most browsers cannot open TIFF files.",
   },
   {
     question: "Is there a file size limit?",

@@ -29,7 +29,7 @@ const features: FeatureItem[] = [
     icon: CheckCircle2,
     title: "Accurate Detection",
     description:
-      "Detect and correct spelling mistakes with high accuracy. Our AI identifies common typos, misspellings, and contextual errors in real-time.",
+      "Detect and correct spelling mistakes with high accuracy. Our AI identifies common typos, misspellings, and contextual errors.",
   },
   {
     icon: BookCheck,
@@ -49,7 +49,7 @@ const steps: StepItem[] = [
   {
     title: "Input Your Text",
     description:
-      "Paste or type your text into our spell checker. Our tool supports various document types and text formats for comprehensive checking.",
+      "Paste or type your text into our spell checker. It takes plain text, up to 5,000 characters per check.",
   },
   {
     title: "AI Analysis",
@@ -59,7 +59,7 @@ const steps: StepItem[] = [
   {
     title: "Get Corrections",
     description:
-      "Receive detailed corrections with highlighted errors and suggested improvements. Copy the corrected text for immediate use.",
+      "Receive the corrected text along with a list of each misspelling and its fix. Copy the corrected text for immediate use.",
   },
 ];
 

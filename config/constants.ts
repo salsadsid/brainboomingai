@@ -45,9 +45,7 @@ export const aiTools: ToolDef[] = [
       "AI to human text converter",
       "humanize AI text",
       "AI text humanizer",
-      "make AI text undetectable",
       "AI content converter",
-      "bypass AI detector",
     ],
     category: "UtilitiesApplication",
     priority: 0.9,
@@ -167,12 +165,11 @@ export const otherTools: ToolDef[] = [
     icon: "Hash",
     shortTitle: "MD5 Generator",
     description:
-      "Generate MD5 hashes for your text with our free MD5 generator. Secure your data with ease.",
+      "Generate MD5 hashes for your text with our free MD5 generator. Create checksums to verify data integrity.",
     keywords: [
       "MD5 generator",
       "MD5 hash online",
       "generate MD5 checksum",
-      "MD5 encrypt text",
       "hash generator",
     ],
     category: "DeveloperApplication",
@@ -184,7 +181,7 @@ export const otherTools: ToolDef[] = [
     icon: "Scaling",
     shortTitle: "Image Resizer",
     description:
-      "Resize your images quickly and easily with our free image resizer. Adjust dimensions and file size effortlessly.",
+      "Resize your images quickly and easily with our free image resizer. Set exact dimensions or lock the aspect ratio.",
     keywords: [
       "free image resizer",
       "resize image online",
@@ -201,7 +198,7 @@ export const otherTools: ToolDef[] = [
     icon: "Shrink",
     shortTitle: "Image Compressor",
     description:
-      "Compress your images without losing quality with our free image compressor. Optimize your images for web use.",
+      "Shrink your images with minimal visible quality loss using our free image compressor. Optimize your images for web use.",
     keywords: [
       "free image compressor",
       "compress image online",
