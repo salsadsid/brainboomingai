@@ -1,4 +1,5 @@
-import { siteConfig } from "@/config/site";
+import ContactLink from "@/components/layout/ContactLink";
+import { contact, siteConfig } from "@/config/site";
 import { buildMetadata } from "@/lib/seo";
 
 /**
@@ -97,14 +98,9 @@ export default function PrivacyPage() {
           </h2>
           <p>
             You can request deletion of your account and stored generation
-            history at any time by emailing{" "}
-            <a
-              href={`mailto:${siteConfig.email}`}
-              className="text-primary hover:underline"
-            >
-              {siteConfig.email}
-            </a>
-            .
+            history at any time through <ContactLink />.
+            {contact.kind === "issues" &&
+              " Issues there are public, so do not post your email address or any personal details — just ask for deletion, and we will reply with a private way to confirm the account is yours."}
           </p>
         </section>
 

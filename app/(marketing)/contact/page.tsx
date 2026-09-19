@@ -1,6 +1,7 @@
-import { siteConfig } from "@/config/site";
+import { contact, siteConfig } from "@/config/site";
 import { buildMetadata } from "@/lib/seo";
-import { Mail } from "lucide-react";
+import { Github, Mail } from "lucide-react";
+import Link from "next/link";
 
 export const metadata = buildMetadata({
   title: "Contact",
@@ -10,6 +11,10 @@ export const metadata = buildMetadata({
 });
 
 export default function ContactPage() {
+  // Issues are public; email is not. The page says different things depending
+  // on which one `contact` currently points at — see config/site.ts.
+  const viaIssues = contact.kind === "issues";
+
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
       <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
@@ -17,16 +22,25 @@ export default function ContactPage() {
       </h1>
 
       <p className="text-lg text-muted-foreground leading-relaxed mb-10">
-        Questions, bug reports and feature requests are all welcome. Email is
-        the fastest way to reach us, and we read every message.
+        Questions, bug reports and feature requests are all welcome.{" "}
+        {viaIssues
+          ? "They are tracked in the open on GitHub — open an issue and you will get a reply there."
+          : "Email is the fastest way to reach us, and we read every message."}
       </p>
 
       <a
-        href={`mailto:${siteConfig.email}`}
+        href={contact.href}
+        {...(contact.external
+          ? { target: "_blank", rel: "noopener noreferrer" }
+          : {})}
         className="inline-flex items-center gap-3 rounded-lg bg-brand-gradient px-6 py-4 font-semibold text-white shadow-glow transition-all hover:brightness-110"
       >
-        <Mail className="w-5 h-5" aria-hidden="true" />
-        {siteConfig.email}
+        {viaIssues ? (
+          <Github className="w-5 h-5" aria-hidden="true" />
+        ) : (
+          <Mail className="w-5 h-5" aria-hidden="true" />
+        )}
+        {viaIssues ? "Open an issue on GitHub" : contact.label}
       </a>
 
       <div className="mt-12 space-y-6 text-muted-foreground">
@@ -36,8 +50,9 @@ export default function ContactPage() {
           </h2>
           <p>
             Tell us which tool you were using and what you expected to happen.
-            If you can, include the text or file that caused the issue — it
-            makes the problem far quicker to reproduce.
+            An example that reproduces the problem makes it far quicker to fix.
+            {viaIssues &&
+              " Issues are public, so use a made-up example rather than your own text, and never include personal details."}
           </p>
         </div>
 
@@ -46,8 +61,8 @@ export default function ContactPage() {
             Suggesting a new tool
           </h2>
           <p>
-            We prioritise new tools by how often they are requested, so it is
-            genuinely worth sending yours in.
+            Tell us what you would use it for. A concrete use case is the most
+            useful thing a request can include.
           </p>
         </div>
 
@@ -57,7 +72,11 @@ export default function ContactPage() {
           </h2>
           <p>
             For questions about how we handle the text and images you submit,
-            see our privacy policy.
+            see our{" "}
+            <Link href="/privacy" className="text-primary hover:underline">
+              privacy policy
+            </Link>
+            .
           </p>
         </div>
       </div>

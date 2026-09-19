@@ -77,8 +77,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: HOME_TITLE,
     description: siteConfig.description,
-    site: siteConfig.twitterHandle,
-    creator: siteConfig.twitterHandle,
   },
   alternates: { canonical: siteUrl },
   // Paste the token from Search Console here (or set the env var) to verify
