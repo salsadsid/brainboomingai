@@ -45,6 +45,24 @@ async function saveToHistory(doc: {
   }
 }
 
+/** Best-effort, for the same reason as saveToHistory. */
+async function logActivity(entry: {
+  userId: string;
+  action: string;
+  tool: string;
+  metadata: Record<string, unknown>;
+  ip: string;
+}): Promise<void> {
+  try {
+    await UserActivity.create(entry);
+  } catch (err: unknown) {
+    logger.error("Activity tracking error", err, {
+      userId: entry.userId,
+      tool: entry.tool,
+    });
+  }
+}
+
 export async function POST(req: Request) {
   const startedAt = Date.now();
 
@@ -124,18 +142,20 @@ export async function POST(req: Request) {
     // plain text instead of failing the request.
     const payload = parseToolResult(tool, aiResponse);
 
-    // Track activity for logged-in users
-    if (userId) {
-      UserActivity.create({
-        userId,
-        action: "tool_use",
-        tool,
-        metadata: { promptLength: prompt.length },
-        ip,
-      }).catch((err: unknown) => logger.error("Activity tracking error", err, { userId, tool }));
-    }
-
+    // Everything written after a successful generation, awaited together: on
+    // serverless the function can be frozen the moment the response is sent, so
+    // a write left floating — as the activity log used to be — may never land.
     await Promise.all([
+      // Track activity for logged-in users
+      userId
+        ? logActivity({
+            userId,
+            action: "tool_use",
+            tool,
+            metadata: { promptLength: prompt.length },
+            ip,
+          })
+        : null,
       // History is a signed-in feature, and the only reason content is ever
       // kept. An anonymous visitor's text and result go back to them and are
       // stored nowhere — this used to save both for everyone. The raw string is

@@ -281,7 +281,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(UserActivity.create).mockResolvedValueOnce({} as never);
 
     await POST(jsonRequest({ text: "my input", tool: "free-spell-checker" }));
 
@@ -298,6 +297,25 @@ describe("POST /api/generate", () => {
     );
   });
 
+  it("returns the result even when the activity log fails", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "ok",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(UserActivity.create).mockRejectedValueOnce(new Error("mongo down"));
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    expect(res.status).toBe(201);
+    // The write is awaited now rather than left floating, so its failure has to
+    // be contained — and must not take the history row down with it.
+    expect(GeneratedResponseModel.create).toHaveBeenCalledTimes(1);
+  });
+
   it("returns the result even when the history write fails", async () => {
     vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
     vi.mocked(rateLimit).mockResolvedValue({ success: true });
@@ -305,7 +323,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(UserActivity.create).mockResolvedValueOnce({} as never);
     vi.mocked(GeneratedResponseModel.create).mockRejectedValueOnce(
       new Error("mongo down"),
     );
