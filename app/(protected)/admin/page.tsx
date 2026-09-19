@@ -19,13 +19,29 @@ interface ToolStat {
   runs: number;
   anonymous: number;
   errors: number;
+  /** Successful runs whose output could not be parsed into the tool's shape. */
+  textFallbacks: number;
   /** Null when no run in the window succeeded. */
   avgLatencyMs: number | null;
   avgAiLatencyMs: number | null;
 }
 
+const USAGE_COLUMNS = [
+  "Tool",
+  "Runs",
+  "Anonymous",
+  "Avg time",
+  "Model time",
+  "Plain text",
+  "Failed",
+];
+
 function toolName(slug: string): string {
   return allTools.find((t) => t.href === `/${slug}`)?.shortTitle ?? slug;
+}
+
+function percent(part: number, whole: number): string {
+  return whole === 0 ? "—" : `${Math.round((part / whole) * 100)}%`;
 }
 
 function seconds(ms: number | null): string {
@@ -62,6 +78,7 @@ export default async function AdminOverviewPage() {
           runs: { $sum: 1 },
           anonymous: { $sum: { $cond: ["$authenticated", 0, 1] } },
           errors: { $sum: { $cond: [{ $eq: ["$status", "ok"] }, 0, 1] } },
+          textFallbacks: { $sum: { $cond: [{ $eq: ["$format", "text"] }, 1, 0] } },
           // Successful runs only — a failed run's timing says how long the
           // failure took, not how fast the tool is. $avg skips the nulls.
           avgLatencyMs: {
@@ -123,16 +140,14 @@ export default async function AdminOverviewPage() {
             <table className="w-full">
               <thead className="bg-elevated">
                 <tr>
-                  {["Tool", "Runs", "Anonymous", "Avg time", "Model time", "Failed"].map(
-                    (heading) => (
-                      <th
-                        key={heading}
-                        className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground"
-                      >
-                        {heading}
-                      </th>
-                    ),
-                  )}
+                  {USAGE_COLUMNS.map((heading) => (
+                    <th
+                      key={heading}
+                      className="px-5 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground"
+                    >
+                      {heading}
+                    </th>
+                  ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -148,13 +163,19 @@ export default async function AdminOverviewPage() {
                       {stat.runs.toLocaleString()}
                     </td>
                     <td className="px-5 py-3.5 font-mono text-sm text-muted-foreground">
-                      {Math.round((stat.anonymous / stat.runs) * 100)}%
+                      {percent(stat.anonymous, stat.runs)}
                     </td>
                     <td className="px-5 py-3.5 font-mono text-sm text-muted-foreground">
                       {seconds(stat.avgLatencyMs)}
                     </td>
                     <td className="px-5 py-3.5 font-mono text-sm text-muted-foreground">
                       {seconds(stat.avgAiLatencyMs)}
+                    </td>
+                    {/* Share of successful runs that fell back from the rich
+                        result view to plain text — the structured-output
+                        health check. */}
+                    <td className="px-5 py-3.5 font-mono text-sm text-muted-foreground">
+                      {percent(stat.textFallbacks, stat.runs - stat.errors)}
                     </td>
                     <td
                       className={`px-5 py-3.5 font-mono text-sm ${
