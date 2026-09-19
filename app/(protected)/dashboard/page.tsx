@@ -21,7 +21,9 @@ export default async function DashboardPage() {
     GeneratedResponseModel.find({ userId: user.id })
       .sort({ createdAt: -1 })
       .limit(50)
-      .select("tool prompt createdAt")
+      // `text` has to be projected for the `r.text ?? r.prompt` fallback below
+      // to ever pick it; without it every row showed template boilerplate.
+      .select("tool text prompt createdAt")
       .lean(),
     UserActivity.find({ userId: user.id })
       .sort({ createdAt: -1 })
