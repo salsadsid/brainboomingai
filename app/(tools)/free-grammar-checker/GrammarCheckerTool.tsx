@@ -5,6 +5,7 @@ import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { TEXT_TOOL_DATA_HANDLING } from "@/config/dataHandling";
 import { toolFaqs } from "@/config/toolFaqs";
 import { BookOpen, CheckCircle, Shield } from "lucide-react";
 
@@ -39,9 +40,8 @@ const features: FeatureItem[] = [
   },
   {
     icon: Shield,
-    title: "Secure Processing",
-    description:
-      "Your text and results are stored to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+    title: "What happens to your text",
+    description: TEXT_TOOL_DATA_HANDLING,
   },
 ];
 

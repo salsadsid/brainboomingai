@@ -5,6 +5,7 @@ import ToolFAQ from "@/components/tools/ToolFAQ";
 import ToolFeatures from "@/components/tools/ToolFeatures";
 import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FeatureItem, StepItem, TextToolConfig } from "@/components/tools/types";
+import { TEXT_TOOL_DATA_HANDLING } from "@/config/dataHandling";
 import { toolFaqs } from "@/config/toolFaqs";
 import { CheckCircle, Sparkles, Zap, Shield } from "lucide-react";
 
@@ -33,9 +34,8 @@ const features: FeatureItem[] = [
   },
   {
     icon: Shield,
-    title: "100% Free & Secure",
-    description:
-      "No registration required. Your text and results are stored to improve our service. We do not share your data with third parties.",
+    title: "Free, no signup",
+    description: `No registration required. ${TEXT_TOOL_DATA_HANDLING}`,
   },
   {
     icon: CheckCircle,

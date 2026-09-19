@@ -258,7 +258,7 @@ export default function Home() {
           <SectionHeading
             eyebrow="Utilities"
             title="Productivity suite"
-            description="Image and developer utilities that run entirely in your browser — your files never leave your device."
+            description="Image and developer utilities. The image tools run entirely in your browser — your files never leave your device."
           />
           <ToolsGrid tools={otherTools} columns={3} />
         </div>

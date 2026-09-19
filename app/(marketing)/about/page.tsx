@@ -20,8 +20,9 @@ export default function AboutPage() {
       <div className="max-w-none space-y-6 text-lg leading-relaxed text-muted-foreground">
         <p>
           {siteConfig.name} is a collection of free, AI-powered tools for
-          writing and everyday productivity. Every tool runs in your browser,
-          returns results in seconds, and works without an account.
+          writing and everyday productivity. Every tool opens in your browser
+          with nothing to install, returns results in seconds, and works
+          without an account.
         </p>
 
         <h2 className="text-2xl font-semibold text-foreground pt-6">

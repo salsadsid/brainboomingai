@@ -1,4 +1,5 @@
 import type { FAQItem } from "@/components/tools/types";
+import { TEXT_TOOL_DATA_HANDLING } from "./dataHandling";
 
 /**
  * FAQ copy, keyed by tool route.
@@ -114,8 +115,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       },
       {
         question: "Is my content stored or shared?",
-        answer:
-          "Your prompts and generated summaries are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+        answer: TEXT_TOOL_DATA_HANDLING,
       },
     ],
   },
@@ -140,8 +140,7 @@ export const toolFaqs: Record<string, ToolFaqSection> = {
       },
       {
         question: "Is my text stored or shared when using the spell checker?",
-        answer:
-          "Your text and corrections are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+        answer: TEXT_TOOL_DATA_HANDLING,
       },
     ],
   },

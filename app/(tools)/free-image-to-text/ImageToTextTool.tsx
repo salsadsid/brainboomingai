@@ -6,6 +6,7 @@ import ToolHowItWorks from "@/components/tools/ToolHowItWorks";
 import type { FAQItem, FeatureItem, StepItem } from "@/components/tools/types";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IMAGE_TO_TEXT_DATA_HANDLING } from "@/config/dataHandling";
 import ToolResultView from "@/components/tools/results/ToolResultView";
 import { GenerateError, useGenerate } from "@/hooks/useGenerate";
 import { type GeneratePayload, primaryTextOf } from "@/lib/toolResults";
@@ -79,8 +80,7 @@ const faqs: FAQItem[] = [
   },
   {
     question: "Is my uploaded image stored or shared?",
-    answer:
-      "Your extracted text and prompts are stored on our servers to improve our service. We do not share your data with third parties. All processing happens over encrypted connections.",
+    answer: IMAGE_TO_TEXT_DATA_HANDLING,
   },
 ];
 
