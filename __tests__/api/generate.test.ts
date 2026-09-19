@@ -61,6 +61,7 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 import { POST } from "@/app/api/generate/route";
+import { auth } from "@/auth";
 import {
   generateResponse,
   QuotaExceededError,
@@ -69,6 +70,7 @@ import {
 import { rateLimit } from "@/lib/rateLimit";
 import GeneratedResponseModel from "@/models/GeneratedResponse";
 import ToolRun from "@/models/ToolRun";
+import UserActivity from "@/models/UserActivity";
 
 function jsonRequest(body: unknown, ip = "1.2.3.4"): Request {
   return new Request("http://localhost/api/generate", {
@@ -122,9 +124,6 @@ describe("POST /api/generate", () => {
       response: "AI says hello",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "AI says hello",
-    } as never);
 
     const res = await POST(
       jsonRequest({ text: "say hello", tool: "free-grammar-checker" }),
@@ -148,7 +147,6 @@ describe("POST /api/generate", () => {
       response: JSON.stringify(structured),
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
 
     const res = await POST(
       jsonRequest({ text: "she dont like rain", tool: "free-grammar-checker" }),
@@ -169,7 +167,6 @@ describe("POST /api/generate", () => {
       response: "{}",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({} as never);
 
     await POST(jsonRequest({ text: "hi", tool: "free-text-summarizer" }));
 
@@ -194,9 +191,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "ok",
-    } as never);
 
     const res = await POST(
       jsonRequest({
@@ -221,9 +215,6 @@ describe("POST /api/generate", () => {
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
-      response: "ok",
-    } as never);
 
     await POST(jsonRequest({ text: "hello", tool: "free-text-summarizer" }));
 
@@ -262,24 +253,73 @@ describe("POST /api/generate", () => {
     expect(generateResponse).not.toHaveBeenCalled();
   });
 
-  it("persists the user's text alongside the composed prompt", async () => {
+  // --- what gets kept -----------------------------------------------------
+  // `auth` resolves to null by default, so every test above runs as an
+  // anonymous visitor. These are the only ones that sign a user in.
+
+  it("keeps nothing an anonymous visitor wrote", async () => {
     vi.mocked(rateLimit).mockResolvedValue({ success: true });
     vi.mocked(generateResponse).mockResolvedValue({
       response: "ok",
       responseRaw: {} as Record<string, unknown>,
     });
-    vi.mocked(GeneratedResponseModel.create).mockResolvedValue({
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    expect(res.status).toBe(201);
+    // This used to save the text and the result for everyone.
+    expect(GeneratedResponseModel.create).not.toHaveBeenCalled();
+    expect(UserActivity.create).not.toHaveBeenCalled();
+  });
+
+  it("saves a signed-in user's run to their history", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
       response: "ok",
-    } as never);
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(UserActivity.create).mockResolvedValueOnce({} as never);
 
     await POST(jsonRequest({ text: "my input", tool: "free-spell-checker" }));
 
-    // History views slice this for display; without `text` they would all show
+    // History views slice `text` for display; without it they would all show
     // the same template boilerplate.
     const saved = vi.mocked(GeneratedResponseModel.create).mock
-      .calls[0][0] as unknown as { text: string; prompt: string };
+      .calls[0][0] as unknown as { text: string; prompt: string; userId: string };
     expect(saved.text).toBe("my input");
     expect(saved.prompt).toContain("expert in spell checking");
+    expect(saved.userId).toBe("user-1");
+
+    expect(UserActivity.create).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: "user-1", action: "tool_use" }),
+    );
+  });
+
+  it("returns the result even when the history write fails", async () => {
+    vi.mocked(auth).mockResolvedValueOnce({ user: { id: "user-1" } } as never);
+    vi.mocked(rateLimit).mockResolvedValue({ success: true });
+    vi.mocked(generateResponse).mockResolvedValue({
+      response: "ok",
+      responseRaw: {} as Record<string, unknown>,
+    });
+    vi.mocked(UserActivity.create).mockResolvedValueOnce({} as never);
+    vi.mocked(GeneratedResponseModel.create).mockRejectedValueOnce(
+      new Error("mongo down"),
+    );
+
+    const res = await POST(
+      jsonRequest({ text: "my input", tool: "free-spell-checker" }),
+    );
+
+    // The answer exists; a lost history row is not a reason to withhold it.
+    expect(res.status).toBe(201);
+    // And the run is counted once, as a success — not again as an error.
+    const runs = vi.mocked(ToolRun.create).mock.calls;
+    expect(runs).toHaveLength(1);
+    expect(runs[0][0]).toMatchObject({ status: "ok", authenticated: true });
   });
 
   it("reports quota exhaustion as non-retryable, distinctly from busy", async () => {

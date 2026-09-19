@@ -22,6 +22,29 @@ import { NextResponse } from "next/server";
  */
 const MAX_TEXT_LENGTH = 5_000;
 
+/**
+ * Best-effort. By the time this runs the user's result exists, and losing a
+ * history row is a smaller failure than withholding the answer they waited for
+ * — which is what awaiting this inside the request's try block used to do.
+ */
+async function saveToHistory(doc: {
+  prompt: string;
+  text: string;
+  tool: string;
+  response: string;
+  responseRaw: unknown;
+  userId: string;
+}): Promise<void> {
+  try {
+    await GeneratedResponseModel.create(doc);
+  } catch (err: unknown) {
+    logger.error("History write error", err, {
+      userId: doc.userId,
+      tool: doc.tool,
+    });
+  }
+}
+
 export async function POST(req: Request) {
   const startedAt = Date.now();
 
@@ -101,17 +124,6 @@ export async function POST(req: Request) {
     // plain text instead of failing the request.
     const payload = parseToolResult(tool, aiResponse);
 
-    // Save to MongoDB — the raw string, as before, so history stays readable
-    // whichever format the response took.
-    await GeneratedResponseModel.create({
-      prompt,
-      text,
-      tool,
-      response: aiResponse,
-      responseRaw,
-      userId,
-    });
-
     // Track activity for logged-in users
     if (userId) {
       UserActivity.create({
@@ -123,16 +135,32 @@ export async function POST(req: Request) {
       }).catch((err: unknown) => logger.error("Activity tracking error", err, { userId, tool }));
     }
 
-    // Usage metrics with nothing of the user's in them: sizes and timings only.
-    // `latencyMs` is the time until the result was ready to send.
-    await recordToolRun({
-      ...run,
-      outputChars: aiResponse.length,
-      latencyMs: Date.now() - startedAt,
-      aiLatencyMs,
-      format: payload.format,
-      status: "ok",
-    });
+    await Promise.all([
+      // History is a signed-in feature, and the only reason content is ever
+      // kept. An anonymous visitor's text and result go back to them and are
+      // stored nowhere — this used to save both for everyone. The raw string is
+      // saved so history stays readable whichever format the response took.
+      userId
+        ? saveToHistory({
+            prompt,
+            text,
+            tool,
+            response: aiResponse,
+            responseRaw,
+            userId,
+          })
+        : null,
+      // Usage metrics with nothing of the user's in them: sizes and timings
+      // only. `latencyMs` is the time until the result was ready to send.
+      recordToolRun({
+        ...run,
+        outputChars: aiResponse.length,
+        latencyMs: Date.now() - startedAt,
+        aiLatencyMs,
+        format: payload.format,
+        status: "ok",
+      }),
+    ]);
 
     return NextResponse.json(payload, { status: 201 });
   } catch (error: unknown) {
