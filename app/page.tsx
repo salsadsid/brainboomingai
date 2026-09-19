@@ -27,8 +27,9 @@ const toolListSchema = {
 
 /**
  * Every figure here is a fact about the product, not a metric we cannot back
- * up. No user counts, no ratings, no testimonials — inventing social proof for
- * a site with no analytics would be a lie a visitor could catch.
+ * up. No user counts, no ratings, no testimonials — inventing social proof
+ * would be a lie a visitor could catch. If usage numbers ever appear here they
+ * should come from the real ones (ToolRun, Web Analytics), not from copy.
  *
  * Each value must also read as a quantity. An earlier version showed "0" over
  * the label "Accounts required", which scans as a broken or missing metric
