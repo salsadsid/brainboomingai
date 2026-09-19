@@ -38,6 +38,41 @@ describe("parseToolResult", () => {
     expect(result.format).toBe("structured");
   });
 
+  // --- issue count --------------------------------------------------------
+  // The badge reads `issueCount`; the list beneath it renders `corrections`.
+  // The model fills them in independently, so they have to be reconciled here
+  // or the two disagree on screen.
+
+  it("uses the corrections list when the model's count disagrees", () => {
+    // Seen in production: a count of 6 sent alongside 8 corrections.
+    const corrections = Array.from({ length: 8 }, (_, i) => ({
+      original: `wrong${i}`,
+      corrected: `right${i}`,
+    }));
+    const result = parseToolResult(
+      "free-grammar-checker",
+      JSON.stringify({ correctedText: "fixed", issueCount: 6, corrections }),
+    );
+
+    if (result.format !== "structured") throw new Error("unreachable");
+    if (result.tool !== "free-grammar-checker") throw new Error("unreachable");
+    expect(result.data.issueCount).toBe(8);
+    expect(result.data.corrections).toHaveLength(8);
+  });
+
+  it("keeps the model's count when no corrections are listed", () => {
+    // The text may still have changed. Reporting 0 here would put "No issues
+    // found" above an edited paragraph.
+    const result = parseToolResult(
+      "free-spell-checker",
+      JSON.stringify({ correctedText: "fixed", issueCount: 3, corrections: [] }),
+    );
+
+    if (result.format !== "structured") throw new Error("unreachable");
+    if (result.tool !== "free-spell-checker") throw new Error("unreachable");
+    expect(result.data.issueCount).toBe(3);
+  });
+
   // --- fallback paths -----------------------------------------------------
   // Each of these previously had no answer at all: the client rendered
   // whatever came back and scraped it with regexes.
