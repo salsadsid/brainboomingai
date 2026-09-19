@@ -162,6 +162,10 @@ export async function POST(req: Request) {
       }),
     ]);
 
+    // On record as a success. Cleared so the catch block cannot count the same
+    // run a second time, as a failure, if anything below were to throw.
+    run = null;
+
     return NextResponse.json(payload, { status: 201 });
   } catch (error: unknown) {
     logger.error("Error generating response", error);

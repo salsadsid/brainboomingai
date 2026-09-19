@@ -51,11 +51,11 @@ const ToolRunSchema = new Schema<IToolRun>(
   { timestamps: true }
 );
 
-// Global counters and "today" windows on the admin overview.
+// The admin overview's per-tool breakdown: a $match on a recent window.
 ToolRunSchema.index({ createdAt: -1 });
 
-// Per-tool breakdown over a recent window.
-ToolRunSchema.index({ tool: 1, createdAt: -1 });
+// Its two counters: successful runs, in total and since midnight.
+ToolRunSchema.index({ status: 1, createdAt: -1 });
 
 const ToolRun =
   mongoose.models.ToolRun || mongoose.model<IToolRun>("ToolRun", ToolRunSchema);
